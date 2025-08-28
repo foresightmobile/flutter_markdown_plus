@@ -1,3 +1,11 @@
+## 1.0.5
+
+* Minor dependency updates to help with builds
+
+## 1.0.4
+
+* Ignore example directory to resolve publishing issues and reduce package size
+
 ## 1.0.3
 
 * Add support for LaTeX rendering in markdown.
