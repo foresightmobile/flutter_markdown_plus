@@ -278,10 +278,10 @@ class MarkdownBuilder implements md.NodeVisitor {
         element.children!.add(md.Text(''));
       }
 
-      final TextStyle parentStyle = _inlines.last.style!;
+      final TextStyle? parentStyle = _inlines.last.style;
       _inlines.add(_InlineElement(
         tag,
-        style: parentStyle.merge(styleSheet.styles[tag]),
+        style: parentStyle?.merge(styleSheet.styles[tag]),
       ));
     }
 
@@ -697,7 +697,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     if (_inlines.isEmpty) {
       _inlines.add(_InlineElement(
         tag,
-        style: styleSheet.styles[tag!],
+        style: tag != null ? styleSheet.styles[tag] : null,
       ));
     }
   }
