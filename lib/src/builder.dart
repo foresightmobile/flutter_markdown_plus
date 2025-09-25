@@ -699,7 +699,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     if (_inlines.isEmpty) {
       _inlines.add(_InlineElement(
         tag,
-        style: styleSheet.styles[tag!],
+        style: tag != null ? styleSheet.styles[tag] : null,
       ));
     }
   }
