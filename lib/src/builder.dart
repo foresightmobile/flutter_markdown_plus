@@ -236,13 +236,13 @@ class MarkdownBuilder implements md.NodeVisitor {
         _tables.add(_TableElement());
       } else if (tag == 'tr') {
         final int length = _tables.single.rows.length;
-        BoxDecoration? decoration;
+        Decoration? decoration;
         if (length == 0) {
           // First row is header - apply header decoration if available
-          decoration = styleSheet.tableHeadCellsDecoration as BoxDecoration?;
+          decoration = styleSheet.tableHeadCellsDecoration;
         } else if (length.isEven) {
           // Alternating body rows
-          decoration = styleSheet.tableCellsDecoration as BoxDecoration?;
+          decoration = styleSheet.tableCellsDecoration;
         }
         _tables.single.rows.add(TableRow(
           decoration: decoration,
