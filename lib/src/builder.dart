@@ -573,13 +573,24 @@ class MarkdownBuilder implements md.NodeVisitor {
     _lastVisitedTag = tag;
   }
 
-  Table _buildTable() {
-    return Table(
+  Widget _buildTable() {
+    final Table table = Table(
       defaultColumnWidth: styleSheet.tableColumnWidth!,
       defaultVerticalAlignment: styleSheet.tableVerticalAlignment,
       border: styleSheet.tableBorder,
       children: _tables.removeLast().rows,
     );
+
+    // Clip the table to the border radius if one is specified
+    final BorderRadiusGeometry? borderRadius = styleSheet.tableBorder?.borderRadius;
+    if (borderRadius != null) {
+      return ClipRRect(
+        borderRadius: borderRadius,
+        child: table,
+      );
+    }
+
+    return table;
   }
 
   Widget _buildImage(String src, String? title, String? alt) {
