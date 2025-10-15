@@ -44,6 +44,8 @@ class MarkdownStyleSheet {
     this.tableScrollbarThumbVisibility,
     this.tableCellsPadding,
     this.tableCellsDecoration,
+    this.tableHeadCellsPadding,
+    this.tableHeadCellsDecoration,
     this.tableVerticalAlignment = TableCellVerticalAlignment.middle,
     this.blockquotePadding,
     this.blockquoteDecoration,
@@ -141,6 +143,8 @@ class MarkdownStyleSheet {
       tableColumnWidth: const FlexColumnWidth(),
       tableCellsPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       tableCellsDecoration: const BoxDecoration(),
+      tableHeadCellsPadding: null,
+      tableHeadCellsDecoration: null,
       blockquotePadding: const EdgeInsets.all(8.0),
       blockquoteDecoration: BoxDecoration(
         color: Colors.blue.shade100,
@@ -316,6 +320,8 @@ class MarkdownStyleSheet {
       tableColumnWidth: const FlexColumnWidth(),
       tableCellsPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       tableCellsDecoration: const BoxDecoration(),
+      tableHeadCellsPadding: null,
+      tableHeadCellsDecoration: null,
       blockquotePadding: const EdgeInsets.all(8.0),
       blockquoteDecoration: BoxDecoration(
         color: Colors.blue.shade100,
@@ -375,6 +381,8 @@ class MarkdownStyleSheet {
     bool? tableScrollbarThumbVisibility,
     EdgeInsets? tableCellsPadding,
     Decoration? tableCellsDecoration,
+    EdgeInsets? tableHeadCellsPadding,
+    Decoration? tableHeadCellsDecoration,
     TableCellVerticalAlignment? tableVerticalAlignment,
     EdgeInsets? blockquotePadding,
     Decoration? blockquoteDecoration,
@@ -440,6 +448,8 @@ class MarkdownStyleSheet {
       tableScrollbarThumbVisibility: tableScrollbarThumbVisibility,
       tableCellsPadding: tableCellsPadding ?? this.tableCellsPadding,
       tableCellsDecoration: tableCellsDecoration ?? this.tableCellsDecoration,
+      tableHeadCellsPadding: tableHeadCellsPadding ?? this.tableHeadCellsPadding,
+      tableHeadCellsDecoration: tableHeadCellsDecoration ?? this.tableHeadCellsDecoration,
       tableVerticalAlignment: tableVerticalAlignment ?? this.tableVerticalAlignment,
       blockquotePadding: blockquotePadding ?? this.blockquotePadding,
       blockquoteDecoration: blockquoteDecoration ?? this.blockquoteDecoration,
@@ -505,6 +515,8 @@ class MarkdownStyleSheet {
       tableScrollbarThumbVisibility: other.tableScrollbarThumbVisibility,
       tableCellsPadding: other.tableCellsPadding,
       tableCellsDecoration: other.tableCellsDecoration,
+      tableHeadCellsPadding: other.tableHeadCellsPadding,
+      tableHeadCellsDecoration: other.tableHeadCellsDecoration,
       tableVerticalAlignment: other.tableVerticalAlignment,
       blockquotePadding: other.blockquotePadding,
       blockquoteDecoration: other.blockquoteDecoration,
@@ -637,6 +649,16 @@ class MarkdownStyleSheet {
   /// The decoration to use for `th` and `td` elements.
   final Decoration? tableCellsDecoration;
 
+  /// The padding to use for `th` elements.
+  ///
+  /// If null, defaults to [tableCellsPadding].
+  final EdgeInsets? tableHeadCellsPadding;
+
+  /// The decoration to use for `th` elements.
+  ///
+  /// If null, defaults to [tableCellsDecoration].
+  final Decoration? tableHeadCellsDecoration;
+
   /// The [TableCellVerticalAlignment] to use for `th` and `td` elements.
   final TableCellVerticalAlignment tableVerticalAlignment;
 
@@ -750,6 +772,8 @@ class MarkdownStyleSheet {
         other.tableColumnWidth == tableColumnWidth &&
         other.tableCellsPadding == tableCellsPadding &&
         other.tableCellsDecoration == tableCellsDecoration &&
+        other.tableHeadCellsPadding == tableHeadCellsPadding &&
+        other.tableHeadCellsDecoration == tableHeadCellsDecoration &&
         other.tableVerticalAlignment == tableVerticalAlignment &&
         other.blockquotePadding == blockquotePadding &&
         other.blockquoteDecoration == blockquoteDecoration &&
@@ -809,6 +833,8 @@ class MarkdownStyleSheet {
       tableColumnWidth,
       tableCellsPadding,
       tableCellsDecoration,
+      tableHeadCellsPadding,
+      tableHeadCellsDecoration,
       tableVerticalAlignment,
       blockquotePadding,
       blockquoteDecoration,

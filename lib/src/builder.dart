@@ -239,9 +239,13 @@ class MarkdownBuilder implements md.NodeVisitor {
         _tables.add(_TableElement());
       } else if (tag == 'tr') {
         final int length = _tables.single.rows.length;
-        BoxDecoration? decoration = styleSheet.tableCellsDecoration as BoxDecoration?;
-        if (length == 0 || length.isOdd) {
-          decoration = null;
+        BoxDecoration? decoration;
+        if (length == 0) {
+          // First row is header - apply header decoration if available
+          decoration = styleSheet.tableHeadCellsDecoration as BoxDecoration?;
+        } else if (length.isEven) {
+          // Alternating body rows
+          decoration = styleSheet.tableCellsDecoration as BoxDecoration?;
         }
         _tables.single.rows.add(TableRow(
           decoration: decoration,
@@ -509,6 +513,7 @@ class MarkdownBuilder implements md.NodeVisitor {
       } else if (tag == 'br') {
         current.children.add(_buildRichText(const TextSpan(text: '\n')));
       } else if (tag == 'th' || tag == 'td') {
+        final bool isHeaderCell = tag == 'th';
         TextAlign? align;
         final String? alignAttribute = element.attributes['align'];
         if (alignAttribute == null) {
@@ -526,6 +531,7 @@ class MarkdownBuilder implements md.NodeVisitor {
         final Widget child = _buildTableCell(
           _mergeInlineChildren(current.children, align),
           textAlign: align,
+          isHeader: isHeaderCell,
         );
         _tables.single.rows.last.children.add(child);
       } else if (tag == 'a') {
@@ -666,12 +672,19 @@ class MarkdownBuilder implements md.NodeVisitor {
     );
   }
 
-  Widget _buildTableCell(List<Widget?> children, {TextAlign? textAlign}) {
+  Widget _buildTableCell(List<Widget?> children, {TextAlign? textAlign, bool isHeader = false}) {
+    final EdgeInsets cellPadding = isHeader && styleSheet.tableHeadCellsPadding != null
+        ? styleSheet.tableHeadCellsPadding!
+        : styleSheet.tableCellsPadding!;
+
+    final TextStyle cellStyle =
+        isHeader && styleSheet.tableHead != null ? styleSheet.tableHead! : styleSheet.tableBody!;
+
     return TableCell(
       child: Padding(
-        padding: styleSheet.tableCellsPadding!,
+        padding: cellPadding,
         child: DefaultTextStyle(
-          style: styleSheet.tableBody!,
+          style: cellStyle,
           textAlign: textAlign,
           child: Wrap(
             alignment: switch (textAlign) {
