@@ -569,6 +569,133 @@ void defineTests() {
           expect(table.defaultColumnWidth, columnWidth);
         },
       );
+
+      testWidgets(
+        'table header cells should use tableHeadCellsPadding when specified',
+        (WidgetTester tester) async {
+          final ThemeData theme = ThemeData.light().copyWith(textTheme: textTheme);
+
+          const String data = '|Header|\n|----|\n|Body|';
+          const EdgeInsets headerPadding = EdgeInsets.all(20);
+          const EdgeInsets bodyPadding = EdgeInsets.all(10);
+          final MarkdownStyleSheet style = MarkdownStyleSheet.fromTheme(theme).copyWith(
+            tableHeadCellsPadding: headerPadding,
+            tableCellsPadding: bodyPadding,
+          );
+
+          await tester.pumpWidget(boilerplate(MarkdownBody(data: data, styleSheet: style)));
+
+          final Iterable<Padding> paddings = tester.widgetList(find.byType(Padding));
+          // Filter to get only TableCell paddings (not other paddings like table padding)
+          final List<Padding> cellPaddings = paddings.where((Padding p) {
+            return p.padding == headerPadding || p.padding == bodyPadding;
+          }).toList();
+
+          expect(cellPaddings.length, 2);
+          expect(cellPaddings[0].padding, headerPadding); // Header cell
+          expect(cellPaddings[1].padding, bodyPadding); // Body cell
+        },
+      );
+
+      testWidgets(
+        'table header cells should use tableCellsPadding when tableHeadCellsPadding is null',
+        (WidgetTester tester) async {
+          final ThemeData theme = ThemeData.light().copyWith(textTheme: textTheme);
+
+          const String data = '|Header|\n|----|\n|Body|';
+          const EdgeInsets cellPadding = EdgeInsets.all(12);
+          final MarkdownStyleSheet style = MarkdownStyleSheet.fromTheme(theme).copyWith(
+            tableCellsPadding: cellPadding,
+            tableHeadCellsPadding: null,
+          );
+
+          await tester.pumpWidget(boilerplate(MarkdownBody(data: data, styleSheet: style)));
+
+          final Iterable<Padding> paddings = tester.widgetList(find.byType(Padding));
+          final List<Padding> cellPaddings = paddings.where((Padding p) {
+            return p.padding == cellPadding;
+          }).toList();
+
+          expect(cellPaddings.length, 2); // Both header and body use same padding
+        },
+      );
+
+      testWidgets(
+        'table header row should use tableHeadCellsDecoration when specified',
+        (WidgetTester tester) async {
+          final ThemeData theme = ThemeData.light().copyWith(textTheme: textTheme);
+
+          const String data = '|Header|\n|----|\n|Body|';
+          final BoxDecoration headerDecoration = BoxDecoration(
+            color: Colors.blue.shade100,
+          );
+          final BoxDecoration bodyDecoration = BoxDecoration(
+            color: Colors.grey.shade100,
+          );
+          final MarkdownStyleSheet style = MarkdownStyleSheet.fromTheme(theme).copyWith(
+            tableHeadCellsDecoration: headerDecoration,
+            tableCellsDecoration: bodyDecoration,
+          );
+
+          await tester.pumpWidget(boilerplate(MarkdownBody(data: data, styleSheet: style)));
+
+          final Table table = tester.widget(find.byType(Table));
+
+          expect(table.children.length, 2); // Header and body rows
+          expect(table.children[0].decoration, headerDecoration); // Header row
+          expect(table.children[1].decoration, isNull); // Body row (odd row, no decoration by default)
+        },
+      );
+
+      testWidgets(
+        'table header row should use tableCellsDecoration when tableHeadCellsDecoration is null',
+        (WidgetTester tester) async {
+          final ThemeData theme = ThemeData.light().copyWith(textTheme: textTheme);
+
+          const String data = '|Header|\n|----|\n|Body|';
+          final MarkdownStyleSheet style = MarkdownStyleSheet.fromTheme(theme).copyWith(
+            tableHeadCellsDecoration: null,
+            tableCellsDecoration: null,
+          );
+
+          await tester.pumpWidget(boilerplate(MarkdownBody(data: data, styleSheet: style)));
+
+          final Table table = tester.widget(find.byType(Table));
+
+          expect(table.children.length, 2); // Header and body rows
+          expect(table.children[0].decoration, isNull); // Header row with no decoration
+          expect(table.children[1].decoration, isNull); // Body row with no decoration
+        },
+      );
+
+      testWidgets(
+        'table with multiple rows should apply decorations correctly',
+        (WidgetTester tester) async {
+          final ThemeData theme = ThemeData.light().copyWith(textTheme: textTheme);
+
+          const String data = '|H1|H2|\n|--|--|\n|R1C1|R1C2|\n|R2C1|R2C2|\n|R3C1|R3C2|';
+          final BoxDecoration headerDecoration = BoxDecoration(
+            color: Colors.blue.shade100,
+          );
+          final BoxDecoration bodyDecoration = BoxDecoration(
+            color: Colors.grey.shade100,
+          );
+          final MarkdownStyleSheet style = MarkdownStyleSheet.fromTheme(theme).copyWith(
+            tableHeadCellsDecoration: headerDecoration,
+            tableCellsDecoration: bodyDecoration,
+          );
+
+          await tester.pumpWidget(boilerplate(MarkdownBody(data: data, styleSheet: style)));
+
+          final Table table = tester.widget(find.byType(Table));
+
+          expect(table.children.length, 4); // 1 header + 3 body rows
+          expect(table.children[0].decoration, headerDecoration); // Header row (length=0)
+          expect(table.children[1].decoration, isNull); // Body row 1 (length=1, odd)
+          expect(table.children[2].decoration, bodyDecoration); // Body row 2 (length=2, even)
+          expect(table.children[3].decoration, isNull); // Body row 3 (length=3, odd)
+        },
+      );
     });
   });
 }
