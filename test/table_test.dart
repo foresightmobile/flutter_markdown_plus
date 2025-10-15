@@ -653,9 +653,12 @@ void defineTests() {
           final ThemeData theme = ThemeData.light().copyWith(textTheme: textTheme);
 
           const String data = '|Header|\n|----|\n|Body|';
+          final BoxDecoration bodyDecoration = BoxDecoration(
+            color: Colors.grey.shade100,
+          );
           final MarkdownStyleSheet style = MarkdownStyleSheet.fromTheme(theme).copyWith(
             tableHeadCellsDecoration: null,
-            tableCellsDecoration: null,
+            tableCellsDecoration: bodyDecoration,
           );
 
           await tester.pumpWidget(boilerplate(MarkdownBody(data: data, styleSheet: style)));
@@ -663,8 +666,8 @@ void defineTests() {
           final Table table = tester.widget(find.byType(Table));
 
           expect(table.children.length, 2); // Header and body rows
-          expect(table.children[0].decoration, isNull); // Header row with no decoration
-          expect(table.children[1].decoration, isNull); // Body row with no decoration
+          expect(table.children[0].decoration, bodyDecoration); // Header falls back to body decoration
+          expect(table.children[1].decoration, isNull); // First body row (odd) remains undecorated
         },
       );
 
