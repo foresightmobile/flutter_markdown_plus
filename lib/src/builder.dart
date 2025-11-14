@@ -202,6 +202,8 @@ class MarkdownBuilder implements md.NodeVisitor {
       node.accept(this);
     }
 
+    _addAnonymousBlockIfNeeded();
+
     assert(_tables.isEmpty);
     assert(_inlines.isEmpty);
     assert(!_isInBlockquote);
@@ -223,7 +225,8 @@ class MarkdownBuilder implements md.NodeVisitor {
     }
 
     int? start;
-    if (_isBlockTag(tag)) {
+    final bool isBlock = _isBlockTag(tag) || (builders.containsKey(tag) && builders[tag]!.isBlockElement());
+    if (isBlock) {
       _addAnonymousBlockIfNeeded();
       if (_isListTag(tag)) {
         _listIndents.add(tag);
@@ -368,7 +371,8 @@ class MarkdownBuilder implements md.NodeVisitor {
   void visitElementAfter(md.Element element) {
     final String tag = element.tag;
 
-    if (_isBlockTag(tag)) {
+    final bool isBlock = _isBlockTag(tag) || (builders.containsKey(tag) && builders[tag]!.isBlockElement());
+    if (isBlock) {
       _addAnonymousBlockIfNeeded();
 
       final _BlockElement current = _blocks.removeLast();
@@ -745,9 +749,9 @@ class MarkdownBuilder implements md.NodeVisitor {
         final Padding padding = Padding(padding: textPadding, child: wrap);
         _addBlockChild(padding);
       }
-
-      _inlines.clear();
     }
+
+    _inlines.clear();
   }
 
   /// Extracts all spans from an inline element and merges them into a single list

@@ -3,12 +3,12 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+
 import '../demos/basic_markdown_demo.dart';
 import '../demos/centered_header_demo.dart';
 import '../demos/custom_bullet_list_demo.dart';
 import '../demos/extended_emoji_demo.dart';
 import '../demos/markdown_body_shrink_wrap_demo.dart';
-import '../demos/markdown_latex_plugin_demo.dart';
 import '../demos/minimal_markdown_demo.dart';
 import '../demos/original_demo.dart';
 import '../demos/subscript_syntax_demo.dart';
@@ -33,7 +33,6 @@ class HomeScreen extends StatelessWidget {
     const CenteredHeaderDemo(),
     const MarkdownBodyShrinkWrapDemo(),
     const CustomBulletListDemo(),
-    const MarkdownLatexPluginDemo(),
   ];
 
   @override
