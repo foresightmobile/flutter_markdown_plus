@@ -1,3 +1,7 @@
+## 1.0.6
+
+* Fix cursor behavior when using custom builder for anchor tags. The code now only manages `_linkHandlers` when there is no custom builder for anchor tags, preventing conflicts between the default link recognizer and custom builder widgets.
+
 ## 1.0.3
 
 * Add support for LaTeX rendering in markdown.
