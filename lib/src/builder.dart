@@ -239,13 +239,9 @@ class MarkdownBuilder implements md.NodeVisitor {
         _tables.add(_TableElement());
       } else if (tag == 'tr') {
         final int length = _tables.single.rows.length;
-        Decoration? decoration;
-        if (length == 0) {
-          // First row is header - apply header decoration if available
-          decoration = styleSheet.tableHeadCellsDecoration;
-        } else if (length.isEven) {
-          // Alternating body rows
-          decoration = styleSheet.tableCellsDecoration;
+        BoxDecoration? decoration = styleSheet.tableCellsDecoration as BoxDecoration?;
+        if (length == 0 || length.isOdd) {
+          decoration = null;
         }
         _tables.single.rows.add(TableRow(
           decoration: decoration,
@@ -262,7 +258,7 @@ class MarkdownBuilder implements md.NodeVisitor {
       }
       _blocks.add(bElement);
     } else {
-      if (tag == 'a') {
+      if (tag == 'a' && !builders.containsKey('a')) {
         final String? text = extractTextFromElement(element);
         // Don't add empty links
         if (text == null) {
@@ -535,7 +531,9 @@ class MarkdownBuilder implements md.NodeVisitor {
         );
         _tables.single.rows.last.children.add(child);
       } else if (tag == 'a') {
-        _linkHandlers.removeLast();
+        if (!builders.containsKey('a')) {
+          _linkHandlers.removeLast();
+        }
       } else if (tag == 'sup') {
         final Widget c = current.children.last;
         TextSpan? textSpan;
