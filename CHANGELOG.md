@@ -1,6 +1,8 @@
 ## 1.0.6
 
 * Fix cursor behavior when using custom builder for anchor tags. The code now only manages `_linkHandlers` when there is no custom builder for anchor tags, preventing conflicts between the default link recognizer and custom builder widgets.
+* New properties introduced to `MarkdownStyleSheet`: `tableHeadCellsPadding` and `tableHeadCelssDecoration`.
+* Implemented automatic table content clipping to respect rounded borders when `tableBorder` specifies a border radius.
 
 ## 1.0.3
 
