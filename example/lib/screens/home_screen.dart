@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-
 import '../demos/basic_markdown_demo.dart';
 import '../demos/centered_header_demo.dart';
 import '../demos/custom_bullet_list_demo.dart';
