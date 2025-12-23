@@ -1,3 +1,22 @@
+## 1.0.6
+
+* Fix cursor behavior when using custom builder for anchor tags. The code now only manages `_linkHandlers` when there is no custom builder for anchor tags, preventing conflicts between the default link recognizer and custom builder widgets.
+* New properties introduced to `MarkdownStyleSheet`: `tableHeadCellsPadding` and `tableHeadCelssDecoration`.
+* Implemented automatic table content clipping to respect rounded borders when `tableBorder` specifies a border radius.
+
+**Thanks to our contributors:**
+* [@mark-nicepants](https://github.com/mark-nicepants) for fixing null pointer issues with custom builders
+* [@jlandon](https://github.com/jlandon) for adding table header cell customization features
+* [@4rthurmonteiro](https://github.com/4rthurmonteiro) for the link builder fix
+
+## 1.0.5
+
+* Minor dependency updates to help with builds
+
+## 1.0.4
+
+* Ignore example directory to resolve publishing issues and reduce package size
+
 ## 1.0.3
 
 * Add support for LaTeX rendering in markdown.

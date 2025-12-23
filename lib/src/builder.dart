@@ -202,6 +202,8 @@ class MarkdownBuilder implements md.NodeVisitor {
       node.accept(this);
     }
 
+    _addAnonymousBlockIfNeeded();
+
     assert(_tables.isEmpty);
     assert(_inlines.isEmpty);
     assert(!_isInBlockquote);
@@ -223,7 +225,8 @@ class MarkdownBuilder implements md.NodeVisitor {
     }
 
     int? start;
-    if (_isBlockTag(tag)) {
+    final bool isBlock = _isBlockTag(tag) || (builders.containsKey(tag) && builders[tag]!.isBlockElement());
+    if (isBlock) {
       _addAnonymousBlockIfNeeded();
       if (_isListTag(tag)) {
         _listIndents.add(tag);
@@ -236,8 +239,13 @@ class MarkdownBuilder implements md.NodeVisitor {
         _tables.add(_TableElement());
       } else if (tag == 'tr') {
         final int length = _tables.single.rows.length;
-        BoxDecoration? decoration = styleSheet.tableCellsDecoration as BoxDecoration?;
-        if (length == 0 || length.isOdd) {
+        Decoration? decoration = styleSheet.tableCellsDecoration;
+
+        if (length == 0) {
+          decoration = styleSheet.tableHeadCellsDecoration ?? styleSheet.tableCellsDecoration;
+        } else if (length.isEven) {
+          decoration = styleSheet.tableCellsDecoration;
+        } else {
           decoration = null;
         }
         _tables.single.rows.add(TableRow(
@@ -255,7 +263,7 @@ class MarkdownBuilder implements md.NodeVisitor {
       }
       _blocks.add(bElement);
     } else {
-      if (tag == 'a') {
+      if (tag == 'a' && !builders.containsKey('a')) {
         final String? text = extractTextFromElement(element);
         // Don't add empty links
         if (text == null) {
@@ -278,11 +286,9 @@ class MarkdownBuilder implements md.NodeVisitor {
         element.children!.add(md.Text(''));
       }
 
-      final TextStyle parentStyle = _inlines.last.style!;
-      _inlines.add(_InlineElement(
-        tag,
-        style: parentStyle.merge(styleSheet.styles[tag]),
-      ));
+      final TextStyle? parentStyle = _inlines.last.style;
+      final TextStyle? tagStyle = styleSheet.styles[tag];
+      _inlines.add(_InlineElement(tag, style: parentStyle != null ? parentStyle.merge(tagStyle) : tagStyle));
     }
 
     return true;
@@ -370,7 +376,8 @@ class MarkdownBuilder implements md.NodeVisitor {
   void visitElementAfter(md.Element element) {
     final String tag = element.tag;
 
-    if (_isBlockTag(tag)) {
+    final bool isBlock = _isBlockTag(tag) || (builders.containsKey(tag) && builders[tag]!.isBlockElement());
+    if (isBlock) {
       _addAnonymousBlockIfNeeded();
 
       final _BlockElement current = _blocks.removeLast();
@@ -507,6 +514,7 @@ class MarkdownBuilder implements md.NodeVisitor {
       } else if (tag == 'br') {
         current.children.add(_buildRichText(const TextSpan(text: '\n')));
       } else if (tag == 'th' || tag == 'td') {
+        final bool isHeaderCell = tag == 'th';
         TextAlign? align;
         final String? alignAttribute = element.attributes['align'];
         if (alignAttribute == null) {
@@ -524,10 +532,13 @@ class MarkdownBuilder implements md.NodeVisitor {
         final Widget child = _buildTableCell(
           _mergeInlineChildren(current.children, align),
           textAlign: align,
+          isHeader: isHeaderCell,
         );
         _tables.single.rows.last.children.add(child);
       } else if (tag == 'a') {
-        _linkHandlers.removeLast();
+        if (!builders.containsKey('a')) {
+          _linkHandlers.removeLast();
+        }
       } else if (tag == 'sup') {
         final Widget c = current.children.last;
         TextSpan? textSpan;
@@ -565,13 +576,24 @@ class MarkdownBuilder implements md.NodeVisitor {
     _lastVisitedTag = tag;
   }
 
-  Table _buildTable() {
-    return Table(
+  Widget _buildTable() {
+    final Table table = Table(
       defaultColumnWidth: styleSheet.tableColumnWidth!,
       defaultVerticalAlignment: styleSheet.tableVerticalAlignment,
       border: styleSheet.tableBorder,
       children: _tables.removeLast().rows,
     );
+
+    // Clip the table to the border radius if one is specified
+    final BorderRadiusGeometry? borderRadius = styleSheet.tableBorder?.borderRadius;
+    if (borderRadius != null) {
+      return ClipRRect(
+        borderRadius: borderRadius,
+        child: table,
+      );
+    }
+
+    return table;
   }
 
   Widget _buildImage(String src, String? title, String? alt) {
@@ -664,12 +686,19 @@ class MarkdownBuilder implements md.NodeVisitor {
     );
   }
 
-  Widget _buildTableCell(List<Widget?> children, {TextAlign? textAlign}) {
+  Widget _buildTableCell(List<Widget?> children, {TextAlign? textAlign, bool isHeader = false}) {
+    final EdgeInsets cellPadding = isHeader && styleSheet.tableHeadCellsPadding != null
+        ? styleSheet.tableHeadCellsPadding!
+        : styleSheet.tableCellsPadding!;
+
+    final TextStyle cellStyle =
+        isHeader && styleSheet.tableHead != null ? styleSheet.tableHead! : styleSheet.tableBody!;
+
     return TableCell(
       child: Padding(
-        padding: styleSheet.tableCellsPadding!,
+        padding: cellPadding,
         child: DefaultTextStyle(
-          style: styleSheet.tableBody!,
+          style: cellStyle,
           textAlign: textAlign,
           child: Wrap(
             alignment: switch (textAlign) {
@@ -697,7 +726,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     if (_inlines.isEmpty) {
       _inlines.add(_InlineElement(
         tag,
-        style: styleSheet.styles[tag!],
+        style: tag != null ? styleSheet.styles[tag] : null,
       ));
     }
   }
@@ -747,9 +776,9 @@ class MarkdownBuilder implements md.NodeVisitor {
         final Padding padding = Padding(padding: textPadding, child: wrap);
         _addBlockChild(padding);
       }
-
-      _inlines.clear();
     }
+
+    _inlines.clear();
   }
 
   /// Extracts all spans from an inline element and merges them into a single list
