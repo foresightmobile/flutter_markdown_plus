@@ -156,6 +156,12 @@ valuable resources are the
 [Markdown Live Preview](https://markdownlivepreview.com/). These two resources
 are dynamic, online Markdown viewers.
 
+## Contributing
+
+Before running `./validate.sh` or publishing the package, ensure all optional demos
+in the example app are disabled. See `example/README.md` for details on managing
+optional demo dependencies.
+
 ## Markdown Resources
 
 Here are some additional Markdown syntax resources:

@@ -1,0 +1,8 @@
+# Inherit from the parent package's analysis options
+include: ../analysis_options.yaml
+
+analyzer:
+  exclude:
+    # GENERATED - DO NOT EDIT MANUALLY
+    # Run: dart run tool/configure_demos.dart
+    - lib/demos/markdown_latex_plugin_demo.dart

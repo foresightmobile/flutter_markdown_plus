@@ -1,0 +1,23 @@
+# Optional demo configuration
+# Set enabled: true and run `dart run tool/configure_demos.dart` to enable
+# Set enabled: false before running validate.sh or publishing
+
+demos:
+  latex:
+    enabled: false
+    package: flutter_markdown_plus_latex
+    version: ^1.0.4
+    # Uncomment for local development:
+    # path: ../../flutter_markdown_plus_latex
+    import: "package:flutter_markdown_plus_latex/flutter_markdown_plus_latex.dart"
+    demo_file: lib/demos/markdown_latex_plugin_demo.dart
+    demo_class: MarkdownLatexPluginDemo
+
+  # Add more optional demos here:
+  # another_plugin:
+  #   enabled: false
+  #   package: flutter_markdown_plus_another
+  #   version: ^1.0.0
+  #   import: "package:flutter_markdown_plus_another/flutter_markdown_plus_another.dart"
+  #   demo_file: lib/demos/another_plugin_demo.dart
+  #   demo_class: AnotherPluginDemo

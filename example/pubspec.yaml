@@ -12,16 +12,19 @@ dependencies:
 
   flutter_markdown_plus:
     path: ../
-#  flutter_markdown_plus_latex: ^1.0.4
-#  flutter_markdown_plus_latex:
-#    path: ../../flutter_markdown_plus_latex   # For relative path testing
 
   markdown: ^7.3.0
+  # BEGIN OPTIONAL DEMO DEPENDENCIES
+  # flutter_markdown_plus_latex: ^1.0.4 # disabled
+  # END OPTIONAL DEMO DEPENDENCIES
 
+
+  
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  yaml: ^3.1.2 # For tool/configure_demos.dart
 
 flutter:
   assets:
