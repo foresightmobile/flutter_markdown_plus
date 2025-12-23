@@ -4,6 +4,11 @@
 * New properties introduced to `MarkdownStyleSheet`: `tableHeadCellsPadding` and `tableHeadCelssDecoration`.
 * Implemented automatic table content clipping to respect rounded borders when `tableBorder` specifies a border radius.
 
+**Thanks to our contributors:**
+* [@mark-nicepants](https://github.com/mark-nicepants) for fixing null pointer issues with custom builders
+* [@jlandon](https://github.com/jlandon) for adding table header cell customization features
+* [@4rthurmonteiro](https://github.com/4rthurmonteiro) for the link builder fix
+
 ## 1.0.5
 
 * Minor dependency updates to help with builds
