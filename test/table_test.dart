@@ -606,7 +606,6 @@ void defineTests() {
           const EdgeInsets cellPadding = EdgeInsets.all(12);
           final MarkdownStyleSheet style = MarkdownStyleSheet.fromTheme(theme).copyWith(
             tableCellsPadding: cellPadding,
-            tableHeadCellsPadding: null,
           );
 
           await tester.pumpWidget(boilerplate(MarkdownBody(data: data, styleSheet: style)));
@@ -657,7 +656,6 @@ void defineTests() {
             color: Colors.grey.shade100,
           );
           final MarkdownStyleSheet style = MarkdownStyleSheet.fromTheme(theme).copyWith(
-            tableHeadCellsDecoration: null,
             tableCellsDecoration: bodyDecoration,
           );
 
