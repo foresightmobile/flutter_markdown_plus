@@ -28,5 +28,5 @@ topics:
   - markdown
   - widgets
 
-dartfmt:
-  line_length: 120
+formatter:
+  page_width: 140

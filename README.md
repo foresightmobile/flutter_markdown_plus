@@ -1,6 +1,14 @@
 # Flutter Markdown
 [![pub package](https://img.shields.io/pub/v/flutter_markdown_plus.svg)](https://pub.dartlang.org/packages/flutter_markdown_plus)
 
+## About This Package
+
+`flutter_markdown_plus` is the continuation of the original [`flutter_markdown`](https://pub.dev/packages/flutter_markdown) package that was developed and maintained by Google. As the original package has been discontinued, Foresight Mobile has taken over maintenance of this project to ensure continued support and development for the Flutter community.
+
+For historical context, see the [original flutter_markdown package](https://pub.dev/packages/flutter_markdown).
+
+**LaTeX Support:** For LaTeX rendering support, check out the [`flutter_markdown_plus_latex`](https://pub.dev/packages/flutter_markdown_plus_latex) package.
+
 A markdown renderer for Flutter. It supports the
 [original format](https://daringfireball.net/projects/markdown/), but no inline
 HTML.
