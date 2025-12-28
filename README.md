@@ -172,3 +172,7 @@ Here are some additional Markdown syntax resources:
 - [CommonMark Markdown Reference](https://commonmark.org/help/)
 - [GitHub Guides - Mastering Markdown](https://guides.github.com/features/mastering-markdown/#GitHub-flavored-markdown)
   - [Download PDF cheatsheet version](https://guides.github.com/pdfs/markdown-cheatsheet-online.pdf)
+
+## Maintainers
+
+This package is proudly maintained by [Gareth Reese](https://github.com/gazreese) and [Marko Radisavljevic](https://github.com/Prototypev1) for [Foresight Mobile](https://foresightmobile.com/) ([GitHub](https://github.com/foresightmobile/))

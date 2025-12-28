@@ -1,3 +1,12 @@
+## 1.0.7
+
+* Improved pub.dev score by making example app source code available in published package
+* Updated `.pubignore` to only exclude build artifacts and generated files instead of entire example directory
+* Fixed linter warnings by removing unnecessary null default values in `MarkdownStyleSheet`
+* Added `CLAUDE.md` documentation for AI-assisted development
+* Enhanced README with package history and link to LaTeX support package
+* Standardized formatter configuration across project
+
 ## 1.0.6
 
 * Fix cursor behavior when using custom builder for anchor tags. The code now only manages `_linkHandlers` when there is no custom builder for anchor tags, preventing conflicts between the default link recognizer and custom builder widgets.
