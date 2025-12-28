@@ -20,6 +20,9 @@ analyzer:
     # Ignore generated files
     - '**/*.g.dart'
     - '**/*.mocks.dart' # Mockito @GenerateMocks
+    
+formatter:
+  page_width: 120
 
 linter:
   rules:
