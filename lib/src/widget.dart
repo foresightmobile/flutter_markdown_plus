@@ -561,8 +561,8 @@ class Markdown extends MarkdownWidget {
   @override
   Widget build(BuildContext context, List<Widget>? children) {
     if (noScroll) {
-      final List<Widget> childrenWithPadding = [];
-      for (final Widget child in children!) {
+      final List<Widget> childrenWithPadding = <Widget>[];
+      for (final Widget child in children ?? <Widget>[]) {
         childrenWithPadding.add(Padding(
           padding: padding,
           child: child,
