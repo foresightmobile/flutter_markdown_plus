@@ -522,6 +522,7 @@ class Markdown extends MarkdownWidget {
     this.controller,
     this.physics,
     this.shrinkWrap = false,
+    this.noScroll = false,
     super.softLineBreak,
   });
 
@@ -544,8 +545,20 @@ class Markdown extends MarkdownWidget {
   /// See also: [ScrollView.shrinkWrap]
   final bool shrinkWrap;
 
+  /// If true, the markdown is rendered in a non-scrolling [Column] instead of
+  /// a scrolling [ListView]. Use this when the widget is already inside a
+  /// scrolling parent.
+  final bool noScroll;
+
   @override
   Widget build(BuildContext context, List<Widget>? children) {
+    if (noScroll) {
+      final List<Widget> childrenWithPadding = <Widget>[];
+      for (final Widget child in children ?? <Widget>[]) {
+        childrenWithPadding.add(Padding(padding: padding, child: child));
+      }
+      return Column(children: childrenWithPadding);
+    }
     return ListView(
       padding: padding,
       controller: controller,
