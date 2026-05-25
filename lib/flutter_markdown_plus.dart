@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 /// A library to render markdown formatted text.
-library flutter_markdown_plus;
+library;
 
 export 'src/builder.dart';
 export 'src/style_sheet.dart';
