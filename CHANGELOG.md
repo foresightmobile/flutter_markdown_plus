@@ -10,6 +10,7 @@
 * Migrated linting to `package:flutter_lints`, retaining strict type analysis and required public API documentation
 * Updated dependencies: `markdown` to `^7.3.1`, `mockito` to `^5.7.0`, and pinned `leak_tracker_flutter_testing`
 * Aligned the example app's Flutter constraint with the package and added a `documentation` link to the pubspec
+* Updated the example app's Android Gradle Plugin to 8.6.0 (Flutter's current minimum) and removed an unused Google Cloud Artifact Registry Gradle plugin
 * Excluded the locally symlinked `flutter_markdown_plus_latex` package from analysis and publishing
 
 **Thanks to our contributors:**
