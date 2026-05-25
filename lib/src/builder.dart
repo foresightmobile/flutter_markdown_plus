@@ -989,11 +989,24 @@ class MarkdownBuilder implements md.NodeVisitor {
   Widget _buildRichText(TextSpan text, {TextAlign? textAlign, String? key}) {
     //Adding a unique key prevents the problem of using the same link handler for text spans with the same text
     final Key k = key == null ? UniqueKey() : Key(key);
+    // Build strutStyle from paragraph style to enforce consistent line height
+    // across spans with different font weights.
+    final TextStyle? pStyle = styleSheet.p;
+    final StrutStyle? strutStyle = pStyle != null
+        ? StrutStyle(
+            fontFamily: pStyle.fontFamily,
+            fontSize: pStyle.fontSize,
+            height: pStyle.height,
+            leading: 0,
+            forceStrutHeight: true,
+          )
+        : null;
     if (selectable) {
       return SelectableText.rich(
         text,
         textScaler: styleSheet.textScaler,
         textAlign: textAlign ?? TextAlign.start,
+        strutStyle: strutStyle,
         onSelectionChanged: onSelectionChanged != null
             ? (TextSelection selection, SelectionChangedCause? cause) =>
                 onSelectionChanged!(text.text, selection, cause)
@@ -1006,6 +1019,7 @@ class MarkdownBuilder implements md.NodeVisitor {
         text,
         textScaler: styleSheet.textScaler,
         textAlign: textAlign ?? TextAlign.start,
+        strutStyle: strutStyle,
         key: k,
       );
     }

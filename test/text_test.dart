@@ -397,4 +397,34 @@ void defineTests() {
       expectTextStrings(widgets, <String>['strikethrough']);
     });
   });
+
+  group('Strut style', () {
+    testWidgets(
+      'paragraph rich text forces a consistent strut height across font weights',
+      (WidgetTester tester) async {
+        // A bold span should not change the paragraph line height. The builder
+        // applies a forced strut height derived from the paragraph style so the
+        // line height is consistent regardless of font weight (see PR #130).
+        const double paragraphFontSize = 17.0;
+        final MarkdownStyleSheet styleSheet = MarkdownStyleSheet(
+          p: const TextStyle(fontSize: paragraphFontSize, height: 1.5),
+        );
+
+        await tester.pumpWidget(
+          boilerplate(
+            MarkdownBody(
+              data: 'normal **bold** text',
+              styleSheet: styleSheet,
+            ),
+          ),
+        );
+
+        final Text text = tester.widget<Text>(find.byType(Text));
+        expect(text.strutStyle, isNotNull);
+        expect(text.strutStyle!.forceStrutHeight, isTrue);
+        expect(text.strutStyle!.fontSize, paragraphFontSize);
+        expect(text.strutStyle!.height, 1.5);
+      },
+    );
+  });
 }
