@@ -1,3 +1,12 @@
+## 1.0.8
+
+* Added an integration test suite (`example/integration_test/`) that runs on a device or emulator, covering link taps, scrolling, task-list checkboxes, text selection, and example app launch
+* Added `scripts/integration_test.sh` and a GitHub Actions job that runs the integration tests on an Android emulator
+* Migrated linting to `package:flutter_lints`, retaining strict type analysis and required public API documentation
+* Updated dependencies: `markdown` to `^7.3.1`, `mockito` to `^5.7.0`, and pinned `leak_tracker_flutter_testing`
+* Aligned the example app's Flutter constraint with the package and added a `documentation` link to the pubspec
+* Excluded the locally symlinked `flutter_markdown_plus_latex` package from analysis and publishing
+
 ## 1.0.7
 
 * Improved pub.dev score by making example app source code available in published package
