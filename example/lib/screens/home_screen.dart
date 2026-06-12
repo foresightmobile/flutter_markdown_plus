@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import '../demos/basic_markdown_demo.dart';
+import '../demos/blenheim_great_court_demo.dart';
 import '../demos/centered_header_demo.dart';
 import '../demos/custom_bullet_list_demo.dart';
 import '../demos/extended_emoji_demo.dart';
@@ -23,6 +24,7 @@ class HomeScreen extends StatelessWidget {
   static const String routeName = '/homeScreen';
 
   final List<MarkdownDemoWidget> _demos = <MarkdownDemoWidget>[
+    const BlenheimGreatCourtDemo(),
     const MinimalMarkdownDemo(),
     const BasicMarkdownDemo(),
     const WrapAlignmentDemo(),
