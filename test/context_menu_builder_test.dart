@@ -43,5 +43,26 @@ void defineTests() {
 
       expect(text.contextMenuBuilder, same(customContextMenuBuilder));
     });
+
+    testWidgets('selection callback receives rich text as plain text', (WidgetTester tester) async {
+      String? selectedText;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MarkdownBody(
+            data: 'Selectable **rich** text',
+            selectable: true,
+            onSelectionChanged: (String? text, TextSelection selection, SelectionChangedCause? cause) {
+              selectedText = text;
+            },
+          ),
+        ),
+      );
+
+      final SelectableText text = tester.widget<SelectableText>(find.byType(SelectableText));
+      text.onSelectionChanged?.call(const TextSelection(baseOffset: 0, extentOffset: 10), SelectionChangedCause.drag);
+
+      expect(selectedText, 'Selectable rich text');
+    });
   });
 }
