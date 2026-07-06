@@ -1,3 +1,11 @@
+## 1.0.9
+
+* Fixed custom inline `builders` (e.g. `a`) duplicating trailing text when the element had multiple children, such as link text containing a `_` or `*` delimiter that the parser splits into separate text nodes (#132)
+
+**Thanks to our contributors:**
+* [@Jess-Gabia](https://github.com/Jess-Gabia) for reporting the issue and identifying the fix (#132)
+* [@amungi](https://github.com/amungi) for confirming the fix in production
+
 ## 1.0.8
 
 * Fixed custom `builders` and `paddingBuilders` for the `hr` tag being ignored

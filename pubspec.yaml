@@ -5,7 +5,7 @@ description: A Markdown renderer for Flutter. Create rich text output,
 repository: https://github.com/foresightmobile/flutter_markdown_plus
 issue_tracker: https://github.com/foresightmobile/flutter_markdown_plus/issues
 documentation: https://github.com/foresightmobile/flutter_markdown_plus#readme
-version: 1.0.8
+version: 1.0.9
 
 environment:
   sdk: ^3.4.0

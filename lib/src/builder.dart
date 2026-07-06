@@ -504,11 +504,13 @@ class MarkdownBuilder implements md.NodeVisitor {
           parent.style,
         );
         if (child != null) {
-          if (current.children.isEmpty) {
-            current.children.add(child);
-          } else {
-            current.children[0] = child;
-          }
+          // The returned widget represents the entire element, so discard all
+          // existing inline children — replacing only children[0] leaves any
+          // siblings (e.g. link text split on a `_`/`*` delimiter) to leak
+          // through to the parent and render twice. See issue #132.
+          current.children
+            ..clear()
+            ..add(child);
         }
       } else if (tag == 'img') {
         // create an image widget for this image

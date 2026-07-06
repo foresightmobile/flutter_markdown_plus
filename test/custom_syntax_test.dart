@@ -211,6 +211,48 @@ void defineTests() {
       expect(textWidget.data, 'foo');
     },
   );
+
+  testWidgets(
+    'inline builder replaces all children, not just the first (issue #132)',
+    (WidgetTester tester) async {
+      // The link text starts with an unpaired `_`, which the parser splits into
+      // multiple text nodes (`[Text("_"), Text("hello world")]`). A custom `a`
+      // builder returning a widget must replace *all* of them, otherwise the
+      // trailing "hello world" leaks through and renders twice.
+      await tester.pumpWidget(
+        boilerplate(
+          Markdown(
+            data: '[_hello world](https://example.com)',
+            builders: <String, MarkdownElementBuilder>{
+              'a': LinkTagBuilder(),
+            },
+          ),
+        ),
+      );
+
+      expect(find.text('LINK'), findsOneWidget);
+      expect(find.textContaining('hello world', findRichText: true), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'inline builder replaces all children with a `*` delimiter (issue #132)',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        boilerplate(
+          Markdown(
+            data: '[*hello world](https://example.com)',
+            builders: <String, MarkdownElementBuilder>{
+              'a': LinkTagBuilder(),
+            },
+          ),
+        ),
+      );
+
+      expect(find.text('LINK'), findsOneWidget);
+      expect(find.textContaining('hello world', findRichText: true), findsNothing);
+    },
+  );
 }
 
 class SubscriptSyntax extends md.InlineSyntax {
@@ -368,6 +410,15 @@ class ImgBuilder extends MarkdownElementBuilder {
   @override
   Widget? visitElementAfter(md.Element element, TextStyle? preferredStyle) {
     return Text('foo', style: preferredStyle);
+  }
+}
+
+class LinkTagBuilder extends MarkdownElementBuilder {
+  @override
+  Widget visitElementAfter(md.Element element, TextStyle? preferredStyle) {
+    // Deliberately returns a marker that does not contain the link text, so a
+    // test can assert the original children were fully replaced.
+    return const Text('LINK');
   }
 }
 
