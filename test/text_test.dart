@@ -397,4 +397,80 @@ void defineTests() {
       expectTextStrings(widgets, <String>['strikethrough']);
     });
   });
+
+  group('Strut style', () {
+    testWidgets(
+      'paragraph rich text forces a consistent strut height across font weights',
+      (WidgetTester tester) async {
+        // A bold span should not change the paragraph line height. The builder
+        // applies a forced strut height derived from the span's base style so
+        // the line height is consistent regardless of font weight (see PR #130).
+        const double paragraphFontSize = 17.0;
+        final MarkdownStyleSheet styleSheet = MarkdownStyleSheet(
+          p: const TextStyle(fontSize: paragraphFontSize, height: 1.5),
+        );
+
+        await tester.pumpWidget(
+          boilerplate(
+            MarkdownBody(
+              data: 'normal **bold** text',
+              styleSheet: styleSheet,
+            ),
+          ),
+        );
+
+        final Text text = tester.widget<Text>(find.byType(Text));
+        expect(text.strutStyle, isNotNull);
+        expect(text.strutStyle!.forceStrutHeight, isTrue);
+        expect(text.strutStyle!.fontSize, paragraphFontSize);
+        expect(text.strutStyle!.height, 1.5);
+      },
+    );
+
+    testWidgets(
+      'header strut is derived from the header style, not the paragraph style',
+      (WidgetTester tester) async {
+        // Regression guard: _buildRichText is the generic rich-text builder used
+        // for headers/blockquotes/list items as well as paragraphs. The strut
+        // must follow each block's own style so a large header is not forced
+        // down to the (smaller) paragraph size, which would clip the header.
+        const double headerFontSize = 32.0;
+        const double paragraphFontSize = 14.0;
+        final ThemeData theme = ThemeData.light().copyWith(textTheme: textTheme);
+        final MarkdownStyleSheet styleSheet = MarkdownStyleSheet.fromTheme(theme).merge(
+          MarkdownStyleSheet(
+            h1: const TextStyle(fontSize: headerFontSize),
+            p: const TextStyle(fontSize: paragraphFontSize),
+          ),
+        );
+
+        await tester.pumpWidget(
+          boilerplate(
+            MarkdownBody(
+              data: '# Heading\n\nbody',
+              styleSheet: styleSheet,
+            ),
+          ),
+        );
+
+        // The first Text is the header, the second is the paragraph body.
+        final List<Text> texts = tester.widgetList<Text>(find.byType(Text)).toList();
+        expect(texts.length, 2);
+
+        final Text headerText = texts.first;
+        final Text bodyText = texts.last;
+
+        expect(headerText.strutStyle, isNotNull);
+        expect(headerText.strutStyle!.forceStrutHeight, isTrue);
+        expect(headerText.strutStyle!.fontSize, headerFontSize);
+
+        expect(bodyText.strutStyle, isNotNull);
+        expect(bodyText.strutStyle!.fontSize, paragraphFontSize);
+
+        // The header strut must be taller than the paragraph strut, otherwise
+        // the header text would be vertically clipped.
+        expect(headerText.strutStyle!.fontSize! > bodyText.strutStyle!.fontSize!, isTrue);
+      },
+    );
+  });
 }

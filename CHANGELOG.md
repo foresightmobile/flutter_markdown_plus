@@ -1,3 +1,25 @@
+## 1.0.8
+
+* Fixed custom `builders` and `paddingBuilders` for the `hr` tag being ignored
+* Fixed bold, italic, and link formatting not rendering inside blockquotes
+* Forced a consistent line height within each text block so mixed font weights (e.g. bold) no longer shift line height, while headers and other blocks keep their own height
+* Updated the default blockquote styling to be theme-aware (uses `surfaceContainerHighest` with a primary-coloured left border) for better light/dark mode support
+* Added a `noScroll` option to the `Markdown` widget to render content in a non-scrolling `Column` for use inside an existing scroll view
+* Added an integration test suite (`example/integration_test/`) that runs on a device or emulator, covering link taps, scrolling, task-list checkboxes, text selection, and example app launch
+* Added `scripts/integration_test.sh` and a GitHub Actions job that runs the integration tests on an Android emulator
+* Migrated linting to `package:flutter_lints`, retaining strict type analysis and required public API documentation
+* Updated dependencies: `markdown` to `^7.3.1`, `mockito` to `^5.7.0`, and pinned `leak_tracker_flutter_testing`
+* Aligned the example app's Flutter constraint with the package and added a `documentation` link to the pubspec
+* Updated the example app's Android Gradle Plugin to 8.6.0 (Flutter's current minimum) and removed an unused Google Cloud Artifact Registry Gradle plugin
+* Excluded the locally symlinked `flutter_markdown_plus_latex` package from analysis and publishing
+
+**Thanks to our contributors:**
+* [@joelbrostrom](https://github.com/joelbrostrom) for fixing custom builders on the `hr` tag (#131)
+* [@vsaase](https://github.com/vsaase) for fixing inline formatting inside blockquotes (#128)
+* [@domhel](https://github.com/domhel) for theme-aware blockquote styling (#42)
+* [@szuwest](https://github.com/szuwest) for the strong text line-height fix (#130)
+* [@senlinjun](https://github.com/senlinjun) for the `noScroll` option (#38)
+
 ## 1.0.7
 
 * Improved pub.dev score by making example app source code available in published package

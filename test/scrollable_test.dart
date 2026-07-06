@@ -191,5 +191,51 @@ void defineTests() {
         expect(scrollViews.first.controller, isNot(equals(scrollViews.last.controller)));
       },
     );
+
+    testWidgets(
+      'noScroll renders content in a non-scrolling Column',
+      (WidgetTester tester) async {
+        const String data = '# A\n\npara one\n\npara two';
+
+        await tester.pumpWidget(
+          boilerplate(
+            const Markdown(data: data, noScroll: true),
+          ),
+        );
+
+        // No scroll view should be present when noScroll is true.
+        expect(find.byType(Scrollable), findsNothing);
+
+        // The content should be laid out in at least one Column.
+        expect(find.byType(Column), findsWidgets);
+
+        // Each direct child rendered by the noScroll branch is wrapped in Padding.
+        final Finder columnFinder = find.descendant(
+          of: find.byType(Markdown),
+          matching: find.byType(Column),
+        );
+        final Column column = tester.widgetList<Column>(columnFinder).first;
+        expect(column.children, isNotEmpty);
+        for (final Widget child in column.children) {
+          expect(child, isA<Padding>());
+        }
+      },
+    );
+
+    testWidgets(
+      'noScroll defaults to false and keeps the scrolling ListView',
+      (WidgetTester tester) async {
+        const String data = '# A\n\npara one\n\npara two';
+
+        await tester.pumpWidget(
+          boilerplate(
+            const Markdown(data: data),
+          ),
+        );
+
+        // With default args the ListView still scrolls.
+        expect(find.byType(Scrollable), findsOneWidget);
+      },
+    );
   });
 }

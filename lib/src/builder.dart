@@ -358,7 +358,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     } else {
       child = _buildRichText(
         TextSpan(
-          style: _isInBlockquote ? styleSheet.blockquote : _inlines.last.style,
+          style: _inlines.last.style,
           text: trimText(text.text),
           recognizer: _linkHandlers.isNotEmpty ? _linkHandlers.last : null,
         ),
@@ -474,7 +474,16 @@ class MarkdownBuilder implements md.NodeVisitor {
           child: child,
         );
       } else if (tag == 'hr') {
-        child = Container(decoration: styleSheet.horizontalRuleDecoration);
+        if (!builders.containsKey(tag)) {
+          child = Container(decoration: styleSheet.horizontalRuleDecoration);
+        }
+      }
+
+      if (tag == 'hr' && paddingBuilders.containsKey(tag)) {
+        child = Padding(
+          padding: paddingBuilders[tag]!.getPadding(),
+          child: child,
+        );
       }
 
       _addBlockChild(child);
@@ -726,7 +735,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     if (_inlines.isEmpty) {
       _inlines.add(_InlineElement(
         tag,
-        style: tag != null ? styleSheet.styles[tag] : null,
+        style: _isInBlockquote ? styleSheet.blockquote : (tag != null ? styleSheet.styles[tag] : null),
       ));
     }
   }
@@ -980,11 +989,25 @@ class MarkdownBuilder implements md.NodeVisitor {
   Widget _buildRichText(TextSpan text, {TextAlign? textAlign, String? key}) {
     //Adding a unique key prevents the problem of using the same link handler for text spans with the same text
     final Key k = key == null ? UniqueKey() : Key(key);
+    // Force a consistent line height within each text block, derived from the
+    // span's own base style so headers/blockquotes keep their correct height
+    // while mixed font weights within a block no longer shift line height.
+    final TextStyle? baseStyle = text.style ?? styleSheet.p;
+    final StrutStyle? strutStyle = baseStyle != null
+        ? StrutStyle(
+            fontFamily: baseStyle.fontFamily,
+            fontSize: baseStyle.fontSize ?? styleSheet.p?.fontSize,
+            height: baseStyle.height ?? styleSheet.p?.height,
+            leading: 0,
+            forceStrutHeight: true,
+          )
+        : null;
     if (selectable) {
       return SelectableText.rich(
         text,
         textScaler: styleSheet.textScaler,
         textAlign: textAlign ?? TextAlign.start,
+        strutStyle: strutStyle,
         onSelectionChanged: onSelectionChanged != null
             ? (TextSelection selection, SelectionChangedCause? cause) =>
                 onSelectionChanged!(text.text, selection, cause)
@@ -997,6 +1020,7 @@ class MarkdownBuilder implements md.NodeVisitor {
         text,
         textScaler: styleSheet.textScaler,
         textAlign: textAlign ?? TextAlign.start,
+        strutStyle: strutStyle,
         key: k,
       );
     }

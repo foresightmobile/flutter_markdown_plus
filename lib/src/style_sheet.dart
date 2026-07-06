@@ -143,10 +143,16 @@ class MarkdownStyleSheet {
       tableColumnWidth: const FlexColumnWidth(),
       tableCellsPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       tableCellsDecoration: const BoxDecoration(),
-      blockquotePadding: const EdgeInsets.all(8.0),
+      blockquotePadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       blockquoteDecoration: BoxDecoration(
-        color: Colors.blue.shade100,
-        borderRadius: BorderRadius.circular(2.0),
+        color: theme.colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(3),
+        border: Border(
+          left: BorderSide(
+            color: theme.colorScheme.primary,
+            width: 3,
+          ),
+        ),
       ),
       codeblockPadding: const EdgeInsets.all(8.0),
       codeblockDecoration: BoxDecoration(
@@ -318,10 +324,16 @@ class MarkdownStyleSheet {
       tableColumnWidth: const FlexColumnWidth(),
       tableCellsPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       tableCellsDecoration: const BoxDecoration(),
-      blockquotePadding: const EdgeInsets.all(8.0),
+      blockquotePadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       blockquoteDecoration: BoxDecoration(
-        color: Colors.blue.shade100,
-        borderRadius: BorderRadius.circular(2.0),
+        color: theme.colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(3),
+        border: Border(
+          left: BorderSide(
+            color: theme.colorScheme.primary,
+            width: 3,
+          ),
+        ),
       ),
       codeblockPadding: const EdgeInsets.all(8.0),
       codeblockDecoration: BoxDecoration(

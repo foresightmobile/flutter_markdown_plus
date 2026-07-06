@@ -25,6 +25,7 @@
 **/doc/api/
 .dart_tool/
 .flutter-plugins
+.flutter-plugins-dependencies
 .packages
 .pub-cache/
 .pub/
@@ -37,3 +38,7 @@ lib/generated_plugin_registrant.dart
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 example/android/app/.cxx/Debug
 example/ios/Flutter/ephemeral
+
+# Local symlink to the sibling flutter_markdown_plus_latex package, used for
+# cross-package development. Not part of this repository.
+flutter_markdown_plus_latex

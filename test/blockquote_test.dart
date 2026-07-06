@@ -87,19 +87,48 @@ void defineTests() {
           theme.textTheme.bodyMedium!.color,
         );
 
-        /// Markdown guide
+        /// Markdown guide (link - should use link color)
         expect(styledTextParts[1].text, 'Markdown guide');
-        expect(styledTextParts[1].style!.color, styleSheet.blockquote!.color);
+        expect(styledTextParts[1].style!.color, Colors.blue);
 
         /// and this is
+        expect(styledTextParts[2].text, ' and this is ');
         expect(
           styledTextParts[2].style!.color,
           theme.textTheme.bodyMedium!.color,
         );
 
-        /// bold
-        expect(styledTextParts[2].text, ' and this is bold and italic');
-        expect(styledTextParts[2].style!.fontWeight, FontWeight.w400);
+        /// bold (should be bold)
+        expect(styledTextParts[3].text, 'bold');
+        expect(styledTextParts[3].style!.fontWeight, FontWeight.bold);
+
+        /// and
+        expect(styledTextParts[4].text, ' and ');
+
+        /// italic (should be italic)
+        expect(styledTextParts[5].text, 'italic');
+        expect(styledTextParts[5].style!.fontStyle, FontStyle.italic);
+      },
+    );
+
+    testWidgets(
+      'bold text in blockquote renders with bold font weight',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          boilerplate(
+            const MarkdownBody(data: '> **bold text**'),
+          ),
+        );
+
+        final Text quoteText = tester.widget(find.byType(Text));
+        final TextSpan textSpan = quoteText.textSpan! as TextSpan;
+
+        // The bold span is either the root span directly (when it's the only
+        // element) or the first child span.
+        final TextSpan boldSpan = textSpan.children != null ? textSpan.children!.cast<TextSpan>().first : textSpan;
+
+        expect(boldSpan.text, 'bold text');
+        expect(boldSpan.style!.fontWeight, FontWeight.bold);
       },
     );
   });
