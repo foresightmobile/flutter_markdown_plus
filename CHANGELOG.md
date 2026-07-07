@@ -1,3 +1,11 @@
+## 1.0.10
+
+* Added a `contextMenuBuilder` parameter to `Markdown` and `MarkdownBody`, letting callers customise or suppress (pass `null`) the text-selection toolbar shown when `selectable` is enabled. Defaults to the platform-adaptive Flutter selection toolbar, so existing behaviour is unchanged (#134)
+* `onSelectionChanged` now reports the full selectable plain text via `TextSpan.toPlainText()`. Previously, paragraphs containing rich/nested inline spans (bold, italic, code, links) reported the top-level `TextSpan.text`, which was `null` for multi-child spans; callers now receive the complete text so `TextSelection.textInside` works as expected (#134)
+
+**Thanks to our contributors:**
+* [@momadvisor](https://github.com/momadvisor) for the `contextMenuBuilder` parameter and plain-text selection fix (#134)
+
 ## 1.0.9
 
 * Fixed custom inline `builders` (e.g. `a`) duplicating trailing text when the element had multiple children, such as link text containing a `_` or `*` delimiter that the parser splits into separate text nodes (#132)
