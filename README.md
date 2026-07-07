@@ -1,9 +1,19 @@
-# Flutter Markdown
+# Flutter Markdown Plus
 [![pub package](https://img.shields.io/pub/v/flutter_markdown_plus.svg)](https://pub.dartlang.org/packages/flutter_markdown_plus)
 
 ## About This Package
 
 `flutter_markdown_plus` is the continuation of the original [`flutter_markdown`](https://pub.dev/packages/flutter_markdown) package that was developed and maintained by Google. As the original package has been discontinued, Foresight Mobile has taken over maintenance of this project to ensure continued support and development for the Flutter community.
+
+The package is **actively maintained**: bug reports are triaged against the current release, community pull requests are reviewed and merged with credit, and fixes and additive features ship regularly as patch releases. See the [changelog](https://pub.dev/packages/flutter_markdown_plus/changelog) and [GitHub releases](https://github.com/foresightmobile/flutter_markdown_plus/releases) for the full history, and [`CONTRIBUTING.md`](CONTRIBUTING.md) if you'd like to help.
+
+### Recent highlights
+
+- **`contextMenuBuilder`** — customise or suppress the text-selection toolbar shown when `selectable` is enabled (1.0.10).
+- **`noScroll`** — render `Markdown` in a non-scrolling `Column` for embedding inside an existing scroll view (1.0.8).
+- **Theme-aware blockquotes** — default blockquote styling now adapts to light and dark themes (1.0.8).
+- **Correct inline formatting in blockquotes**, consistent line height across mixed font weights, and custom `builders`/`paddingBuilders` support for the `hr` tag (1.0.8).
+- **Integration test suite** running on a real device or emulator, plus a GitHub Actions job on an Android emulator (1.0.8).
 
 For historical context, see the [original flutter_markdown package](https://pub.dev/packages/flutter_markdown).
 
