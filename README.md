@@ -19,6 +19,40 @@ For historical context, see the [original flutter_markdown package](https://pub.
 
 **LaTeX Support:** For LaTeX rendering support, check out the [`flutter_markdown_plus_latex`](https://pub.dev/packages/flutter_markdown_plus_latex) package.
 
+## Features
+
+- **GitHub Flavored Markdown** by default — headings, bold/italic, strikethrough, blockquotes, lists, and horizontal rules.
+- **Tables** with customisable borders, cell alignment, and per-column widths.
+- **Task lists** rendered as checkboxes.
+- **Fenced and inline code** with independent per-block horizontal scrolling and selection highlighting.
+- **Links** with a tap callback, and **images** from the network, local files, or bundled assets.
+- **Footnotes** and **emoji** (Unicode or `:shortcode:` syntax).
+- **Text selection** with `onSelectionChanged`, a tap handler, and a customisable selection toolbar via `contextMenuBuilder`.
+- **Three widgets** for different layouts: scrollable `Markdown`, inline `MarkdownBody`, and unstyled `MarkdownRaw`.
+- **Deep styling** through `MarkdownStyleSheet`, plus **custom element and padding builders** for full control over rendering.
+- **`noScroll`** mode to embed rendered Markdown inside an existing scroll view.
+- Runs on **Android, iOS, web, macOS, Windows, and Linux**.
+
+## Screenshots
+
+| Rich text & formatting | Tables & task lists | Code blocks |
+| :---: | :---: | :---: |
+| ![Rich text and formatting](screenshots/formatting.png) | ![Tables and task lists](screenshots/tables.png) | ![Code blocks](screenshots/code.png) |
+
+## Installation
+
+Add the package to your project:
+
+```bash
+flutter pub add flutter_markdown_plus
+```
+
+Then import it where you need it:
+
+```dart
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+```
+
 A markdown renderer for Flutter. It supports the
 [original format](https://daringfireball.net/projects/markdown/), but no inline
 HTML.
@@ -88,6 +122,62 @@ By default, Markdown uses the formatting from the current material design theme,
 but it's possible to create your own custom styling. Use the MarkdownStyle class
 to pass in your own style. If you don't want to use Markdown outside of material
 design, use the MarkdownRaw class.
+
+### Choosing a widget
+
+| Widget | Use it when |
+| --- | --- |
+| `Markdown` | You want a standalone, scrollable view of the content. |
+| `MarkdownBody` | You want to embed rendered Markdown inside your own layout; it sizes itself to its content. |
+| `MarkdownRaw` | You want the rendering without Material theming. |
+
+To render inside an existing scroll view (for example a `CustomScrollView` or a
+`Column` in a `SingleChildScrollView`), use `Markdown` with `noScroll: true` so it
+lays out as a non-scrolling `Column` instead of managing its own scrolling.
+
+## Handling Links
+
+Markdown links are not followed automatically — you decide what a tap does.
+Provide an `onTapLink` callback and open the URL yourself, for example with the
+[`url_launcher`](https://pub.dev/packages/url_launcher) package:
+
+```dart
+Markdown(
+  data: '[Flutter](https://flutter.dev)',
+  onTapLink: (String text, String? href, String title) {
+    if (href != null) {
+      launchUrl(Uri.parse(href));
+    }
+  },
+);
+```
+
+## Styling
+
+Pass a `MarkdownStyleSheet` to restyle any element. The easiest approach is to
+start from the current theme and override only what you need with `copyWith`:
+
+```dart
+MarkdownBody(
+  data: markdownSource,
+  styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
+    h1: Theme.of(context).textTheme.headlineMedium,
+    code: const TextStyle(
+      fontFamily: 'monospace',
+      backgroundColor: Color(0x11000000),
+    ),
+    blockquotePadding: const EdgeInsets.all(12),
+  ),
+);
+```
+
+## Custom Rendering
+
+For full control over how a specific tag renders, supply a
+`MarkdownElementBuilder` through the `builders` map, and fine-tune spacing with
+`paddingBuilders`. This lets you swap in your own widgets for elements such as
+`code`, `a`, or custom tags. See the [`example/`](example/) app for working
+custom-builder demos.
 
 ## Selection
 

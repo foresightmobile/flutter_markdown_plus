@@ -1,3 +1,9 @@
+## 1.0.11
+
+* Overhauled the README: added a feature list, installation instructions, a widget comparison (`Markdown` / `MarkdownBody` / `MarkdownRaw`), and code examples for link handling (`onTapLink`), `MarkdownStyleSheet` styling, and custom element builders
+* Added screenshots to the pub.dev listing showcasing rich-text formatting, GitHub Flavored Markdown tables and task lists, and code blocks
+* Pointed the `documentation` link at the generated API docs on pub.dev
+
 ## 1.0.10
 
 * Added a `contextMenuBuilder` parameter to `Markdown` and `MarkdownBody`, letting callers customise or suppress (pass `null`) the text-selection toolbar shown when `selectable` is enabled. Defaults to the platform-adaptive Flutter selection toolbar, so existing behaviour is unchanged (#134)
