@@ -114,6 +114,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     this.fitContent = false,
     this.onSelectionChanged,
     this.onTapText,
+    this.contextMenuBuilder,
     this.softLineBreak = false,
   });
 
@@ -161,6 +162,11 @@ class MarkdownBuilder implements md.NodeVisitor {
 
   /// Default tap handler used when [selectable] is set to true
   final VoidCallback? onTapText;
+
+  /// Builds the text selection toolbar when [selectable] is set to true.
+  ///
+  /// Set this to null to suppress the text selection context menu.
+  final EditableTextContextMenuBuilder? contextMenuBuilder;
 
   /// The soft line break is used to identify the spaces at the end of aline of
   /// text and the leading spaces in the immediately following the line of text.
@@ -1012,9 +1018,10 @@ class MarkdownBuilder implements md.NodeVisitor {
         strutStyle: strutStyle,
         onSelectionChanged: onSelectionChanged != null
             ? (TextSelection selection, SelectionChangedCause? cause) =>
-                onSelectionChanged!(text.text, selection, cause)
+                onSelectionChanged!(text.toPlainText(), selection, cause)
             : null,
         onTap: onTapText,
+        contextMenuBuilder: contextMenuBuilder,
         key: k,
       );
     } else {
