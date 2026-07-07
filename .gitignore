@@ -42,3 +42,6 @@ example/ios/Flutter/ephemeral
 # Local symlink to the sibling flutter_markdown_plus_latex package, used for
 # cross-package development. Not part of this repository.
 flutter_markdown_plus_latex
+
+# Claude Code project instructions (kept local, not shared via git)
+CLAUDE.md
