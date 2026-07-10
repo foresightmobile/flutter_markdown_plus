@@ -14,6 +14,7 @@ import 'image_test.dart' as image_test;
 import 'line_break_test.dart' as line_break_test;
 import 'link_test.dart' as link_test;
 import 'list_test.dart' as list_test;
+import 'render_golden_test.dart' as render_golden_test;
 import 'scrollable_test.dart' as scrollable_test;
 import 'selection_area_compatibility_test.dart' as selection_area_test;
 import 'style_sheet_test.dart' as style_sheet_test;
@@ -36,6 +37,7 @@ void main() {
   line_break_test.defineTests();
   link_test.defineTests();
   list_test.defineTests();
+  render_golden_test.defineTests();
   scrollable_test.defineTests();
   selection_area_test.defineTests();
   style_sheet_test.defineTests();

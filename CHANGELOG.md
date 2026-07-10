@@ -1,6 +1,10 @@
+## 1.0.12
+
+* Added golden render regression tests for the Markdown widgets, covering text formatting, emphasis, blockquotes, lists, tables, task lists, and code blocks. They render with real fonts and run in the local `flutter test` suite; like the existing image goldens they are platform-specific, and are skipped on CI (whose Flutter `stable` channel is unpinned) to avoid flaky pixel-exact diffs when the toolchain drifts
+
 ## 1.0.11
 
-* Overhauled the README: added a feature list, installation instructions, a widget comparison (`Markdown` / `MarkdownBody` / `MarkdownRaw`), and code examples for link handling (`onTapLink`), `MarkdownStyleSheet` styling, and custom element builders
+* Overhauled the README: added a feature list, installation instructions, a widget comparison (`Markdown` / `MarkdownBody` / `MarkdownRaw`), and code examples for link handling (`onTapLink`), `MarkdownStyleSheet` styling, and custom element builders — documenting the previously undocumented `onTapLink` and `styleSheet` APIs (resolves #123)
 * Added screenshots to the pub.dev listing showcasing rich-text formatting, GitHub Flavored Markdown tables and task lists, and code blocks
 * Pointed the `documentation` link at the generated API docs on pub.dev
 
