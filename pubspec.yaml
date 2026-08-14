@@ -12,9 +12,11 @@ environment:
   flutter: ">=3.27.1"
 
 dependencies:
+  cupertino_ui: any
   flutter:
     sdk: flutter
   markdown: ^7.3.1
+  material_ui: any
   meta: ^1.16.0
   path: ^1.9.1
 
