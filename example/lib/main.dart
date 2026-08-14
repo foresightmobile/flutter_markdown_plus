@@ -56,7 +56,7 @@
 /// flutter_markdown_plus package.
 library;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'screens/demo_screen.dart';
 import 'screens/home_screen.dart';
 import 'shared/markdown_demo_widget.dart';
