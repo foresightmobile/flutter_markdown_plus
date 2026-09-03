@@ -179,6 +179,27 @@ For full control over how a specific tag renders, supply a
 `code`, `a`, or custom tags. See the [`example/`](example/) app for working
 custom-builder demos.
 
+Returning a widget from `visitElementAfterWithContext` replaces the element's
+default rendering. To keep it and only wrap it, override `wrapBlockWidget`
+instead; it receives the fully built block. For example, to give headings a key
+that `#fragment` links can scroll to:
+
+```dart
+class HeadingAnchorBuilder extends MarkdownElementBuilder {
+  final Map<String, GlobalKey> keys = <String, GlobalKey>{};
+
+  @override
+  Widget wrapBlockWidget(BuildContext context, md.Element element, Widget child) {
+    return KeyedSubtree(key: keys.putIfAbsent(element.textContent, GlobalKey.new), child: child);
+  }
+}
+```
+
+Then resolve the fragment in `onTapLink` and call `Scrollable.ensureVisible` on
+`keys[fragment]?.currentContext`. The target heading must be laid out for this,
+so use `MarkdownBody` or `Markdown(shrinkWrap: true)`; the anchor link demo in
+[`example/`](example/) shows a complete version.
+
 ## Selection
 
 By default, Markdown is not selectable. A caller may use the following ways to
