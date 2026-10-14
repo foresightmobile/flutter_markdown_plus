@@ -994,12 +994,20 @@ class MarkdownBuilder implements md.NodeVisitor {
     return mergedSpans;
   }
 
+  bool _hasWidgetSpan(InlineSpan span) {
+    if (span is WidgetSpan) {
+      return true;
+    }
+    return span is TextSpan && (span.children?.any(_hasWidgetSpan) ?? false);
+  }
+
   Widget _buildRichText(TextSpan text, {TextAlign? textAlign, String? key}) {
     //Adding a unique key prevents the problem of using the same link handler for text spans with the same text
     final Key k = key == null ? UniqueKey() : Key(key);
     // Force a consistent line height within each text block, derived from the
     // span's own base style so headers/blockquotes keep their correct height
     // while mixed font weights within a block no longer shift line height.
+    // Inline widgets may be taller than that strut and must expand their lines.
     final TextStyle? baseStyle = text.style ?? styleSheet.p;
     final StrutStyle? strutStyle = baseStyle != null
         ? StrutStyle(
@@ -1007,7 +1015,7 @@ class MarkdownBuilder implements md.NodeVisitor {
             fontSize: baseStyle.fontSize ?? styleSheet.p?.fontSize,
             height: baseStyle.height ?? styleSheet.p?.height,
             leading: 0,
-            forceStrutHeight: true,
+            forceStrutHeight: !_hasWidgetSpan(text),
           )
         : null;
     if (selectable) {
