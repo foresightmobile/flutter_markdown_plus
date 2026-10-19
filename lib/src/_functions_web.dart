@@ -4,12 +4,15 @@
 
 import 'dart:js_interop';
 
+import 'package:cupertino_ui/cupertino_ui.dart' as cui;
 import 'package:flutter/cupertino.dart' show CupertinoTheme;
 import 'package:flutter/material.dart' show Theme;
+import 'package:material_ui/material_ui.dart' as mui;
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' as p;
 
 import 'style_sheet.dart';
+import 'theme_family.dart';
 import 'widget.dart';
 
 /// Type for a function that creates image widgets.
@@ -94,10 +97,9 @@ final MarkdownStyleSheet Function(BuildContext, MarkdownStyleSheetBaseTheme?)
   MarkdownStyleSheetBaseTheme? baseTheme,
 ) {
   final MarkdownStyleSheet result = switch (baseTheme) {
-    MarkdownStyleSheetBaseTheme.platform when _userAgent.toDart.contains('Mac OS X') =>
-      MarkdownStyleSheet.fromCupertinoTheme(CupertinoTheme.of(context)),
-    MarkdownStyleSheetBaseTheme.cupertino => MarkdownStyleSheet.fromCupertinoTheme(CupertinoTheme.of(context)),
-    _ => MarkdownStyleSheet.fromTheme(Theme.of(context)),
+    MarkdownStyleSheetBaseTheme.platform when _userAgent.toDart.contains('Mac OS X') => _cupertinoStyleSheet(context),
+    MarkdownStyleSheetBaseTheme.cupertino => _cupertinoStyleSheet(context),
+    _ => _materialStyleSheet(context),
   };
 
   return result.copyWith(
@@ -122,3 +124,11 @@ Widget _handleDataSchemeUri(Uri uri, final double? width, final double? height) 
 
 @JS('window.navigator.userAgent')
 external JSString get _userAgent;
+
+MarkdownStyleSheet _materialStyleSheet(BuildContext context) => usesMaterialUiTheme(context)
+    ? MarkdownStyleSheet.fromMaterialUiTheme(mui.Theme.of(context))
+    : MarkdownStyleSheet.fromTheme(Theme.of(context));
+
+MarkdownStyleSheet _cupertinoStyleSheet(BuildContext context) => usesMaterialUiTheme(context)
+    ? MarkdownStyleSheet.fromCupertinoUiTheme(cui.CupertinoTheme.of(context))
+    : MarkdownStyleSheet.fromCupertinoTheme(CupertinoTheme.of(context));
