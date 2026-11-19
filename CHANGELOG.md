@@ -1,3 +1,16 @@
+## 1.1.0
+
+* Added support for apps built on `package:material_ui` and `package:cupertino_ui`, the standalone libraries that replace `package:flutter/material.dart` and `package:flutter/cupertino.dart` from Flutter 3.50. Apps that use the legacy libraries render exactly as before (#144)
+  * New `MarkdownStyleSheet.fromMaterialUiTheme`, `MarkdownStyleSheet.largeFromMaterialUiTheme` and `MarkdownStyleSheet.fromCupertinoUiTheme` factories. They take the `material_ui` and `cupertino_ui` theme types and produce the same style sheets as `fromTheme`, `largeFromTheme` and `fromCupertinoTheme` (#150)
+  * The default style sheet now follows the nearest Material or Cupertino theme, whichever library it comes from, so `material_ui` apps get themed Markdown in light and dark mode without `MaterialUiCompatibilityBridge` (#150)
+  * Under a `material_ui` theme, selectable text, its selection handles and default selection toolbar, and the scrollbars on code blocks and fixed-width tables now come from `material_ui` and follow its theme. Previously, opening the selection toolbar in a `material_ui` app threw "No MaterialLocalizations found" (#153)
+* Now requires Flutter 3.47.0 or later, which `material_ui` and `cupertino_ui` need. Projects on older Flutter versions keep resolving 1.0.12
+* Added `material_ui` and `cupertino_ui` as dependencies
+
+**Thanks to our contributors:**
+* [@TheoGermain](https://github.com/TheoGermain) for `material_ui` and `cupertino_ui` theme support (#150)
+* [@joelbrostrom](https://github.com/joelbrostrom) for nearest-theme fixes and `material_ui` selectable text, selection toolbar and scrollbars (#153)
+
 ## 1.0.12
 
 * Added golden render regression tests for the Markdown widgets, covering text formatting, emphasis, blockquotes, lists, tables, task lists, and code blocks. They render with real fonts and run in the local `flutter test` suite; like the existing image goldens they are platform-specific, and are skipped on CI (whose Flutter `stable` channel is unpinned) to avoid flaky pixel-exact diffs when the toolchain drifts

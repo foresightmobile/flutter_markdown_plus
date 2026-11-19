@@ -9,6 +9,7 @@ The package is **actively maintained**: bug reports are triaged against the curr
 
 ### Recent highlights
 
+- **`package:material_ui` support** — themed Markdown in apps built on `material_ui` and `cupertino_ui`, in light and dark mode, with no compatibility bridge (1.1.0).
 - **`contextMenuBuilder`** — customise or suppress the text-selection toolbar shown when `selectable` is enabled (1.0.10).
 - **`noScroll`** — render `Markdown` in a non-scrolling `Column` for embedding inside an existing scroll view (1.0.8).
 - **Theme-aware blockquotes** — default blockquote styling now adapts to light and dark themes (1.0.8).
@@ -170,6 +171,47 @@ MarkdownBody(
   ),
 );
 ```
+
+## Using with package:material_ui
+
+Since 1.1.0 the package works in apps built on
+[`package:material_ui`](https://pub.dev/packages/material_ui) and
+[`package:cupertino_ui`](https://pub.dev/packages/cupertino_ui), as well as in
+apps that still use `package:flutter/material.dart` and
+`package:flutter/cupertino.dart`. You don't need `MaterialUiCompatibilityBridge`.
+
+The default style sheet (when you don't pass `styleSheet`) picks up the app
+theme automatically, in light and dark mode. It reads the nearest `Theme`,
+whichever library that theme comes from.
+
+To start from the theme and override some styles, use the `material_ui`
+factory, which takes `material_ui`'s `ThemeData`:
+
+```dart
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+import 'package:material_ui/material_ui.dart';
+
+MarkdownBody(
+  data: markdownSource,
+  styleSheet: MarkdownStyleSheet.fromMaterialUiTheme(Theme.of(context)).copyWith(
+    blockquotePadding: const EdgeInsets.all(12),
+  ),
+);
+```
+
+| `flutter/material.dart` / `flutter/cupertino.dart` | `material_ui` / `cupertino_ui` |
+| --- | --- |
+| `MarkdownStyleSheet.fromTheme` | `MarkdownStyleSheet.fromMaterialUiTheme` |
+| `MarkdownStyleSheet.largeFromTheme` | `MarkdownStyleSheet.largeFromMaterialUiTheme` |
+| `MarkdownStyleSheet.fromCupertinoTheme` | `MarkdownStyleSheet.fromCupertinoUiTheme` |
+
+The widgets the package builds itself follow the same theme. Under a
+`material_ui` theme, selectable text, its selection handles and its default
+selection toolbar come from `material_ui`, as do the scrollbars on code blocks
+and wide tables.
+
+Version 1.1.0 needs Flutter 3.47.0 or later. Projects on older Flutter versions
+keep resolving 1.0.12.
 
 ## Custom Rendering
 
