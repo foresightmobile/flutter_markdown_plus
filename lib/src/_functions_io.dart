@@ -4,10 +4,6 @@
 
 import 'dart:io';
 
-import 'package:cupertino_ui/cupertino_ui.dart' as cui;
-import 'package:flutter/cupertino.dart' show CupertinoTheme;
-import 'package:flutter/material.dart' show Theme;
-import 'package:material_ui/material_ui.dart' as mui;
 import 'package:flutter/widgets.dart';
 
 import 'style_sheet.dart';
@@ -90,13 +86,13 @@ final MarkdownStyleSheet Function(BuildContext, MarkdownStyleSheetBaseTheme?)
   MarkdownStyleSheet result;
   switch (baseTheme) {
     case MarkdownStyleSheetBaseTheme.platform:
-      result = (Platform.isIOS || Platform.isMacOS) ? _cupertinoStyleSheet(context) : _materialStyleSheet(context);
+      result = (Platform.isIOS || Platform.isMacOS) ? cupertinoStyleSheetOf(context) : materialStyleSheetOf(context);
     case MarkdownStyleSheetBaseTheme.cupertino:
-      result = _cupertinoStyleSheet(context);
+      result = cupertinoStyleSheetOf(context);
     case MarkdownStyleSheetBaseTheme.material:
     // ignore: no_default_cases
     default:
-      result = _materialStyleSheet(context);
+      result = materialStyleSheetOf(context);
   }
 
   return result.copyWith(
@@ -118,11 +114,3 @@ Widget _handleDataSchemeUri(Uri uri, final double? width, final double? height) 
   }
   return const SizedBox();
 }
-
-MarkdownStyleSheet _materialStyleSheet(BuildContext context) => usesMaterialUiTheme(context)
-    ? MarkdownStyleSheet.fromMaterialUiTheme(mui.Theme.of(context))
-    : MarkdownStyleSheet.fromTheme(Theme.of(context));
-
-MarkdownStyleSheet _cupertinoStyleSheet(BuildContext context) => usesMaterialUiTheme(context)
-    ? MarkdownStyleSheet.fromCupertinoUiTheme(cui.CupertinoTheme.of(context))
-    : MarkdownStyleSheet.fromCupertinoTheme(CupertinoTheme.of(context));

@@ -23,6 +23,7 @@ import 'table_test.dart' as table_test;
 import 'text_alignment_test.dart' as text_alignment_test;
 import 'text_scaler_test.dart' as text_scaler;
 import 'text_test.dart' as text_test;
+import 'theme_family_test.dart' as theme_family_test;
 import 'uri_test.dart' as uri_test;
 
 void main() {
@@ -45,6 +46,7 @@ void main() {
   style_sheet_test.defineTests();
   table_test.defineTests();
   text_test.defineTests();
+  theme_family_test.defineTests();
   text_alignment_test.defineTests();
   text_scaler.defineTests();
   uri_test.defineTests();
