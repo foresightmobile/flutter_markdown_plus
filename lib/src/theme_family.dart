@@ -4,7 +4,7 @@
 
 import 'package:cupertino_ui/cupertino_ui.dart' as cui;
 import 'package:flutter/cupertino.dart' show CupertinoTheme, InheritedCupertinoTheme;
-import 'package:flutter/material.dart' show Theme;
+import 'package:flutter/material.dart' show MaterialLocalizations, Theme;
 import 'package:flutter/widgets.dart';
 import 'package:material_ui/material_ui.dart' as mui;
 
@@ -61,3 +61,15 @@ MarkdownStyleSheet materialStyleSheetOf(BuildContext context) => usesMaterialUiT
 MarkdownStyleSheet cupertinoStyleSheetOf(BuildContext context) => usesCupertinoUiTheme(context)
     ? MarkdownStyleSheet.fromCupertinoUiTheme(cui.CupertinoTheme.of(context))
     : MarkdownStyleSheet.fromCupertinoTheme(CupertinoTheme.of(context));
+
+/// Whether the text selection toolbar at [context] should come from `package:material_ui`.
+///
+/// The toolbar looks up its labels in [MaterialLocalizations] (or `CupertinoLocalizations` on Apple platforms), and
+/// the legacy and `package:material_ui` toolbars look up different localization types. This picks the
+/// `package:material_ui` toolbar only when the legacy [MaterialLocalizations] are missing and the
+/// `package:material_ui` or `package:cupertino_ui` ones are present, as in a `package:material_ui` `MaterialApp`.
+/// Otherwise it keeps the legacy toolbar, as in 1.0.x.
+bool usesMaterialUiLocalizations(BuildContext context) =>
+    Localizations.of<MaterialLocalizations>(context, MaterialLocalizations) == null &&
+    (Localizations.of<mui.MaterialLocalizations>(context, mui.MaterialLocalizations) != null ||
+        Localizations.of<cui.CupertinoLocalizations>(context, cui.CupertinoLocalizations) != null);

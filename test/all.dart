@@ -15,6 +15,7 @@ import 'line_break_test.dart' as line_break_test;
 import 'link_test.dart' as link_test;
 import 'list_test.dart' as list_test;
 import 'material_ui_test.dart' as material_ui_test;
+import 'material_ui_widgets_test.dart' as material_ui_widgets_test;
 import 'render_golden_test.dart' as render_golden_test;
 import 'scrollable_test.dart' as scrollable_test;
 import 'selection_area_compatibility_test.dart' as selection_area_test;
@@ -40,6 +41,7 @@ void main() {
   link_test.defineTests();
   list_test.defineTests();
   material_ui_test.defineTests();
+  material_ui_widgets_test.defineTests();
   render_golden_test.defineTests();
   scrollable_test.defineTests();
   selection_area_test.defineTests();
