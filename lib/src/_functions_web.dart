@@ -4,12 +4,11 @@
 
 import 'dart:js_interop';
 
-import 'package:flutter/cupertino.dart' show CupertinoTheme;
-import 'package:flutter/material.dart' show Theme;
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' as p;
 
 import 'style_sheet.dart';
+import 'theme_family.dart';
 import 'widget.dart';
 
 /// Type for a function that creates image widgets.
@@ -94,10 +93,9 @@ final MarkdownStyleSheet Function(BuildContext, MarkdownStyleSheetBaseTheme?)
   MarkdownStyleSheetBaseTheme? baseTheme,
 ) {
   final MarkdownStyleSheet result = switch (baseTheme) {
-    MarkdownStyleSheetBaseTheme.platform when _userAgent.toDart.contains('Mac OS X') =>
-      MarkdownStyleSheet.fromCupertinoTheme(CupertinoTheme.of(context)),
-    MarkdownStyleSheetBaseTheme.cupertino => MarkdownStyleSheet.fromCupertinoTheme(CupertinoTheme.of(context)),
-    _ => MarkdownStyleSheet.fromTheme(Theme.of(context)),
+    MarkdownStyleSheetBaseTheme.platform when _userAgent.toDart.contains('Mac OS X') => cupertinoStyleSheetOf(context),
+    MarkdownStyleSheetBaseTheme.cupertino => cupertinoStyleSheetOf(context),
+    _ => materialStyleSheetOf(context),
   };
 
   return result.copyWith(

@@ -14,6 +14,8 @@ import 'image_test.dart' as image_test;
 import 'line_break_test.dart' as line_break_test;
 import 'link_test.dart' as link_test;
 import 'list_test.dart' as list_test;
+import 'material_ui_test.dart' as material_ui_test;
+import 'material_ui_widgets_test.dart' as material_ui_widgets_test;
 import 'render_golden_test.dart' as render_golden_test;
 import 'scrollable_test.dart' as scrollable_test;
 import 'selection_area_compatibility_test.dart' as selection_area_test;
@@ -22,6 +24,7 @@ import 'table_test.dart' as table_test;
 import 'text_alignment_test.dart' as text_alignment_test;
 import 'text_scaler_test.dart' as text_scaler;
 import 'text_test.dart' as text_test;
+import 'theme_family_test.dart' as theme_family_test;
 import 'uri_test.dart' as uri_test;
 
 void main() {
@@ -37,12 +40,15 @@ void main() {
   line_break_test.defineTests();
   link_test.defineTests();
   list_test.defineTests();
+  material_ui_test.defineTests();
+  material_ui_widgets_test.defineTests();
   render_golden_test.defineTests();
   scrollable_test.defineTests();
   selection_area_test.defineTests();
   style_sheet_test.defineTests();
   table_test.defineTests();
   text_test.defineTests();
+  theme_family_test.defineTests();
   text_alignment_test.defineTests();
   text_scaler.defineTests();
   uri_test.defineTests();

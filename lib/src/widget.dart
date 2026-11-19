@@ -8,9 +8,11 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:markdown/markdown.dart' as md;
+import 'package:material_ui/material_ui.dart' as mui;
 
 import '../flutter_markdown_plus.dart';
 import '_functions_io.dart' if (dart.library.js_interop) '_functions_web.dart';
+import 'theme_family.dart';
 
 /// Signature for callbacks used by [MarkdownWidget] when
 /// [MarkdownWidget.selectable] is set to true and the user changes selection.
@@ -262,14 +264,21 @@ abstract class MarkdownWidget extends StatefulWidget {
 
   /// Builds the text selection toolbar when [selectable] is set to true.
   ///
-  /// Defaults to the platform-adaptive Flutter text selection toolbar. Set this
-  /// to null to suppress the text selection context menu.
+  /// Defaults to the platform-adaptive Flutter text selection toolbar, from
+  /// `package:material_ui` when the app provides its localizations instead of
+  /// the legacy `flutter/material.dart` ones. Set this to null to suppress the
+  /// text selection context menu.
   final EditableTextContextMenuBuilder? contextMenuBuilder;
 
   static Widget _defaultContextMenuBuilder(
     BuildContext context,
     EditableTextState editableTextState,
   ) {
+    if (usesMaterialUiLocalizations(context)) {
+      return mui.AdaptiveTextSelectionToolbar.editableText(
+        editableTextState: editableTextState,
+      );
+    }
     return AdaptiveTextSelectionToolbar.editableText(
       editableTextState: editableTextState,
     );

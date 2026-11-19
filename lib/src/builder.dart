@@ -5,9 +5,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:markdown/markdown.dart' as md;
+import 'package:material_ui/material_ui.dart' as mui;
 
 import '_functions_io.dart' if (dart.library.js_interop) '_functions_web.dart';
 import 'style_sheet.dart';
+import 'theme_family.dart';
 import 'widget.dart';
 
 final List<String> _kBlockTags = <String>[
@@ -167,6 +169,10 @@ class MarkdownBuilder implements md.NodeVisitor {
   ///
   /// Set this to null to suppress the text selection context menu.
   final EditableTextContextMenuBuilder? contextMenuBuilder;
+
+  // Whether to build the Material widgets (selectable text, scrollbars) from
+  // package:material_ui, so that they follow a material_ui theme.
+  late final bool _useMaterialUi = usesMaterialUiTheme(delegate.context);
 
   /// The soft line break is used to identify the spaces at the end of aline of
   /// text and the leading spaces in the immediately following the line of text.
@@ -350,7 +356,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     } else if (_blocks.last.tag == 'pre') {
       child = _ScrollControllerBuilder(
           builder: (BuildContext context, ScrollController preScrollController, Widget? child) {
-            return Scrollbar(
+            return _buildScrollbar(
               controller: preScrollController,
               child: SingleChildScrollView(
                 controller: preScrollController,
@@ -448,7 +454,7 @@ class MarkdownBuilder implements md.NodeVisitor {
         if (styleSheet.tableColumnWidth is FixedColumnWidth || styleSheet.tableColumnWidth is IntrinsicColumnWidth) {
           child = _ScrollControllerBuilder(
             builder: (BuildContext context, ScrollController tableScrollController, Widget? child) {
-              return Scrollbar(
+              return _buildScrollbar(
                 controller: tableScrollController,
                 thumbVisibility: styleSheet.tableScrollbarThumbVisibility,
                 child: SingleChildScrollView(
@@ -563,6 +569,8 @@ class MarkdownBuilder implements md.NodeVisitor {
           textSpan = c.textSpan! as TextSpan;
         } else if (c is SelectableText && c.textSpan is TextSpan) {
           textSpan = c.textSpan;
+        } else if (c is mui.SelectableText && c.textSpan is TextSpan) {
+          textSpan = c.textSpan;
         }
         if (textSpan != null) {
           final Widget richText = _buildRichText(
@@ -649,6 +657,13 @@ class MarkdownBuilder implements md.NodeVisitor {
     } else {
       return child;
     }
+  }
+
+  Widget _buildScrollbar({required ScrollController controller, bool? thumbVisibility, required Widget child}) {
+    if (_useMaterialUi) {
+      return mui.Scrollbar(controller: controller, thumbVisibility: thumbVisibility, child: child);
+    }
+    return Scrollbar(controller: controller, thumbVisibility: thumbVisibility, child: child);
   }
 
   Widget _buildCheckbox(bool checked) {
@@ -826,6 +841,7 @@ class MarkdownBuilder implements md.NodeVisitor {
   // Returns null if not a valid (text) widget.
   InlineSpan? _getInlineSpanFromText(Widget widget) => switch (widget) {
         SelectableText() => widget.textSpan,
+        mui.SelectableText() => widget.textSpan,
         Text() => widget.textSpan,
         RichText() => widget.text,
         _ => null
@@ -1011,15 +1027,28 @@ class MarkdownBuilder implements md.NodeVisitor {
           )
         : null;
     if (selectable) {
+      final SelectionChangedCallback? selectionChanged = onSelectionChanged != null
+          ? (TextSelection selection, SelectionChangedCause? cause) =>
+              onSelectionChanged!(text.toPlainText(), selection, cause)
+          : null;
+      if (_useMaterialUi) {
+        return mui.SelectableText.rich(
+          text,
+          textScaler: styleSheet.textScaler,
+          textAlign: textAlign ?? TextAlign.start,
+          strutStyle: strutStyle,
+          onSelectionChanged: selectionChanged,
+          onTap: onTapText,
+          contextMenuBuilder: contextMenuBuilder,
+          key: k,
+        );
+      }
       return SelectableText.rich(
         text,
         textScaler: styleSheet.textScaler,
         textAlign: textAlign ?? TextAlign.start,
         strutStyle: strutStyle,
-        onSelectionChanged: onSelectionChanged != null
-            ? (TextSelection selection, SelectionChangedCause? cause) =>
-                onSelectionChanged!(text.toPlainText(), selection, cause)
-            : null,
+        onSelectionChanged: selectionChanged,
         onTap: onTapText,
         contextMenuBuilder: contextMenuBuilder,
         key: k,

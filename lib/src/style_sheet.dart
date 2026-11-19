@@ -2,8 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:cupertino_ui/cupertino_ui.dart' as cui;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart' as mui;
 
 /// Defines which [TextStyle] objects to use for which Markdown elements.
 class MarkdownStyleSheet {
@@ -100,179 +102,65 @@ class MarkdownStyleSheet {
   /// Creates a [MarkdownStyleSheet] from the [TextStyle]s in the provided [ThemeData].
   factory MarkdownStyleSheet.fromTheme(ThemeData theme) {
     assert(theme.textTheme.bodyMedium?.fontSize != null);
-    return MarkdownStyleSheet(
-      a: const TextStyle(color: Colors.blue),
-      p: theme.textTheme.bodyMedium,
-      pPadding: EdgeInsets.zero,
-      code: theme.textTheme.bodyMedium!.copyWith(
-        backgroundColor: theme.cardTheme.color,
-        fontFamily: 'monospace',
-        fontSize: theme.textTheme.bodyMedium!.fontSize! * 0.85,
-      ),
+    return _fromMaterialValues(
+      body: theme.textTheme.bodyMedium,
       h1: theme.textTheme.headlineSmall,
-      h1Padding: EdgeInsets.zero,
       h2: theme.textTheme.titleLarge,
-      h2Padding: EdgeInsets.zero,
       h3: theme.textTheme.titleMedium,
-      h3Padding: EdgeInsets.zero,
       h4: theme.textTheme.bodyLarge,
-      h4Padding: EdgeInsets.zero,
       h5: theme.textTheme.bodyLarge,
-      h5Padding: EdgeInsets.zero,
       h6: theme.textTheme.bodyLarge,
-      h6Padding: EdgeInsets.zero,
-      em: const TextStyle(fontStyle: FontStyle.italic),
-      strong: const TextStyle(fontWeight: FontWeight.bold),
-      del: const TextStyle(decoration: TextDecoration.lineThrough),
-      blockquote: theme.textTheme.bodyMedium,
-      img: theme.textTheme.bodyMedium,
-      checkbox: theme.textTheme.bodyMedium!.copyWith(
-        color: theme.primaryColor,
-      ),
-      blockSpacing: 8.0,
-      listIndent: 24.0,
-      listBullet: theme.textTheme.bodyMedium,
-      listBulletPadding: const EdgeInsets.only(right: 4),
-      tableHead: const TextStyle(fontWeight: FontWeight.w600),
-      tableBody: theme.textTheme.bodyMedium,
-      tableHeadAlign: TextAlign.center,
-      tablePadding: const EdgeInsets.only(bottom: 4.0),
-      tableBorder: TableBorder.all(
-        color: theme.dividerColor,
-      ),
-      tableColumnWidth: const FlexColumnWidth(),
-      tableCellsPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-      tableCellsDecoration: const BoxDecoration(),
-      blockquotePadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      blockquoteDecoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(3),
-        border: Border(
-          left: BorderSide(
-            color: theme.colorScheme.primary,
-            width: 3,
-          ),
-        ),
-      ),
-      codeblockPadding: const EdgeInsets.all(8.0),
-      codeblockDecoration: BoxDecoration(
-        color: theme.cardTheme.color ?? theme.cardColor,
-        borderRadius: BorderRadius.circular(2.0),
-      ),
-      horizontalRuleDecoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(
-            width: 5.0,
-            color: theme.dividerColor,
-          ),
-        ),
-      ),
+      cardThemeColor: theme.cardTheme.color,
+      cardColor: theme.cardColor,
+      primaryColor: theme.primaryColor,
+      dividerColor: theme.dividerColor,
+      surfaceContainerHighest: theme.colorScheme.surfaceContainerHighest,
+      primary: theme.colorScheme.primary,
+    );
+  }
+
+  /// Creates a [MarkdownStyleSheet] from the [TextStyle]s in the provided `package:material_ui` [mui.ThemeData].
+  ///
+  /// Equivalent of [MarkdownStyleSheet.fromTheme] for apps built with `package:material_ui`.
+  factory MarkdownStyleSheet.fromMaterialUiTheme(mui.ThemeData theme) {
+    assert(theme.textTheme.bodyMedium?.fontSize != null);
+    return _fromMaterialValues(
+      body: theme.textTheme.bodyMedium,
+      h1: theme.textTheme.headlineSmall,
+      h2: theme.textTheme.titleLarge,
+      h3: theme.textTheme.titleMedium,
+      h4: theme.textTheme.bodyLarge,
+      h5: theme.textTheme.bodyLarge,
+      h6: theme.textTheme.bodyLarge,
+      cardThemeColor: theme.cardTheme.color,
+      cardColor: theme.cardColor,
+      primaryColor: theme.primaryColor,
+      dividerColor: theme.dividerColor,
+      surfaceContainerHighest: theme.colorScheme.surfaceContainerHighest,
+      primary: theme.colorScheme.primary,
     );
   }
 
   /// Creates a [MarkdownStyleSheet] from the [TextStyle]s in the provided [CupertinoThemeData].
   factory MarkdownStyleSheet.fromCupertinoTheme(CupertinoThemeData theme) {
     assert(theme.textTheme.textStyle.fontSize != null);
-    return MarkdownStyleSheet(
-      a: theme.textTheme.textStyle.copyWith(
-        color: theme.brightness == Brightness.dark ? CupertinoColors.link.darkColor : CupertinoColors.link.color,
-      ),
-      p: theme.textTheme.textStyle,
-      pPadding: EdgeInsets.zero,
-      code: theme.textTheme.textStyle.copyWith(
-        fontFamily: 'monospace',
-        fontSize: theme.textTheme.textStyle.fontSize! * 0.85,
-      ),
-      h1: theme.textTheme.textStyle.copyWith(
-        fontWeight: FontWeight.w500,
-        fontSize: theme.textTheme.textStyle.fontSize! + 10,
-      ),
-      h1Padding: EdgeInsets.zero,
-      h2: theme.textTheme.textStyle.copyWith(
-        fontWeight: FontWeight.w500,
-        fontSize: theme.textTheme.textStyle.fontSize! + 8,
-      ),
-      h2Padding: EdgeInsets.zero,
-      h3: theme.textTheme.textStyle.copyWith(
-        fontWeight: FontWeight.w500,
-        fontSize: theme.textTheme.textStyle.fontSize! + 6,
-      ),
-      h3Padding: EdgeInsets.zero,
-      h4: theme.textTheme.textStyle.copyWith(
-        fontWeight: FontWeight.w500,
-        fontSize: theme.textTheme.textStyle.fontSize! + 4,
-      ),
-      h4Padding: EdgeInsets.zero,
-      h5: theme.textTheme.textStyle.copyWith(
-        fontWeight: FontWeight.w500,
-        fontSize: theme.textTheme.textStyle.fontSize! + 2,
-      ),
-      h5Padding: EdgeInsets.zero,
-      h6: theme.textTheme.textStyle.copyWith(
-        fontWeight: FontWeight.w500,
-      ),
-      h6Padding: EdgeInsets.zero,
-      em: theme.textTheme.textStyle.copyWith(
-        fontStyle: FontStyle.italic,
-      ),
-      strong: theme.textTheme.textStyle.copyWith(
-        fontWeight: FontWeight.bold,
-      ),
-      del: theme.textTheme.textStyle.copyWith(
-        decoration: TextDecoration.lineThrough,
-      ),
-      blockquote: theme.textTheme.textStyle,
-      img: theme.textTheme.textStyle,
-      checkbox: theme.textTheme.textStyle.copyWith(
-        color: theme.primaryColor,
-      ),
-      blockSpacing: 8,
-      listIndent: 24,
-      listBullet: theme.textTheme.textStyle,
-      listBulletPadding: const EdgeInsets.only(right: 4),
-      tableHead: theme.textTheme.textStyle.copyWith(
-        fontWeight: FontWeight.w600,
-      ),
-      tableBody: theme.textTheme.textStyle,
-      tableHeadAlign: TextAlign.center,
-      tablePadding: const EdgeInsets.only(bottom: 8),
-      tableBorder: TableBorder.all(color: CupertinoColors.separator, width: 0),
-      tableColumnWidth: const FlexColumnWidth(),
-      tableCellsPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-      tableCellsDecoration: BoxDecoration(
-        color: theme.brightness == Brightness.dark
-            ? CupertinoColors.systemGrey6.darkColor
-            : CupertinoColors.systemGrey6.color,
-      ),
-      blockquotePadding: const EdgeInsets.all(16),
-      blockquoteDecoration: BoxDecoration(
-        color: theme.brightness == Brightness.dark
-            ? CupertinoColors.systemGrey6.darkColor
-            : CupertinoColors.systemGrey6.color,
-        border: Border(
-          left: BorderSide(
-            color: theme.brightness == Brightness.dark
-                ? CupertinoColors.systemGrey4.darkColor
-                : CupertinoColors.systemGrey4.color,
-            width: 4,
-          ),
-        ),
-      ),
-      codeblockPadding: const EdgeInsets.all(8),
-      codeblockDecoration: BoxDecoration(
-        color: theme.brightness == Brightness.dark
-            ? CupertinoColors.systemGrey6.darkColor
-            : CupertinoColors.systemGrey6.color,
-      ),
-      horizontalRuleDecoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(
-            color: theme.brightness == Brightness.dark
-                ? CupertinoColors.systemGrey4.darkColor
-                : CupertinoColors.systemGrey4.color,
-          ),
-        ),
-      ),
+    return _fromCupertinoValues(
+      textStyle: theme.textTheme.textStyle,
+      brightness: theme.brightness,
+      primaryColor: theme.primaryColor,
+    );
+  }
+
+  /// Creates a [MarkdownStyleSheet] from the [TextStyle]s in the provided `package:cupertino_ui`
+  /// [cui.CupertinoThemeData].
+  ///
+  /// Equivalent of [MarkdownStyleSheet.fromCupertinoTheme] for apps built with `package:cupertino_ui`.
+  factory MarkdownStyleSheet.fromCupertinoUiTheme(cui.CupertinoThemeData theme) {
+    assert(theme.textTheme.textStyle.fontSize != null);
+    return _fromCupertinoValues(
+      textStyle: theme.textTheme.textStyle,
+      brightness: theme.brightness,
+      primaryColor: theme.primaryColor,
     );
   }
 
@@ -281,70 +169,228 @@ class MarkdownStyleSheet {
   /// This constructor uses larger fonts for the headings than in
   /// [MarkdownStyle.fromTheme].
   factory MarkdownStyleSheet.largeFromTheme(ThemeData theme) {
+    return _fromMaterialValues(
+      body: theme.textTheme.bodyMedium,
+      h1: theme.textTheme.displayMedium,
+      h2: theme.textTheme.displaySmall,
+      h3: theme.textTheme.headlineMedium,
+      h4: theme.textTheme.headlineSmall,
+      h5: theme.textTheme.titleLarge,
+      h6: theme.textTheme.titleMedium,
+      cardThemeColor: theme.cardTheme.color,
+      cardColor: theme.cardColor,
+      primaryColor: theme.primaryColor,
+      dividerColor: theme.dividerColor,
+      surfaceContainerHighest: theme.colorScheme.surfaceContainerHighest,
+      primary: theme.colorScheme.primary,
+    );
+  }
+
+  /// Creates a [MarkdownStyleSheet] from the [TextStyle]s in the provided `package:material_ui` [mui.ThemeData].
+  ///
+  /// Equivalent of [MarkdownStyleSheet.largeFromTheme] for apps built with `package:material_ui`.
+  factory MarkdownStyleSheet.largeFromMaterialUiTheme(mui.ThemeData theme) {
+    return _fromMaterialValues(
+      body: theme.textTheme.bodyMedium,
+      h1: theme.textTheme.displayMedium,
+      h2: theme.textTheme.displaySmall,
+      h3: theme.textTheme.headlineMedium,
+      h4: theme.textTheme.headlineSmall,
+      h5: theme.textTheme.titleLarge,
+      h6: theme.textTheme.titleMedium,
+      cardThemeColor: theme.cardTheme.color,
+      cardColor: theme.cardColor,
+      primaryColor: theme.primaryColor,
+      dividerColor: theme.dividerColor,
+      surfaceContainerHighest: theme.colorScheme.surfaceContainerHighest,
+      primary: theme.colorScheme.primary,
+    );
+  }
+
+  static MarkdownStyleSheet _fromMaterialValues({
+    required TextStyle? body,
+    required TextStyle? h1,
+    required TextStyle? h2,
+    required TextStyle? h3,
+    required TextStyle? h4,
+    required TextStyle? h5,
+    required TextStyle? h6,
+    required Color? cardThemeColor,
+    required Color cardColor,
+    required Color primaryColor,
+    required Color dividerColor,
+    required Color surfaceContainerHighest,
+    required Color primary,
+  }) {
     return MarkdownStyleSheet(
       a: const TextStyle(color: Colors.blue),
-      p: theme.textTheme.bodyMedium,
+      p: body,
       pPadding: EdgeInsets.zero,
-      code: theme.textTheme.bodyMedium!.copyWith(
-        backgroundColor: theme.cardTheme.color,
+      code: body!.copyWith(
+        backgroundColor: cardThemeColor,
         fontFamily: 'monospace',
-        fontSize: theme.textTheme.bodyMedium!.fontSize! * 0.85,
+        fontSize: body.fontSize! * 0.85,
       ),
-      h1: theme.textTheme.displayMedium,
+      h1: h1,
       h1Padding: EdgeInsets.zero,
-      h2: theme.textTheme.displaySmall,
+      h2: h2,
       h2Padding: EdgeInsets.zero,
-      h3: theme.textTheme.headlineMedium,
+      h3: h3,
       h3Padding: EdgeInsets.zero,
-      h4: theme.textTheme.headlineSmall,
+      h4: h4,
       h4Padding: EdgeInsets.zero,
-      h5: theme.textTheme.titleLarge,
+      h5: h5,
       h5Padding: EdgeInsets.zero,
-      h6: theme.textTheme.titleMedium,
+      h6: h6,
       h6Padding: EdgeInsets.zero,
       em: const TextStyle(fontStyle: FontStyle.italic),
       strong: const TextStyle(fontWeight: FontWeight.bold),
       del: const TextStyle(decoration: TextDecoration.lineThrough),
-      blockquote: theme.textTheme.bodyMedium,
-      img: theme.textTheme.bodyMedium,
-      checkbox: theme.textTheme.bodyMedium!.copyWith(
-        color: theme.primaryColor,
+      blockquote: body,
+      img: body,
+      checkbox: body.copyWith(
+        color: primaryColor,
       ),
       blockSpacing: 8.0,
       listIndent: 24.0,
-      listBullet: theme.textTheme.bodyMedium,
+      listBullet: body,
       listBulletPadding: const EdgeInsets.only(right: 4),
       tableHead: const TextStyle(fontWeight: FontWeight.w600),
-      tableBody: theme.textTheme.bodyMedium,
+      tableBody: body,
       tableHeadAlign: TextAlign.center,
       tablePadding: const EdgeInsets.only(bottom: 4.0),
       tableBorder: TableBorder.all(
-        color: theme.dividerColor,
+        color: dividerColor,
       ),
       tableColumnWidth: const FlexColumnWidth(),
       tableCellsPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       tableCellsDecoration: const BoxDecoration(),
       blockquotePadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       blockquoteDecoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest,
+        color: surfaceContainerHighest,
         borderRadius: BorderRadius.circular(3),
         border: Border(
           left: BorderSide(
-            color: theme.colorScheme.primary,
+            color: primary,
             width: 3,
           ),
         ),
       ),
       codeblockPadding: const EdgeInsets.all(8.0),
       codeblockDecoration: BoxDecoration(
-        color: theme.cardTheme.color ?? theme.cardColor,
+        color: cardThemeColor ?? cardColor,
         borderRadius: BorderRadius.circular(2.0),
       ),
       horizontalRuleDecoration: BoxDecoration(
         border: Border(
           top: BorderSide(
             width: 5.0,
-            color: theme.dividerColor,
+            color: dividerColor,
+          ),
+        ),
+      ),
+    );
+  }
+
+  static MarkdownStyleSheet _fromCupertinoValues({
+    required TextStyle textStyle,
+    required Brightness? brightness,
+    required Color primaryColor,
+  }) {
+    return MarkdownStyleSheet(
+      a: textStyle.copyWith(
+        color: brightness == Brightness.dark ? CupertinoColors.link.darkColor : CupertinoColors.link.color,
+      ),
+      p: textStyle,
+      pPadding: EdgeInsets.zero,
+      code: textStyle.copyWith(
+        fontFamily: 'monospace',
+        fontSize: textStyle.fontSize! * 0.85,
+      ),
+      h1: textStyle.copyWith(
+        fontWeight: FontWeight.w500,
+        fontSize: textStyle.fontSize! + 10,
+      ),
+      h1Padding: EdgeInsets.zero,
+      h2: textStyle.copyWith(
+        fontWeight: FontWeight.w500,
+        fontSize: textStyle.fontSize! + 8,
+      ),
+      h2Padding: EdgeInsets.zero,
+      h3: textStyle.copyWith(
+        fontWeight: FontWeight.w500,
+        fontSize: textStyle.fontSize! + 6,
+      ),
+      h3Padding: EdgeInsets.zero,
+      h4: textStyle.copyWith(
+        fontWeight: FontWeight.w500,
+        fontSize: textStyle.fontSize! + 4,
+      ),
+      h4Padding: EdgeInsets.zero,
+      h5: textStyle.copyWith(
+        fontWeight: FontWeight.w500,
+        fontSize: textStyle.fontSize! + 2,
+      ),
+      h5Padding: EdgeInsets.zero,
+      h6: textStyle.copyWith(
+        fontWeight: FontWeight.w500,
+      ),
+      h6Padding: EdgeInsets.zero,
+      em: textStyle.copyWith(
+        fontStyle: FontStyle.italic,
+      ),
+      strong: textStyle.copyWith(
+        fontWeight: FontWeight.bold,
+      ),
+      del: textStyle.copyWith(
+        decoration: TextDecoration.lineThrough,
+      ),
+      blockquote: textStyle,
+      img: textStyle,
+      checkbox: textStyle.copyWith(
+        color: primaryColor,
+      ),
+      blockSpacing: 8,
+      listIndent: 24,
+      listBullet: textStyle,
+      listBulletPadding: const EdgeInsets.only(right: 4),
+      tableHead: textStyle.copyWith(
+        fontWeight: FontWeight.w600,
+      ),
+      tableBody: textStyle,
+      tableHeadAlign: TextAlign.center,
+      tablePadding: const EdgeInsets.only(bottom: 8),
+      tableBorder: TableBorder.all(color: CupertinoColors.separator, width: 0),
+      tableColumnWidth: const FlexColumnWidth(),
+      tableCellsPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      tableCellsDecoration: BoxDecoration(
+        color:
+            brightness == Brightness.dark ? CupertinoColors.systemGrey6.darkColor : CupertinoColors.systemGrey6.color,
+      ),
+      blockquotePadding: const EdgeInsets.all(16),
+      blockquoteDecoration: BoxDecoration(
+        color:
+            brightness == Brightness.dark ? CupertinoColors.systemGrey6.darkColor : CupertinoColors.systemGrey6.color,
+        border: Border(
+          left: BorderSide(
+            color: brightness == Brightness.dark
+                ? CupertinoColors.systemGrey4.darkColor
+                : CupertinoColors.systemGrey4.color,
+            width: 4,
+          ),
+        ),
+      ),
+      codeblockPadding: const EdgeInsets.all(8),
+      codeblockDecoration: BoxDecoration(
+        color:
+            brightness == Brightness.dark ? CupertinoColors.systemGrey6.darkColor : CupertinoColors.systemGrey6.color,
+      ),
+      horizontalRuleDecoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(
+            color: brightness == Brightness.dark
+                ? CupertinoColors.systemGrey4.darkColor
+                : CupertinoColors.systemGrey4.color,
           ),
         ),
       ),
