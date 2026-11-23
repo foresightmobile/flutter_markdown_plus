@@ -1,3 +1,7 @@
+## 1.1.0
+
+* Raised the Compatibility Floor — the oldest Flutter version the package declares support for — from Flutter `>=3.27.1` to `>=3.35.0`, with the Dart `sdk` lower bound moving to `^3.9.0`, the Dart version bundled with Flutter 3.35.0. Anyone on Flutter older than 3.35.0 keeps resolving 1.0.12. (#154)
+
 ## 1.0.12
 
 * Added golden render regression tests for the Markdown widgets, covering text formatting, emphasis, blockquotes, lists, tables, task lists, and code blocks. They render with real fonts and run in the local `flutter test` suite; like the existing image goldens they are platform-specific, and are skipped on CI (whose Flutter `stable` channel is unpinned) to avoid flaky pixel-exact diffs when the toolchain drifts

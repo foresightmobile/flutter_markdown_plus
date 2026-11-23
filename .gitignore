@@ -30,6 +30,7 @@
 .pub-cache/
 .pub/
 /build/
+/test/failures/
 
 # Web related
 lib/generated_plugin_registrant.dart
@@ -44,4 +45,14 @@ example/ios/Flutter/ephemeral
 flutter_markdown_plus_latex
 
 # Claude Code project instructions (kept local, not shared via git)
-CLAUDE.md
+/CLAUDE.md
+
+# Adversarial review reports (for the lead to read, never committed)
+/.review/
+
+# Local planning and agent docs (Specs live in Slite; see CLAUDE.md)
+/docs/
+/.act/
+/AGENTS.md
+/GLOSSARY.md
+/.mimocode/
