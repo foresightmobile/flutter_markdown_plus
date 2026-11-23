@@ -1,6 +1,11 @@
 # Local symlink to the sibling flutter_markdown_plus_latex package (dev only)
 flutter_markdown_plus_latex/
 
+# Local build and test output
+build/
+.dart_tool/
+test/failures/
+
 # Example build artifacts
 example/build/
 example/.dart_tool/

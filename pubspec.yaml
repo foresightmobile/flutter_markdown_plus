@@ -8,8 +8,8 @@ documentation: https://pub.dev/documentation/flutter_markdown_plus/latest/
 version: 1.0.12
 
 environment:
-  sdk: ^3.4.0
-  flutter: ">=3.27.1"
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
 
 dependencies:
   flutter:
@@ -23,7 +23,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   leak_tracker_flutter_testing: ^3.0.10
-  mockito: ^5.7.0
+  mockito: ^5.6.4
   standard_message_codec: ^0.0.1+4
 
 topics:

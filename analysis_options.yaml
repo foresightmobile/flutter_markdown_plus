@@ -24,6 +24,7 @@ analyzer:
     # Locally symlinked sibling package (flutter_markdown_plus_latex) used for
     # cross-package development; not part of this package.
     - 'flutter_markdown_plus_latex/**'
+    - build/**
 
 formatter:
   page_width: 120
