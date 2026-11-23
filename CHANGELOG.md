@@ -1,6 +1,11 @@
+## 1.1.0-dev.1
+
+First prerelease of 1.1.0, published for a soak before stable (see 1.1.0 for the full notes, which apply to this prerelease as well).
+
 ## 1.1.0
 
 * Raised the Compatibility Floor — the oldest Flutter version the package declares support for — from Flutter `>=3.27.1` to `>=3.35.0`, with the Dart `sdk` lower bound moving to `^3.9.0`, the Dart version bundled with Flutter 3.35.0. Anyone on Flutter older than 3.35.0 keeps resolving 1.0.12. (#154)
+* Updated `.pubignore` so local build output and development-only files no longer ship in the published package. A local `flutter pub publish --dry-run` archive is now about 776 KB, where previously a `build/` directory pushed it to around 16 MB. (#168)
 
 ## 1.0.12
 
