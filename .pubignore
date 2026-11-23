@@ -1,3 +1,8 @@
+# NOTE: when this file exists, `pub publish` uses it INSTEAD of `.gitignore`,
+# so anything `.gitignore` excludes is not excluded from the archive. Keep the
+# two lists in sync. Measured 23 Nov 2026: CLAUDE.md is in `.gitignore` yet was
+# packed into the archive until it was added here.
+
 # Local symlink to the sibling flutter_markdown_plus_latex package (dev only)
 flutter_markdown_plus_latex/
 
@@ -5,6 +10,36 @@ flutter_markdown_plus_latex/
 build/
 .dart_tool/
 test/failures/
+
+# Local-only planning, agent and IDE files. Not part of the package.
+AGENTS.md
+CLAUDE.md
+GLOSSARY.md
+docs/
+.act/
+.mimocode/
+.idea/
+worktrees/
+.fvm/
+*.iml
+*.ipr
+*.iws
+*.log
+*.class
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+.packages
+.pub-cache/
+.pub/
+.flutter-plugins
+.flutter-plugins-dependencies
+**/doc/api/
+lib/generated_plugin_registrant.dart
 
 # Example build artifacts
 example/build/
