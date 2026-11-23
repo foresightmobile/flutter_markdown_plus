@@ -6,20 +6,23 @@
 # Local symlink to the sibling flutter_markdown_plus_latex package (dev only)
 flutter_markdown_plus_latex/
 
-# Local build and test output
-build/
+# Local build and test output (root only, matching .gitignore anchoring)
+/build/
 .dart_tool/
-test/failures/
+/test/failures/
 
 # Local-only planning, agent and IDE files. Not part of the package.
-AGENTS.md
-CLAUDE.md
-GLOSSARY.md
-docs/
-.act/
-.mimocode/
+# Anchoring mirrors .gitignore exactly. A leading slash matters: `docs/` on its
+# own would also drop `lib/docs/`, `test/docs/` and `example/docs/`, and `build/`
+# would drop `lib/build/`. Only root-level copies are local-only.
+/AGENTS.md
+/CLAUDE.md
+/GLOSSARY.md
+/docs/
+/.act/
+/.mimocode/
+/worktrees/
 .idea/
-worktrees/
 .fvm/
 *.iml
 *.ipr

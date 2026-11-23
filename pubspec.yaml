@@ -23,7 +23,11 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   leak_tracker_flutter_testing: ^3.0.10
-  mockito: ^5.6.4
+  # Pinned: 5.6.4 is the only mockito that resolves on the Compatibility Floor.
+  # 5.6.5 and 5.7.0+ both pull an analyzer needing meta ^1.18.0, which conflicts
+  # with Flutter 3.35.0's flutter_test-pinned meta 1.16.0. Raise this when the
+  # floor rises past 3.35.0.
+  mockito: 5.6.4
   standard_message_codec: ^0.0.1+4
 
 topics:
