@@ -19,7 +19,6 @@ void defineTests() {
     testWidgets(
       'block builder returning a widget replaces the paragraph without asserting',
       (WidgetTester tester) async {
-        // The sample from issue #64.
         Widget frame(String data) {
           return boilerplate(
             SizedBox(
@@ -35,17 +34,22 @@ void defineTests() {
           );
         }
 
+        // The sample from issue #64. Under the old code the assertion fires on
+        // any build that parses such a paragraph, including this first pump.
+        // The reporter's stack happened to land in didUpdateWidget, so the
+        // second pump below also covers the re-parse path.
         await tester.pumpWidget(frame('## Prompt\n\nHello World\n'));
         expect(tester.takeException(), isNull);
         expect(find.text('Replaced'), findsOneWidget);
         expect(find.text('Hello World'), findsNothing);
 
-        // The reported assertion fired during didUpdateWidget -> _parseMarkdown,
-        // not the first build, so change the data to force a re-parse.
+        // Change the data to force didUpdateWidget -> _parseMarkdown. Both
+        // paragraphs must be replaced, and none of their text may leak.
         await tester.pumpWidget(frame('## Prompt\n\nHello World\n\nSecond\n'));
         expect(tester.takeException(), isNull);
-        expect(find.text('Replaced'), findsWidgets);
+        expect(find.text('Replaced'), findsNWidgets(2));
         expect(find.text('Hello World'), findsNothing);
+        expect(find.text('Second'), findsNothing);
       },
     );
   });
