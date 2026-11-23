@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'utils.dart';
@@ -54,6 +54,53 @@ void defineTests() {
         expect(scrollViews.first.controller, isNotNull);
         expect(scrollViews.last.controller, isNotNull);
         expect(scrollViews.first.controller, isNot(equals(scrollViews.last.controller)));
+      },
+    );
+
+    // Regression test for #63: a single ScrollController shared by every code
+    // block is attached to more than one ScrollPosition as soon as the markdown
+    // holds two or more `pre` blocks, so the first horizontal scroll throws
+    // "The provided ScrollController is attached to more than one ScrollPosition."
+    // Each code block must own its controller and scroll on its own. The bug was
+    // reported on macOS and Windows, where the scrollbar is interactive and the
+    // assertion runs; the default test platform (android) suppresses it, so the
+    // theme platform is set to match.
+    testWidgets(
+      'multiple code blocks scroll horizontally independently (#63)',
+      (WidgetTester tester) async {
+        final String data = '```\n${'a' * 400}\n```\n\n```\n${'b' * 400}\n```';
+
+        await tester.pumpWidget(
+          boilerplate(
+            Theme(
+              data: ThemeData(platform: TargetPlatform.macOS),
+              child: MediaQuery(
+                data: const MediaQueryData(size: Size(400, 600)),
+                child: MarkdownBody(data: data),
+              ),
+            ),
+          ),
+        );
+        expect(tester.takeException(), isNull);
+
+        final List<SingleChildScrollView> scrollViews = tester.allWidgets.whereType<SingleChildScrollView>().toList();
+        expect(scrollViews, hasLength(2));
+
+        // Scroll each code block horizontally; the reported crash fires here.
+        await tester.drag(find.byType(SingleChildScrollView).first, const Offset(-200, 0));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+
+        await tester.drag(find.byType(SingleChildScrollView).last, const Offset(-150, 0));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+
+        // Each code block owns its controller and moved independently.
+        expect(scrollViews[0].controller, isNotNull);
+        expect(scrollViews[1].controller, isNotNull);
+        expect(scrollViews[0].controller, isNot(same(scrollViews[1].controller)));
+        expect(scrollViews[0].controller!.position.pixels, greaterThan(0.0));
+        expect(scrollViews[1].controller!.position.pixels, greaterThan(0.0));
       },
     );
 
