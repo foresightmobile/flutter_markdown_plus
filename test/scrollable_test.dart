@@ -86,21 +86,27 @@ void defineTests() {
         final List<SingleChildScrollView> scrollViews = tester.allWidgets.whereType<SingleChildScrollView>().toList();
         expect(scrollViews, hasLength(2));
 
-        // Scroll each code block horizontally; the reported crash fires here.
+        // Scroll the first code block horizontally; the reported crash fires here.
         await tester.drag(find.byType(SingleChildScrollView).first, const Offset(-200, 0));
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
 
+        // The second code block must not have moved. This is what makes the two
+        // blocks independent rather than merely separately addressed, and it is
+        // the only part of this test that would catch a shared controller on
+        // TargetPlatform.android, where the Scrollbar assertion is suppressed.
+        expect(scrollViews[0].controller!.position.pixels, greaterThan(0.0));
+        expect(scrollViews[1].controller!.position.pixels, 0.0);
+
         await tester.drag(find.byType(SingleChildScrollView).last, const Offset(-150, 0));
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
+        expect(scrollViews[1].controller!.position.pixels, greaterThan(0.0));
 
-        // Each code block owns its controller and moved independently.
+        // Each code block owns its own controller.
         expect(scrollViews[0].controller, isNotNull);
         expect(scrollViews[1].controller, isNotNull);
         expect(scrollViews[0].controller, isNot(same(scrollViews[1].controller)));
-        expect(scrollViews[0].controller!.position.pixels, greaterThan(0.0));
-        expect(scrollViews[1].controller!.position.pixels, greaterThan(0.0));
       },
     );
 
