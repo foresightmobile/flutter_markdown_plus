@@ -46,3 +46,10 @@ flutter_markdown_plus_latex
 
 # Claude Code project instructions (kept local, not shared via git)
 CLAUDE.md
+
+# Local planning and agent docs (Specs live in Slite; see CLAUDE.md)
+/docs/
+/.act/
+/AGENTS.md
+/GLOSSARY.md
+/.mimocode/
