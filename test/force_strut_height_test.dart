@@ -93,18 +93,18 @@ class _StubDelegate implements MarkdownBuilderDelegate {
 }
 
 MarkdownBuilder _builder({bool forceStrutHeight = true}) => MarkdownBuilder(
-      delegate: _StubDelegate(),
-      selectable: false,
-      styleSheet: MarkdownStyleSheet(),
-      imageDirectory: null,
-      imageBuilder: null,
-      checkboxBuilder: null,
-      bulletBuilder: null,
-      builders: const <String, MarkdownElementBuilder>{},
-      paddingBuilders: const <String, MarkdownPaddingBuilder>{},
-      listItemCrossAxisAlignment: MarkdownListItemCrossAxisAlignment.baseline,
-      forceStrutHeight: forceStrutHeight,
-    );
+  delegate: _StubDelegate(),
+  selectable: false,
+  styleSheet: MarkdownStyleSheet(),
+  imageDirectory: null,
+  imageBuilder: null,
+  checkboxBuilder: null,
+  bulletBuilder: null,
+  builders: const <String, MarkdownElementBuilder>{},
+  paddingBuilders: const <String, MarkdownPaddingBuilder>{},
+  listItemCrossAxisAlignment: MarkdownListItemCrossAxisAlignment.baseline,
+  forceStrutHeight: forceStrutHeight,
+);
 
 StrutStyle _strutStyle(WidgetTester tester, bool selectable) => selectable
     ? tester.widget<SelectableText>(find.byType(SelectableText).first).strutStyle!
@@ -138,7 +138,8 @@ void defineTests() {
       // assertion is the layout effect the flag exists for, carried over from
       // st0ck's original b058cb4 test (which measured it on a tall-widget
       // block, before WidgetSpan blocks opted out unconditionally).
-      const String mixed = 'Lead in **a much taller run of emphasis** and enough trailing prose to wrap onto another line.';
+      const String mixed =
+          'Lead in **a much taller run of emphasis** and enough trailing prose to wrap onto another line.';
       final MarkdownStyleSheet mixedStyle = MarkdownStyleSheet(
         p: const TextStyle(fontSize: 16, height: 1.2),
         strong: const TextStyle(fontSize: 32, height: 1.2, fontWeight: FontWeight.bold),
@@ -226,9 +227,7 @@ void defineTests() {
       }
     }
 
-    testWidgets('default flag with an inline widget present does not force the strut', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('default flag with an inline widget present does not force the strut', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -284,9 +283,7 @@ void defineTests() {
                                   data: '$plainData\n\n$tallData',
                                   styleSheet: style,
                                   inlineSyntaxes: tallSyntaxes,
-                                  builders: <String, MarkdownElementBuilder>{
-                                    'tall': _TallButtonBuilder(() => taps++),
-                                  },
+                                  builders: <String, MarkdownElementBuilder>{'tall': _TallButtonBuilder(() => taps++)},
                                   forceStrutHeight: force,
                                 )
                               : MarkdownBody(
@@ -294,9 +291,7 @@ void defineTests() {
                                   data: '$plainData\n\n$tallData',
                                   styleSheet: style,
                                   inlineSyntaxes: tallSyntaxes,
-                                  builders: <String, MarkdownElementBuilder>{
-                                    'tall': _TallButtonBuilder(() => taps++),
-                                  },
+                                  builders: <String, MarkdownElementBuilder>{'tall': _TallButtonBuilder(() => taps++)},
                                   forceStrutHeight: force,
                                 );
                         },
