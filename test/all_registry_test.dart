@@ -18,23 +18,23 @@ void defineTests() {
   test('every test file is registered in test/all.dart', () {
     final String aggregator = File('test/all.dart').readAsStringSync();
 
-    final List<String> testFiles = Directory('test')
-        .listSync()
-        .whereType<File>()
-        .map((File f) => f.uri.pathSegments.last)
-        .where((String name) => name.endsWith('_test.dart'))
-        .where((String name) => name != 'all_registry_test.dart')
-        .toList()
-      ..sort();
+    final List<String> testFiles =
+        Directory('test')
+            .listSync()
+            .whereType<File>()
+            .map((File f) => f.uri.pathSegments.last)
+            .where((String name) => name.endsWith('_test.dart'))
+            .where((String name) => name != 'all_registry_test.dart')
+            .toList()
+          ..sort();
 
-    final List<String> unregistered = testFiles
-        .where((String name) => !aggregator.contains(name))
-        .toList();
+    final List<String> unregistered = testFiles.where((String name) => !aggregator.contains(name)).toList();
 
     expect(
       unregistered,
       isEmpty,
-      reason: 'These test files exist but are not registered in test/all.dart, '
+      reason:
+          'These test files exist but are not registered in test/all.dart, '
           'which CONTRIBUTING.md asks for. Add an import and a defineTests() '
           'call for each:\n  ${unregistered.join('\n  ')}',
     );
