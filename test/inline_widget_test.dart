@@ -9,10 +9,7 @@ import 'package:markdown/markdown.dart' as md;
 
 import 'utils.dart';
 
-void main() {
-  defineTests();
-  defineNestedSpanTests();
-}
+void main() => defineTests();
 
 void defineTests() {
   group('InlineWidget', () {
@@ -111,6 +108,8 @@ void defineTests() {
       });
     }
   });
+
+  defineNestedSpanTests();
 }
 
 Finder _paragraph(bool selectable) =>
