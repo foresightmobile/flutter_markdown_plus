@@ -110,6 +110,13 @@ Future<void> _expectGolden(WidgetTester tester, String data, String file) async 
   tester.view.physicalSize = const Size(390 * 2.0, 844 * 2.0);
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);
+  // Unmount the tree. Without this leak_tracker reports the still-mounted
+  // MaterialApp (and its HeroController and _MaterialAppState) as
+  // notDisposed at tearDownAll -- 520 objects, one whole failing test that
+  // had nothing to do with the pixels being compared.
+  addTearDown(() async {
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
 
   final ThemeData base = ThemeData(
     colorSchemeSeed: const Color(0xFF2962FF),
