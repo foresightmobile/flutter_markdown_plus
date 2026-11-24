@@ -276,3 +276,29 @@ Here are some additional Markdown syntax resources:
 ## Maintainers
 
 This package is proudly maintained by [Gareth Reese](https://github.com/gazreese) and [Marko Radisavljevic](https://github.com/Prototypev1) for [Foresight Mobile](https://foresightmobile.com/) ([GitHub](https://github.com/foresightmobile/))
+
+### Per-paragraph direction
+
+`paragraphDirectionBuilder` optionally chooses a direction from each assembled
+prose paragraph's spans. It works with `Markdown` and `MarkdownBody`, including
+selectable text, tight/loose lists and blockquotes. Supply your application's
+language-direction policy; the package does not guess a language or add a BiDi
+algorithm:
+
+```dart
+MarkdownBody(
+  data: markdown,
+  fitContent: false, // Allow start alignment across the available width.
+  paragraphDirectionBuilder: (span) => directionForVisibleText(
+    span.toPlainText(includeSemanticsLabels: false),
+  ),
+)
+```
+
+Here `directionForVisibleText` is an application-supplied function returning
+`TextDirection?`. Return `null` to inherit the surrounding direction. Omitting
+the callback preserves existing behavior. The renderer keeps the assembled
+spans, formatting and link recognizers unchanged. Images/custom widgets are
+excluded from the callback's text; text segments around them share one
+paragraph direction. Headings, fenced code, tables and list markers are not
+changed by this option.

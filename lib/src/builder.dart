@@ -114,6 +114,8 @@ class MarkdownBuilder implements md.NodeVisitor {
     this.fitContent = false,
     this.onSelectionChanged,
     this.onTapText,
+    this.paragraphDirectionBuilder,
+    this.forceStrutHeight = true,
     this.contextMenuBuilder,
     this.softLineBreak = false,
   });
@@ -162,6 +164,12 @@ class MarkdownBuilder implements md.NodeVisitor {
 
   /// Default tap handler used when [selectable] is set to true
   final VoidCallback? onTapText;
+
+  /// Optionally selects direction for assembled prose paragraphs.
+  final MarkdownParagraphDirectionBuilder? paragraphDirectionBuilder;
+
+  /// Preserve fixed prose line heights by default; disable for tall inline widgets.
+  final bool forceStrutHeight;
 
   /// Builds the text selection toolbar when [selectable] is set to true.
   ///
@@ -781,11 +789,25 @@ class MarkdownBuilder implements md.NodeVisitor {
         inline.children,
         textAlign,
       );
-      final Wrap wrap = Wrap(
+      Widget wrap = Wrap(
         crossAxisAlignment: WrapCrossAlignment.center,
         alignment: blockAlignment,
         children: mergedInlines,
       );
+
+      // The immediate block owner distinguishes prose from headings/code even
+      // when _currentBlockTag still refers to an enclosing list or quote.
+      final String? tag = _blocks.last.tag;
+      if (paragraphDirectionBuilder != null && (tag == 'p' || tag == 'li')) {
+        final List<InlineSpan> spans = mergedInlines.map(_getInlineSpanFromText).whereType<InlineSpan>().toList();
+        if (spans.isNotEmpty) {
+          final InlineSpan paragraph = spans.length == 1 ? spans.single : TextSpan(children: spans);
+          final TextDirection? direction = paragraphDirectionBuilder!(paragraph);
+          if (direction != null) {
+            wrap = Directionality(textDirection: direction, child: wrap);
+          }
+        }
+      }
 
       if (textPadding == EdgeInsets.zero) {
         _addBlockChild(wrap);
@@ -1007,7 +1029,7 @@ class MarkdownBuilder implements md.NodeVisitor {
             fontSize: baseStyle.fontSize ?? styleSheet.p?.fontSize,
             height: baseStyle.height ?? styleSheet.p?.height,
             leading: 0,
-            forceStrutHeight: true,
+            forceStrutHeight: forceStrutHeight,
           )
         : null;
     if (selectable) {
