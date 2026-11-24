@@ -344,10 +344,15 @@ class MarkdownBuilder implements md.NodeVisitor {
       return text.replaceAll(softLineBreakPattern, ' ');
     }
 
+    // A builder registered for the current block may render the text itself.
+    // When it returns null the default rendering below is used, so a builder
+    // can override only wrapBlockWidget (or visitElementBefore) and still get
+    // the element's text rendered.
     Widget? child;
     if (_blocks.isNotEmpty && builders.containsKey(_blocks.last.tag)) {
       child = builders[_blocks.last.tag!]!.visitText(text, styleSheet.styles[_blocks.last.tag!]);
-    } else if (_blocks.last.tag == 'pre') {
+    }
+    if (child == null && _blocks.last.tag == 'pre') {
       child = _ScrollControllerBuilder(
           builder: (BuildContext context, ScrollController preScrollController, Widget? child) {
             return Scrollbar(
@@ -361,19 +366,16 @@ class MarkdownBuilder implements md.NodeVisitor {
             );
           },
           child: _buildRichText(delegate.formatText(styleSheet, text.text)));
-    } else {
-      child = _buildRichText(
-        TextSpan(
-          style: _inlines.last.style,
-          text: trimText(text.text),
-          recognizer: _linkHandlers.isNotEmpty ? _linkHandlers.last : null,
-        ),
-        textAlign: _textAlignForBlockTag(_currentBlockTag),
-      );
     }
-    if (child != null) {
-      _inlines.last.children.add(child);
-    }
+    child ??= _buildRichText(
+      TextSpan(
+        style: _inlines.last.style,
+        text: trimText(text.text),
+        recognizer: _linkHandlers.isNotEmpty ? _linkHandlers.last : null,
+      ),
+      textAlign: _textAlignForBlockTag(_currentBlockTag),
+    );
+    _inlines.last.children.add(child);
 
     _lastVisitedTag = null;
   }
@@ -490,6 +492,11 @@ class MarkdownBuilder implements md.NodeVisitor {
           padding: paddingBuilders[tag]!.getPadding(),
           child: child,
         );
+      }
+
+      final MarkdownElementBuilder? builder = builders[tag];
+      if (builder != null) {
+        child = builder.wrapBlockWidget(delegate.context, element, child);
       }
 
       _addBlockChild(child);

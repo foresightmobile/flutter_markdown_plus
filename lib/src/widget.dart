@@ -105,7 +105,8 @@ abstract class MarkdownElementBuilder {
   /// If [MarkdownWidget.styleSheet] has a style of this tag, will passing
   /// to [preferredStyle].
   ///
-  /// If you needn't build a widget, return null.
+  /// If you needn't build a widget, return null; the text is then rendered
+  /// with the default text rendering for its block.
   Widget? visitText(md.Text text, TextStyle? preferredStyle) => null;
 
   /// Called when an Element has been reached, after its children have been
@@ -118,6 +119,9 @@ abstract class MarkdownElementBuilder {
   /// [parentStyle].
   ///
   /// If a widget build isn't needed, return null.
+  ///
+  /// See also [wrapBlockWidget], which wraps the default rendering instead of
+  /// replacing it.
   Widget? visitElementAfterWithContext(
     BuildContext context,
     md.Element element,
@@ -126,6 +130,16 @@ abstract class MarkdownElementBuilder {
   ) {
     return visitElementAfter(element, preferredStyle);
   }
+
+  /// Called when a block element's widget has been built, so it can be wrapped
+  /// without replacing the default rendering.
+  ///
+  /// [child] is the fully built widget, either the default one or the one
+  /// returned by [visitElementAfterWithContext]. Not called for inline
+  /// elements.
+  ///
+  /// Returns [child] unchanged by default.
+  Widget wrapBlockWidget(BuildContext context, md.Element element, Widget child) => child;
 
   /// Called when an Element has been reached, after its children have been
   /// visited.

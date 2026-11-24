@@ -23,6 +23,7 @@ import 'text_alignment_test.dart' as text_alignment_test;
 import 'text_scaler_test.dart' as text_scaler;
 import 'text_test.dart' as text_test;
 import 'uri_test.dart' as uri_test;
+import 'wrap_block_widget_test.dart' as wrap_block_widget_test;
 
 void main() {
   blockquote_test.defineTests();
@@ -46,4 +47,5 @@ void main() {
   text_alignment_test.defineTests();
   text_scaler.defineTests();
   uri_test.defineTests();
+  wrap_block_widget_test.defineTests();
 }

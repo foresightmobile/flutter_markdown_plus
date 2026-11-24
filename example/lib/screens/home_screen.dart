@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import '../demos/anchor_link_demo.dart';
 import '../demos/basic_markdown_demo.dart';
 import '../demos/centered_header_demo.dart';
 import '../demos/custom_bullet_list_demo.dart';
@@ -32,6 +33,7 @@ class HomeScreen extends StatelessWidget {
     const CenteredHeaderDemo(),
     const MarkdownBodyShrinkWrapDemo(),
     const CustomBulletListDemo(),
+    const AnchorLinkDemo(),
   ];
 
   @override
