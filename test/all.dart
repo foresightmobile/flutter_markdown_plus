@@ -16,6 +16,8 @@ import 'inline_widget_test.dart' as inline_widget_test;
 import 'line_break_test.dart' as line_break_test;
 import 'link_test.dart' as link_test;
 import 'list_test.dart' as list_test;
+import 'markdown_body_shrink_wrap_test.dart' as markdown_body_shrink_wrap_test;
+import 'padding_test.dart' as padding_test;
 import 'render_golden_test.dart' as render_golden_test;
 import 'scrollable_test.dart' as scrollable_test;
 import 'selection_area_compatibility_test.dart' as selection_area_test;
@@ -42,6 +44,8 @@ void main() {
   line_break_test.defineTests();
   link_test.defineTests();
   list_test.defineTests();
+  markdown_body_shrink_wrap_test.defineTests();
+  padding_test.defineTests();
   render_golden_test.defineTests();
   scrollable_test.defineTests();
   selection_area_test.defineTests();
