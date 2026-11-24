@@ -793,21 +793,27 @@ class MarkdownBuilder implements md.NodeVisitor {
       return <InlineSpan>[span];
     }
 
-    // Merge the style of the parent with the style of the children
-    final Iterable<InlineSpan> spans = span.children!.map((InlineSpan childSpan) {
-      if (childSpan is TextSpan) {
-        return TextSpan(
-          text: childSpan.text,
-          recognizer: childSpan.recognizer,
-          semanticsLabel: childSpan.semanticsLabel,
-          style: childSpan.style?.merge(span.style),
-        );
-      } else {
-        return childSpan;
-      }
-    });
-
-    return spans;
+    // Merge the style of the parent with the style of the children. Each child
+    // keeps its own children, and the parent keeps its own text: dropping them
+    // used to discard a WidgetSpan nested two or more TextSpan levels deep
+    // before it ever reached _buildRichText (#175). Inherited styling is still
+    // correct because TextSpan style composition happens at render.
+    return <InlineSpan>[
+      if (span.text != null && span.text!.isNotEmpty) TextSpan(text: span.text, style: span.style),
+      ...span.children!.map((InlineSpan childSpan) {
+        if (childSpan is TextSpan) {
+          return TextSpan(
+            text: childSpan.text,
+            recognizer: childSpan.recognizer,
+            semanticsLabel: childSpan.semanticsLabel,
+            style: childSpan.style?.merge(span.style),
+            children: childSpan.children,
+          );
+        } else {
+          return childSpan;
+        }
+      }),
+    ];
   }
 
   // Accesses the TextSpan property correctly depending on the widget type.
@@ -964,6 +970,14 @@ class MarkdownBuilder implements md.NodeVisitor {
           nextChild.style == previous.style;
 
       if (matchStyle) {
+        // Concatenating toPlainText() would flatten nested children: a
+        // WidgetSpan a few levels down becomes U+FFFC and the widget vanishes.
+        // Only merge spans that have no children of their own (#175).
+        final bool bothLeaves = (previous.children?.isEmpty ?? true) && (nextChild.children?.isEmpty ?? true);
+        if (!bothLeaves) {
+          mergedSpans.addAll(<InlineSpan>[previous, nextChild]);
+          continue;
+        }
         mergedSpans.add(
           TextSpan(
             text: previous.toPlainText() + nextChild.toPlainText(),

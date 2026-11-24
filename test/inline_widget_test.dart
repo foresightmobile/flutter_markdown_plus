@@ -9,7 +9,10 @@ import 'package:markdown/markdown.dart' as md;
 
 import 'utils.dart';
 
-void main() => defineTests();
+void main() {
+  defineTests();
+  defineNestedSpanTests();
+}
 
 void defineTests() {
   group('InlineWidget', () {
@@ -176,5 +179,69 @@ class SubscriptSyntax extends md.InlineSyntax {
   bool onMatch(md.InlineParser parser, Match match) {
     parser.addNode(md.Element.text('sub', match[1]!));
     return true;
+  }
+}
+
+/// Regression test for #175: a WidgetSpan nested inside nested TextSpans must
+/// reach _buildRichText rather than being dropped by _getInlineSpansFromSpan.
+class _NestedSpanBuilder extends MarkdownElementBuilder {
+  @override
+  Widget visitElementAfterWithContext(
+    BuildContext context,
+    md.Element element,
+    TextStyle? preferredStyle,
+    TextStyle? parentStyle,
+  ) {
+    // WidgetSpan sits two TextSpan levels down: outer TextSpan -> TextSpan ->
+    // WidgetSpan. Before the fix only the first level survived the merge, so
+    // the widget vanished entirely.
+    return const Text.rich(
+      TextSpan(
+        text: 'outer ',
+        children: <InlineSpan>[
+          TextSpan(
+            text: 'inner ',
+            children: <InlineSpan>[
+              WidgetSpan(
+                alignment: PlaceholderAlignment.middle,
+                child: SizedBox(key: ValueKey<String>('nested-tall'), width: 24, height: 80),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _NestedSpanSyntax extends md.InlineSyntax {
+  _NestedSpanSyntax() : super(_pattern);
+
+  static const String _pattern = r'NESTED';
+
+  @override
+  bool onMatch(md.InlineParser parser, Match match) {
+    parser.addNode(md.Element.text('nested', ''));
+    return true;
+  }
+}
+
+void defineNestedSpanTests() {
+  for (final bool selectable in <bool>[false, true]) {
+    testWidgets('nested WidgetSpan renders (selectable=$selectable)', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        boilerplate(
+          MarkdownBody(
+            data: 'Hello NESTED world',
+            selectable: selectable,
+            builders: <String, MarkdownElementBuilder>{'nested': _NestedSpanBuilder()},
+            inlineSyntaxes: <md.InlineSyntax>[_NestedSpanSyntax()],
+          ),
+        ),
+      );
+
+      expect(find.byKey(const ValueKey<String>('nested-tall')), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
   }
 }
