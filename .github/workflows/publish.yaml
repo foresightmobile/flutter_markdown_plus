@@ -4,7 +4,13 @@ name: Publish to pub.dev
 on:
   push:
     tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+' # tag pattern on pub.dev: 'v{{version}'
+      # tag pattern on pub.dev: 'v{{version}}'
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+      # Prerelease tags, e.g. v1.1.0-dev.1 (Spec R30 publishes -dev.N first).
+      # Without this the tag silently triggers nothing: GitHub's filter syntax
+      # treats '+' as "one or more of the preceding character" and matches the
+      # whole ref name, so the pattern above cannot match a prerelease suffix.
+      - 'v[0-9]+.[0-9]+.[0-9]+-dev.[0-9]+'
 
 # Publish using custom workflow
 jobs:
@@ -13,13 +19,26 @@ jobs:
       id-token: write # Required for authentication using OIDC
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: dart-lang/setup-dart@v1
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
       - name: Install dependencies
         run: flutter pub get
+      # `flutter pub publish` publishes whatever pubspec.yaml says and never
+      # compares it to the git tag, so a mismatched tag would publish the wrong
+      # version irreversibly. Check it here instead.
+      - name: Check tag matches pubspec version
+        run: |
+          tag_version="${GITHUB_REF_NAME#v}"
+          spec_version="$(sed -n 's/^version:[[:space:]]*//p' pubspec.yaml | head -n1 | tr -d '[:space:]')"
+          echo "tag=${GITHUB_REF_NAME} -> ${tag_version}"
+          echo "pubspec version=${spec_version}"
+          if [ "${tag_version}" != "${spec_version}" ]; then
+            echo "::error::Tag ${GITHUB_REF_NAME} does not match pubspec.yaml version ${spec_version}. Refusing to publish."
+            exit 1
+          fi
       # Here you can insert custom steps you need
       # - run: dart tool/generate-code.dart
       - name: Publish
