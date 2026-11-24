@@ -1,3 +1,12 @@
+## Unreleased
+
+* Inline widgets inside a paragraph are no longer clipped by the forced line height. A text block containing a `WidgetSpan` — from a custom `MarkdownElementBuilder`, or from a `SyntaxHighlighter` returning one — now lets its lines grow to fit the widget, while text-only blocks keep the fixed strut they have had since 1.0.8 (fixes #152)
+* Added a `forceStrutHeight` parameter to `Markdown`, `MarkdownBody` and `MarkdownBuilder`, defaulting to `true`, to opt out of the forced line height introduced in 1.0.8. Set it to `false` and the generated `StrutStyle` still applies as a minimum line height, but lines are free to grow to their natural height. This restores the pre-1.0.8 layout for apps with a custom `MarkdownStyleSheet` and custom fonts, whose golden heights shrank and whose hard line breaks overlapped after upgrading. Changing the parameter re-parses the Markdown. This is a partial answer to #109, which asked for `StrutStyle` control over the minimum line height: `forceStrutHeight: false` removes the forcing, but the `StrutStyle` itself is not yet configurable
+
+**Thanks to our contributors:**
+* [@dux-web](https://github.com/dux-web) for detecting `WidgetSpan` recursively so inline widgets can expand their text line (#149)
+* [@st0ck](https://github.com/st0ck) for the `forceStrutHeight` opt-out (#152)
+
 ## 1.1.0-dev.1
 
 First prerelease of 1.1.0, published for a soak before stable (see 1.1.0 for the full notes, which apply to this prerelease as well).
