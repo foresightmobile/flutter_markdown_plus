@@ -207,6 +207,7 @@ abstract class MarkdownWidget extends StatefulWidget {
     this.onSelectionChanged,
     this.onTapLink,
     this.onTapText,
+    this.forceStrutHeight = true,
     this.contextMenuBuilder = _defaultContextMenuBuilder,
     this.imageDirectory,
     this.blockSyntaxes,
@@ -253,6 +254,18 @@ abstract class MarkdownWidget extends StatefulWidget {
 
   /// Default tap handler used when [selectable] is set to true
   final VoidCallback? onTapText;
+
+  /// Whether the strut height is forced onto every line of a text block.
+  ///
+  /// Defaults to true, which keeps a consistent line height within each block
+  /// so mixed font weights no longer shift it. Set to false to let lines grow
+  /// to their natural height; the [StrutStyle] is still applied as a minimum.
+  ///
+  /// The strut is never forced for a block containing a [WidgetSpan], which
+  /// may be taller than the strut and must be able to expand its line.
+  ///
+  /// Changing this re-parses the Markdown.
+  final bool forceStrutHeight;
 
   /// Builds the text selection toolbar when [selectable] is set to true.
   ///
@@ -352,7 +365,9 @@ class _MarkdownWidgetState extends State<MarkdownWidget> implements MarkdownBuil
   @override
   void didUpdateWidget(MarkdownWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.data != oldWidget.data || widget.styleSheet != oldWidget.styleSheet) {
+    if (widget.data != oldWidget.data ||
+        widget.styleSheet != oldWidget.styleSheet ||
+        widget.forceStrutHeight != oldWidget.forceStrutHeight) {
       _parseMarkdown();
     }
   }
@@ -396,6 +411,7 @@ class _MarkdownWidgetState extends State<MarkdownWidget> implements MarkdownBuil
       listItemCrossAxisAlignment: widget.listItemCrossAxisAlignment,
       onSelectionChanged: widget.onSelectionChanged,
       onTapText: widget.onTapText,
+      forceStrutHeight: widget.forceStrutHeight,
       contextMenuBuilder: widget.contextMenuBuilder,
       softLineBreak: widget.softLineBreak,
     );
@@ -460,6 +476,7 @@ class MarkdownBody extends MarkdownWidget {
     super.onSelectionChanged,
     super.onTapLink,
     super.onTapText,
+    super.forceStrutHeight,
     super.contextMenuBuilder,
     super.imageDirectory,
     super.blockSyntaxes,
@@ -515,6 +532,7 @@ class Markdown extends MarkdownWidget {
     super.onSelectionChanged,
     super.onTapLink,
     super.onTapText,
+    super.forceStrutHeight,
     super.contextMenuBuilder,
     super.imageDirectory,
     super.blockSyntaxes,

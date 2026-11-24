@@ -7,6 +7,7 @@ import 'context_menu_builder_test.dart' as context_menu_builder_test;
 import 'custom_syntax_test.dart' as custome_syntax_test;
 import 'emphasis_test.dart' as emphasis_test;
 import 'footnote_test.dart' as footnote_test;
+import 'force_strut_height_test.dart' as force_strut_height_test;
 import 'header_test.dart' as header_test;
 import 'horizontal_rule_test.dart' as horizontal_rule_test;
 import 'html_test.dart' as html_test;
@@ -31,6 +32,7 @@ void main() {
   custome_syntax_test.defineTests();
   emphasis_test.defineTests();
   footnote_test.defineTests();
+  force_strut_height_test.defineTests();
   header_test.defineTests();
   horizontal_rule_test.defineTests();
   html_test.defineTests();
