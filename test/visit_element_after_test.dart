@@ -16,42 +16,39 @@ void defineTests() {
     // Regression test for issue #64 (migrated from flutter/flutter#139130).
     // A builder that overrides visitElementAfter for a block element used to
     // trip the `_inlines.isEmpty` assertion in MarkdownBuilder.build.
-    testWidgets(
-      'block builder returning a widget replaces the paragraph without asserting',
-      (WidgetTester tester) async {
-        Widget frame(String data) {
-          return boilerplate(
-            SizedBox(
-              width: 400,
-              child: MarkdownBody(
-                data: data,
-                selectable: true,
-                builders: <String, MarkdownElementBuilder>{
-                  'p': ParagraphBuilder(),
-                },
-              ),
+    testWidgets('block builder returning a widget replaces the paragraph without asserting', (
+      WidgetTester tester,
+    ) async {
+      Widget frame(String data) {
+        return boilerplate(
+          SizedBox(
+            width: 400,
+            child: MarkdownBody(
+              data: data,
+              selectable: true,
+              builders: <String, MarkdownElementBuilder>{'p': ParagraphBuilder()},
             ),
-          );
-        }
+          ),
+        );
+      }
 
-        // The sample from issue #64. Under the old code the assertion fires on
-        // any build that parses such a paragraph, including this first pump.
-        // The reporter's stack happened to land in didUpdateWidget, so the
-        // second pump below also covers the re-parse path.
-        await tester.pumpWidget(frame('## Prompt\n\nHello World\n'));
-        expect(tester.takeException(), isNull);
-        expect(find.text('Replaced'), findsOneWidget);
-        expect(find.text('Hello World'), findsNothing);
+      // The sample from issue #64. Under the old code the assertion fires on
+      // any build that parses such a paragraph, including this first pump.
+      // The reporter's stack happened to land in didUpdateWidget, so the
+      // second pump below also covers the re-parse path.
+      await tester.pumpWidget(frame('## Prompt\n\nHello World\n'));
+      expect(tester.takeException(), isNull);
+      expect(find.text('Replaced'), findsOneWidget);
+      expect(find.text('Hello World'), findsNothing);
 
-        // Change the data to force didUpdateWidget -> _parseMarkdown. Both
-        // paragraphs must be replaced, and none of their text may leak.
-        await tester.pumpWidget(frame('## Prompt\n\nHello World\n\nSecond\n'));
-        expect(tester.takeException(), isNull);
-        expect(find.text('Replaced'), findsNWidgets(2));
-        expect(find.text('Hello World'), findsNothing);
-        expect(find.text('Second'), findsNothing);
-      },
-    );
+      // Change the data to force didUpdateWidget -> _parseMarkdown. Both
+      // paragraphs must be replaced, and none of their text may leak.
+      await tester.pumpWidget(frame('## Prompt\n\nHello World\n\nSecond\n'));
+      expect(tester.takeException(), isNull);
+      expect(find.text('Replaced'), findsNWidgets(2));
+      expect(find.text('Hello World'), findsNothing);
+      expect(find.text('Second'), findsNothing);
+    });
   });
 }
 
