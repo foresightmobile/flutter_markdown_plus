@@ -14,39 +14,31 @@ void main() => defineTests();
 
 void defineTests() {
   group('InlineWidget', () {
-    testWidgets(
-      'Test inline widget',
-      (WidgetTester tester) async {
-        await tester.pumpWidget(
-          boilerplate(
-            MarkdownBody(
-              data: 'Hello, foo bar',
-              builders: <String, MarkdownElementBuilder>{
-                'sub': SubscriptBuilder(),
-              },
-              extensionSet: md.ExtensionSet(
-                <md.BlockSyntax>[],
-                <md.InlineSyntax>[SubscriptSyntax()],
-              ),
-            ),
+    testWidgets('Test inline widget', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        boilerplate(
+          MarkdownBody(
+            data: 'Hello, foo bar',
+            builders: <String, MarkdownElementBuilder>{'sub': SubscriptBuilder()},
+            extensionSet: md.ExtensionSet(<md.BlockSyntax>[], <md.InlineSyntax>[SubscriptSyntax()]),
           ),
-        );
+        ),
+      );
 
-        final Text textWidget = tester.firstWidget(find.byType(Text));
-        final TextSpan span = textWidget.textSpan! as TextSpan;
+      final Text textWidget = tester.firstWidget(find.byType(Text));
+      final TextSpan span = textWidget.textSpan! as TextSpan;
 
-        final TextSpan part1 = span.children![0] as TextSpan;
-        expect(part1.toPlainText(), 'Hello, ');
+      final TextSpan part1 = span.children![0] as TextSpan;
+      expect(part1.toPlainText(), 'Hello, ');
 
-        final WidgetSpan part2 = span.children![1] as WidgetSpan;
-        expect(part2.alignment, PlaceholderAlignment.middle);
-        expect(part2.child, isA<Text>());
-        expect((part2.child as Text).data, 'foo');
+      final WidgetSpan part2 = span.children![1] as WidgetSpan;
+      expect(part2.alignment, PlaceholderAlignment.middle);
+      expect(part2.child, isA<Text>());
+      expect((part2.child as Text).data, 'foo');
 
-        final TextSpan part3 = span.children![2] as TextSpan;
-        expect(part3.toPlainText(), ' bar');
-      },
-    );
+      final TextSpan part3 = span.children![2] as TextSpan;
+      expect(part3.toPlainText(), ' bar');
+    });
   });
 }
 
@@ -58,10 +50,7 @@ class SubscriptBuilder extends MarkdownElementBuilder {
     TextStyle? preferredStyle,
     TextStyle? parentStyle,
   ) {
-    return Text.rich(WidgetSpan(
-      alignment: PlaceholderAlignment.middle,
-      child: Text(element.textContent),
-    ));
+    return Text.rich(WidgetSpan(alignment: PlaceholderAlignment.middle, child: Text(element.textContent)));
   }
 }
 

@@ -12,17 +12,17 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-final TextTheme textTheme =
-    Typography.material2018().black.merge(const TextTheme(bodyMedium: TextStyle(fontSize: 12.0)));
+final TextTheme textTheme = Typography.material2018().black.merge(
+  const TextTheme(bodyMedium: TextStyle(fontSize: 12.0)),
+);
 
 Iterable<Widget> selfAndDescendantWidgetsOf(Finder start, WidgetTester tester) {
   final Element startElement = tester.element(start);
-  final Iterable<Widget> descendants =
-      collectAllElementsFrom(startElement, skipOffstage: false).map((Element e) => e.widget);
-  return <Widget>[
-    startElement.widget,
-    ...descendants,
-  ];
+  final Iterable<Widget> descendants = collectAllElementsFrom(
+    startElement,
+    skipOffstage: false,
+  ).map((Element e) => e.widget);
+  return <Widget>[startElement.widget, ...descendants];
 }
 
 // Returns the RenderEditable displaying the given text.
@@ -55,10 +55,7 @@ Offset positionInRenderedText(WidgetTester tester, String text, int textOffset) 
   );
   // Map the points to global positions.
   final List<TextSelectionPoint> endpoints = textOffsetPoints.map<TextSelectionPoint>((TextSelectionPoint point) {
-    return TextSelectionPoint(
-      renderEditable.localToGlobal(point.point),
-      point.direction,
-    );
+    return TextSelectionPoint(renderEditable.localToGlobal(point.point), point.direction);
   }).toList();
   expect(endpoints.length, 1);
   return endpoints[0].point + const Offset(kIsWeb ? 1.0 : 0.0, -2.0);
@@ -106,20 +103,12 @@ void expectTextSpanStyle(TextSpan textSpan, FontStyle? style, FontWeight weight)
     expect(textSpan.style!.fontStyle, isNull, reason: 'font style is not null');
   } else {
     expect(textSpan.style!.fontStyle, isNotNull, reason: 'font style is null');
-    expect(
-      textSpan.style!.fontStyle == style,
-      isTrue,
-      reason: 'font style is not $style',
-    );
+    expect(textSpan.style!.fontStyle == style, isTrue, reason: 'font style is not $style');
   }
 
   // Font weight check
   expect(textSpan.style, isNotNull, reason: 'font style is null');
-  expect(
-    textSpan.style!.fontWeight == weight,
-    isTrue,
-    reason: 'font weight is not $weight',
-  );
+  expect(textSpan.style!.fontWeight == weight, isTrue, reason: 'font weight is not $weight');
 }
 
 @immutable
@@ -202,17 +191,14 @@ void expectLinkTap(MarkdownLink? actual, MarkdownLink expected) {
 
 String dumpRenderView() {
   return WidgetsBinding.instance.rootElement!.toStringDeep().replaceAll(
-        RegExp(r'SliverChildListDelegate#\d+', multiLine: true),
-        'SliverChildListDelegate',
-      );
+    RegExp(r'SliverChildListDelegate#\d+', multiLine: true),
+    'SliverChildListDelegate',
+  );
 }
 
 /// Wraps a widget with a left-to-right [Directionality] for tests.
 Widget boilerplate(Widget child) {
-  return Directionality(
-    textDirection: TextDirection.ltr,
-    child: child,
-  );
+  return Directionality(textDirection: TextDirection.ltr, child: child);
 }
 
 class TestAssetBundle extends CachingAssetBundle {
@@ -223,12 +209,14 @@ class TestAssetBundle extends CachingAssetBundle {
       final ByteData asset = ByteData.view(utf8.encoder.convert(manifest).buffer);
       return Future<ByteData>.value(asset);
     } else if (key == 'AssetManifest.bin') {
-      final ByteData manifest =
-          const StandardMessageCodec().encodeMessage(<String, List<Object>>{'assets/logo.png': <Object>[]})!;
+      final ByteData manifest = const StandardMessageCodec().encodeMessage(<String, List<Object>>{
+        'assets/logo.png': <Object>[],
+      })!;
       return Future<ByteData>.value(manifest);
     } else if (key == 'AssetManifest.smcbin') {
-      final ByteData manifest =
-          const StandardMessageCodec().encodeMessage(<String, List<Object>>{'assets/logo.png': <Object>[]})!;
+      final ByteData manifest = const StandardMessageCodec().encodeMessage(<String, List<Object>>{
+        'assets/logo.png': <Object>[],
+      })!;
       return Future<ByteData>.value(manifest);
     } else if (key == 'assets/logo.png') {
       // The root directory tests are run from is different for 'flutter test'

@@ -11,25 +11,13 @@ void main() => defineTests();
 
 void defineTests() {
   group('Header', () {
-    testWidgets(
-      'level one',
-      (WidgetTester tester) async {
-        const String data = '# Header';
-        await tester.pumpWidget(boilerplate(const MarkdownBody(data: data)));
+    testWidgets('level one', (WidgetTester tester) async {
+      const String data = '# Header';
+      await tester.pumpWidget(boilerplate(const MarkdownBody(data: data)));
 
-        final Iterable<Widget> widgets = selfAndDescendantWidgetsOf(
-          find.byType(MarkdownBody),
-          tester,
-        );
-        expectWidgetTypes(widgets, <Type>[
-          MarkdownBody,
-          Column,
-          Wrap,
-          Text,
-          RichText,
-        ]);
-        expectTextStrings(widgets, <String>['Header']);
-      },
-    );
+      final Iterable<Widget> widgets = selfAndDescendantWidgetsOf(find.byType(MarkdownBody), tester);
+      expectWidgetTypes(widgets, <Type>[MarkdownBody, Column, Wrap, Text, RichText]);
+      expectTextStrings(widgets, <String>['Header']);
+    });
   });
 }

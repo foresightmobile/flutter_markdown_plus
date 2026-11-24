@@ -17,28 +17,13 @@ typedef ImageBuilder = Widget Function(Uri uri, String? imageDirectory, double? 
 
 /// A default image builder handling http/https, resource, data, and file URLs.
 // ignore: prefer_function_declarations_over_variables
-final ImageBuilder kDefaultImageBuilder = (
-  Uri uri,
-  String? imageDirectory,
-  double? width,
-  double? height,
-) {
+final ImageBuilder kDefaultImageBuilder = (Uri uri, String? imageDirectory, double? width, double? height) {
   if (uri.scheme == 'http' || uri.scheme == 'https') {
-    return Image.network(
-      uri.toString(),
-      width: width,
-      height: height,
-      errorBuilder: kDefaultImageErrorWidgetBuilder,
-    );
+    return Image.network(uri.toString(), width: width, height: height, errorBuilder: kDefaultImageErrorWidgetBuilder);
   } else if (uri.scheme == 'data') {
     return _handleDataSchemeUri(uri, width, height);
   } else if (uri.scheme == 'resource') {
-    return Image.asset(
-      uri.path,
-      width: width,
-      height: height,
-      errorBuilder: kDefaultImageErrorWidgetBuilder,
-    );
+    return Image.asset(uri.path, width: width, height: height, errorBuilder: kDefaultImageErrorWidgetBuilder);
   } else {
     final Uri fileUri;
 
@@ -66,33 +51,22 @@ final ImageBuilder kDefaultImageBuilder = (
       );
     } else {
       final String src = p.join(p.current, fileUri.toString());
-      return Image.network(
-        src,
-        width: width,
-        height: height,
-        errorBuilder: kDefaultImageErrorWidgetBuilder,
-      );
+      return Image.network(src, width: width, height: height, errorBuilder: kDefaultImageErrorWidgetBuilder);
     }
   }
 };
 
 /// A default error widget builder for handling image errors.
 // ignore: prefer_function_declarations_over_variables
-final ImageErrorWidgetBuilder kDefaultImageErrorWidgetBuilder = (
-  BuildContext context,
-  Object error,
-  StackTrace? stackTrace,
-) {
-  return const SizedBox();
-};
+final ImageErrorWidgetBuilder kDefaultImageErrorWidgetBuilder =
+    (BuildContext context, Object error, StackTrace? stackTrace) {
+      return const SizedBox();
+    };
 
 /// A default style sheet generator.
 final MarkdownStyleSheet Function(BuildContext, MarkdownStyleSheetBaseTheme?)
 // ignore: prefer_function_declarations_over_variables
-    kFallbackStyle = (
-  BuildContext context,
-  MarkdownStyleSheetBaseTheme? baseTheme,
-) {
+kFallbackStyle = (BuildContext context, MarkdownStyleSheetBaseTheme? baseTheme) {
   final MarkdownStyleSheet result = switch (baseTheme) {
     MarkdownStyleSheetBaseTheme.platform when _userAgent.toDart.contains('Mac OS X') =>
       MarkdownStyleSheet.fromCupertinoTheme(CupertinoTheme.of(context)),
@@ -100,9 +74,7 @@ final MarkdownStyleSheet Function(BuildContext, MarkdownStyleSheetBaseTheme?)
     _ => MarkdownStyleSheet.fromTheme(Theme.of(context)),
   };
 
-  return result.copyWith(
-    textScaler: MediaQuery.textScalerOf(context),
-  );
+  return result.copyWith(textScaler: MediaQuery.textScalerOf(context));
 };
 
 Widget _handleDataSchemeUri(Uri uri, final double? width, final double? height) {

@@ -23,106 +23,66 @@ void defineTests() {
       io.HttpOverrides.global = TestHttpOverrides();
     });
 
-    testWidgets(
-      'should not interrupt styling',
-      (WidgetTester tester) async {
-        const String data = '_textbefore ![alt](https://img) textafter_';
-        await tester.pumpWidget(
-          boilerplate(
-            const Markdown(data: data),
-          ),
-        );
+    testWidgets('should not interrupt styling', (WidgetTester tester) async {
+      const String data = '_textbefore ![alt](https://img) textafter_';
+      await tester.pumpWidget(boilerplate(const Markdown(data: data)));
 
-        final Iterable<Text> texts = tester.widgetList(find.byType(Text));
-        final Text firstTextWidget = texts.first;
-        final TextSpan firstTextSpan = firstTextWidget.textSpan! as TextSpan;
-        final Image image = tester.widget(find.byType(Image));
-        final NetworkImage networkImage = image.image as NetworkImage;
-        final Text secondTextWidget = texts.last;
-        final TextSpan secondTextSpan = secondTextWidget.textSpan! as TextSpan;
+      final Iterable<Text> texts = tester.widgetList(find.byType(Text));
+      final Text firstTextWidget = texts.first;
+      final TextSpan firstTextSpan = firstTextWidget.textSpan! as TextSpan;
+      final Image image = tester.widget(find.byType(Image));
+      final NetworkImage networkImage = image.image as NetworkImage;
+      final Text secondTextWidget = texts.last;
+      final TextSpan secondTextSpan = secondTextWidget.textSpan! as TextSpan;
 
-        expect(firstTextSpan.text, 'textbefore ');
-        expect(firstTextSpan.style!.fontStyle, FontStyle.italic);
-        expect(networkImage.url, 'https://img');
-        expect(secondTextSpan.text, ' textafter');
-        expect(secondTextSpan.style!.fontStyle, FontStyle.italic);
-      },
-    );
+      expect(firstTextSpan.text, 'textbefore ');
+      expect(firstTextSpan.style!.fontStyle, FontStyle.italic);
+      expect(networkImage.url, 'https://img');
+      expect(secondTextSpan.text, ' textafter');
+      expect(secondTextSpan.style!.fontStyle, FontStyle.italic);
+    });
 
-    testWidgets(
-      'should work with a link',
-      (WidgetTester tester) async {
-        const String data = '![alt](https://img#50x50)';
-        await tester.pumpWidget(
-          boilerplate(
-            const Markdown(data: data),
-          ),
-        );
+    testWidgets('should work with a link', (WidgetTester tester) async {
+      const String data = '![alt](https://img#50x50)';
+      await tester.pumpWidget(boilerplate(const Markdown(data: data)));
 
-        final Image image = tester.widget(find.byType(Image));
-        final NetworkImage networkImage = image.image as NetworkImage;
-        expect(networkImage.url, 'https://img');
-        expect(image.width, 50);
-        expect(image.height, 50);
-      },
-    );
+      final Image image = tester.widget(find.byType(Image));
+      final NetworkImage networkImage = image.image as NetworkImage;
+      expect(networkImage.url, 'https://img');
+      expect(image.width, 50);
+      expect(image.height, 50);
+    });
 
-    testWidgets(
-      'should work with relative remote image',
-      (WidgetTester tester) async {
-        const String data = '![alt](/img.png)';
-        await tester.pumpWidget(
-          boilerplate(
-            const Markdown(
-              data: data,
-              imageDirectory: 'https://localhost',
-            ),
-          ),
-        );
+    testWidgets('should work with relative remote image', (WidgetTester tester) async {
+      const String data = '![alt](/img.png)';
+      await tester.pumpWidget(boilerplate(const Markdown(data: data, imageDirectory: 'https://localhost')));
 
-        final Iterable<Widget> widgets = tester.allWidgets;
-        final Image image = widgets.firstWhere((Widget widget) => widget is Image) as Image;
+      final Iterable<Widget> widgets = tester.allWidgets;
+      final Image image = widgets.firstWhere((Widget widget) => widget is Image) as Image;
 
-        expect(image.image is NetworkImage, isTrue);
-        expect((image.image as NetworkImage).url, 'https://localhost/img.png');
-      },
-    );
+      expect(image.image is NetworkImage, isTrue);
+      expect((image.image as NetworkImage).url, 'https://localhost/img.png');
+    });
 
-    testWidgets(
-      'local files should be files on non-web',
-      (WidgetTester tester) async {
-        const String data = '![alt](http.png)';
-        await tester.pumpWidget(
-          boilerplate(
-            const Markdown(data: data),
-          ),
-        );
+    testWidgets('local files should be files on non-web', (WidgetTester tester) async {
+      const String data = '![alt](http.png)';
+      await tester.pumpWidget(boilerplate(const Markdown(data: data)));
 
-        final Iterable<Widget> widgets = tester.allWidgets;
-        final Image image = widgets.firstWhere((Widget widget) => widget is Image) as Image;
+      final Iterable<Widget> widgets = tester.allWidgets;
+      final Image image = widgets.firstWhere((Widget widget) => widget is Image) as Image;
 
-        expect(image.image is FileImage, isTrue);
-      },
-      skip: kIsWeb || isLinux,
-    );
+      expect(image.image is FileImage, isTrue);
+    }, skip: kIsWeb || isLinux);
 
-    testWidgets(
-      'local files should be network on web',
-      (WidgetTester tester) async {
-        const String data = '![alt](http.png)';
-        await tester.pumpWidget(
-          boilerplate(
-            const Markdown(data: data),
-          ),
-        );
+    testWidgets('local files should be network on web', (WidgetTester tester) async {
+      const String data = '![alt](http.png)';
+      await tester.pumpWidget(boilerplate(const Markdown(data: data)));
 
-        final Iterable<Widget> widgets = tester.allWidgets;
-        final Image image = widgets.firstWhere((Widget widget) => widget is Image) as Image;
+      final Iterable<Widget> widgets = tester.allWidgets;
+      final Image image = widgets.firstWhere((Widget widget) => widget is Image) as Image;
 
-        expect(image.image is NetworkImage, isTrue);
-      },
-      skip: !kIsWeb || !isLinux,
-    );
+      expect(image.image is NetworkImage, isTrue);
+    }, skip: !kIsWeb || !isLinux);
 
     testWidgets(
       'should work with resources',
@@ -138,9 +98,7 @@ void defineTests() {
                   child: Container(
                     color: Colors.white,
                     width: 500,
-                    child: const Markdown(
-                      data: data,
-                    ),
+                    child: const Markdown(data: data),
                   ),
                 ),
               ),
@@ -162,241 +120,191 @@ void defineTests() {
         await tester.pumpAndSettle();
 
         await expectLater(
-            find.byType(Container), matchesGoldenFile('assets/images/golden/image_test/resource_asset_logo.png'));
+          find.byType(Container),
+          matchesGoldenFile('assets/images/golden/image_test/resource_asset_logo.png'),
+        );
       },
       skip: kIsWeb || isLinux, // Goldens are platform-specific.
     );
 
-    testWidgets(
-      'should work with local image files',
-      (WidgetTester tester) async {
-        const String data = '![alt](img.png#50x50)';
-        await tester.pumpWidget(
-          boilerplate(
-            const Markdown(data: data),
+    testWidgets('should work with local image files', (WidgetTester tester) async {
+      const String data = '![alt](img.png#50x50)';
+      await tester.pumpWidget(boilerplate(const Markdown(data: data)));
+
+      final Image image = tester.widget(find.byType(Image));
+      final FileImage fileImage = image.image as FileImage;
+      expect(fileImage.file.path, 'img.png');
+      expect(image.width, 50);
+      expect(image.height, 50);
+    }, skip: kIsWeb || isLinux);
+
+    testWidgets('should show properly next to text', (WidgetTester tester) async {
+      const String data = 'Hello ![alt](img#50x50)';
+      await tester.pumpWidget(boilerplate(const Markdown(data: data)));
+
+      final Text text = tester.widget(find.byType(Text));
+      final TextSpan textSpan = text.textSpan! as TextSpan;
+      expect(textSpan.text, 'Hello ');
+      expect(textSpan.style, isNotNull);
+    });
+
+    testWidgets('should work when nested in a link', (WidgetTester tester) async {
+      final List<String> tapTexts = <String>[];
+      final List<String?> tapResults = <String?>[];
+      const String data = '[![alt](https://img#50x50)](href)';
+      await tester.pumpWidget(
+        boilerplate(
+          Markdown(
+            data: data,
+            onTapLink: (String text, String? value, String title) {
+              tapTexts.add(text);
+              tapResults.add(value);
+            },
           ),
-        );
+        ),
+      );
 
-        final Image image = tester.widget(find.byType(Image));
-        final FileImage fileImage = image.image as FileImage;
-        expect(fileImage.file.path, 'img.png');
-        expect(image.width, 50);
-        expect(image.height, 50);
-      },
-      skip: kIsWeb || isLinux,
-    );
+      final GestureDetector detector = tester.widget(find.byType(GestureDetector));
+      detector.onTap!();
 
-    testWidgets(
-      'should show properly next to text',
-      (WidgetTester tester) async {
-        const String data = 'Hello ![alt](img#50x50)';
-        await tester.pumpWidget(
-          boilerplate(
-            const Markdown(data: data),
+      expect(tapTexts.length, 1);
+      expect(tapTexts, everyElement('alt'));
+      expect(tapResults.length, 1);
+      expect(tapResults, everyElement('href'));
+    });
+
+    testWidgets('should work when nested in a link with text', (WidgetTester tester) async {
+      final List<String> tapTexts = <String>[];
+      final List<String?> tapResults = <String?>[];
+      const String data = '[Text before ![alt](https://img#50x50) text after](href)';
+      await tester.pumpWidget(
+        boilerplate(
+          Markdown(
+            data: data,
+            onTapLink: (String text, String? value, String title) {
+              tapTexts.add(text);
+              tapResults.add(value);
+            },
           ),
-        );
+        ),
+      );
 
-        final Text text = tester.widget(find.byType(Text));
-        final TextSpan textSpan = text.textSpan! as TextSpan;
-        expect(textSpan.text, 'Hello ');
-        expect(textSpan.style, isNotNull);
-      },
-    );
+      final GestureDetector detector = tester.widget(find.byType(GestureDetector));
+      detector.onTap!();
 
-    testWidgets(
-      'should work when nested in a link',
-      (WidgetTester tester) async {
-        final List<String> tapTexts = <String>[];
-        final List<String?> tapResults = <String?>[];
-        const String data = '[![alt](https://img#50x50)](href)';
-        await tester.pumpWidget(
-          boilerplate(
-            Markdown(
-              data: data,
-              onTapLink: (String text, String? value, String title) {
-                tapTexts.add(text);
-                tapResults.add(value);
-              },
-            ),
+      final Iterable<Text> texts = tester.widgetList(find.byType(Text));
+      final Text firstTextWidget = texts.first;
+      final TextSpan firstSpan = firstTextWidget.textSpan! as TextSpan;
+      (firstSpan.recognizer as TapGestureRecognizer?)!.onTap!();
+
+      final Text lastTextWidget = texts.last;
+      final TextSpan lastSpan = lastTextWidget.textSpan! as TextSpan;
+      (lastSpan.recognizer as TapGestureRecognizer?)!.onTap!();
+
+      expect(firstSpan.children, null);
+      expect(firstSpan.text, 'Text before ');
+      expect(firstSpan.recognizer.runtimeType, equals(TapGestureRecognizer));
+
+      expect(lastSpan.children, null);
+      expect(lastSpan.text, ' text after');
+      expect(lastSpan.recognizer.runtimeType, equals(TapGestureRecognizer));
+
+      expect(tapTexts.length, 3);
+      expect(tapTexts, everyElement('Text before alt text after'));
+      expect(tapResults.length, 3);
+      expect(tapResults, everyElement('href'));
+    });
+
+    testWidgets('should work alongside different links', (WidgetTester tester) async {
+      final List<String> tapTexts = <String>[];
+      final List<String?> tapResults = <String?>[];
+      const String data = '[Link before](firstHref)[![alt](https://img#50x50)](imageHref)[link after](secondHref)';
+
+      await tester.pumpWidget(
+        boilerplate(
+          Markdown(
+            data: data,
+            onTapLink: (String text, String? value, String title) {
+              tapTexts.add(text);
+              tapResults.add(value);
+            },
           ),
-        );
+        ),
+      );
 
-        final GestureDetector detector = tester.widget(find.byType(GestureDetector));
-        detector.onTap!();
+      final Iterable<Text> texts = tester.widgetList(find.byType(Text));
+      final Text firstTextWidget = texts.first;
+      final TextSpan firstSpan = firstTextWidget.textSpan! as TextSpan;
+      (firstSpan.recognizer as TapGestureRecognizer?)!.onTap!();
 
-        expect(tapTexts.length, 1);
-        expect(tapTexts, everyElement('alt'));
-        expect(tapResults.length, 1);
-        expect(tapResults, everyElement('href'));
-      },
-    );
+      final GestureDetector detector = tester.widget(find.byType(GestureDetector));
+      detector.onTap!();
 
-    testWidgets(
-      'should work when nested in a link with text',
-      (WidgetTester tester) async {
-        final List<String> tapTexts = <String>[];
-        final List<String?> tapResults = <String?>[];
-        const String data = '[Text before ![alt](https://img#50x50) text after](href)';
-        await tester.pumpWidget(
-          boilerplate(
-            Markdown(
-              data: data,
-              onTapLink: (String text, String? value, String title) {
-                tapTexts.add(text);
-                tapResults.add(value);
-              },
-            ),
-          ),
-        );
+      final Text lastTextWidget = texts.last;
+      final TextSpan lastSpan = lastTextWidget.textSpan! as TextSpan;
+      (lastSpan.recognizer as TapGestureRecognizer?)!.onTap!();
 
-        final GestureDetector detector = tester.widget(find.byType(GestureDetector));
-        detector.onTap!();
+      expect(firstSpan.children, null);
+      expect(firstSpan.text, 'Link before');
+      expect(firstSpan.recognizer.runtimeType, equals(TapGestureRecognizer));
 
-        final Iterable<Text> texts = tester.widgetList(find.byType(Text));
-        final Text firstTextWidget = texts.first;
-        final TextSpan firstSpan = firstTextWidget.textSpan! as TextSpan;
-        (firstSpan.recognizer as TapGestureRecognizer?)!.onTap!();
+      expect(lastSpan.children, null);
+      expect(lastSpan.text, 'link after');
+      expect(lastSpan.recognizer.runtimeType, equals(TapGestureRecognizer));
 
-        final Text lastTextWidget = texts.last;
-        final TextSpan lastSpan = lastTextWidget.textSpan! as TextSpan;
-        (lastSpan.recognizer as TapGestureRecognizer?)!.onTap!();
+      expect(tapTexts.length, 3);
+      expect(tapTexts, <String>['Link before', 'alt', 'link after']);
+      expect(tapResults.length, 3);
+      expect(tapResults, <String>['firstHref', 'imageHref', 'secondHref']);
+    });
 
-        expect(firstSpan.children, null);
-        expect(firstSpan.text, 'Text before ');
-        expect(firstSpan.recognizer.runtimeType, equals(TapGestureRecognizer));
+    testWidgets('should gracefully handle image URLs with empty scheme', (WidgetTester tester) async {
+      const String data = '![alt](://img#x50)';
+      await tester.pumpWidget(boilerplate(const Markdown(data: data)));
 
-        expect(lastSpan.children, null);
-        expect(lastSpan.text, ' text after');
-        expect(lastSpan.recognizer.runtimeType, equals(TapGestureRecognizer));
+      expect(find.byType(Image), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
 
-        expect(tapTexts.length, 3);
-        expect(tapTexts, everyElement('Text before alt text after'));
-        expect(tapResults.length, 3);
-        expect(tapResults, everyElement('href'));
-      },
-    );
+    testWidgets('should gracefully handle image URLs with invalid scheme', (WidgetTester tester) async {
+      const String data = '![alt](ttps://img#x50)';
+      await tester.pumpWidget(boilerplate(const Markdown(data: data)));
 
-    testWidgets(
-      'should work alongside different links',
-      (WidgetTester tester) async {
-        final List<String> tapTexts = <String>[];
-        final List<String?> tapResults = <String?>[];
-        const String data = '[Link before](firstHref)[![alt](https://img#50x50)](imageHref)[link after](secondHref)';
-
-        await tester.pumpWidget(
-          boilerplate(
-            Markdown(
-              data: data,
-              onTapLink: (String text, String? value, String title) {
-                tapTexts.add(text);
-                tapResults.add(value);
-              },
-            ),
-          ),
-        );
-
-        final Iterable<Text> texts = tester.widgetList(find.byType(Text));
-        final Text firstTextWidget = texts.first;
-        final TextSpan firstSpan = firstTextWidget.textSpan! as TextSpan;
-        (firstSpan.recognizer as TapGestureRecognizer?)!.onTap!();
-
-        final GestureDetector detector = tester.widget(find.byType(GestureDetector));
-        detector.onTap!();
-
-        final Text lastTextWidget = texts.last;
-        final TextSpan lastSpan = lastTextWidget.textSpan! as TextSpan;
-        (lastSpan.recognizer as TapGestureRecognizer?)!.onTap!();
-
-        expect(firstSpan.children, null);
-        expect(firstSpan.text, 'Link before');
-        expect(firstSpan.recognizer.runtimeType, equals(TapGestureRecognizer));
-
-        expect(lastSpan.children, null);
-        expect(lastSpan.text, 'link after');
-        expect(lastSpan.recognizer.runtimeType, equals(TapGestureRecognizer));
-
-        expect(tapTexts.length, 3);
-        expect(tapTexts, <String>['Link before', 'alt', 'link after']);
-        expect(tapResults.length, 3);
-        expect(tapResults, <String>['firstHref', 'imageHref', 'secondHref']);
-      },
-    );
-
-    testWidgets(
-      'should gracefully handle image URLs with empty scheme',
-      (WidgetTester tester) async {
-        const String data = '![alt](://img#x50)';
-        await tester.pumpWidget(
-          boilerplate(
-            const Markdown(data: data),
-          ),
-        );
-
+      // On the web, any URI with an unrecognized scheme is treated as a network image.
+      // Thus the error builder of the Image widget is called.
+      // On non-web, any URI with an unrecognized scheme is treated as a file image.
+      // However, constructing a file from an invalid URI will throw an exception.
+      // Thus the Image widget is never created, nor is its error builder called.
+      if (kIsWeb || isLinux) {
+        expect(find.byType(Image), findsOneWidget);
+      } else {
         expect(find.byType(Image), findsNothing);
-        expect(tester.takeException(), isNull);
-      },
-    );
+      }
 
-    testWidgets(
-      'should gracefully handle image URLs with invalid scheme',
-      (WidgetTester tester) async {
-        const String data = '![alt](ttps://img#x50)';
-        await tester.pumpWidget(
-          boilerplate(
-            const Markdown(data: data),
-          ),
-        );
+      expect(tester.takeException(), isNull);
+    });
 
-        // On the web, any URI with an unrecognized scheme is treated as a network image.
-        // Thus the error builder of the Image widget is called.
-        // On non-web, any URI with an unrecognized scheme is treated as a file image.
-        // However, constructing a file from an invalid URI will throw an exception.
-        // Thus the Image widget is never created, nor is its error builder called.
-        if (kIsWeb || isLinux) {
-          expect(find.byType(Image), findsOneWidget);
-        } else {
-          expect(find.byType(Image), findsNothing);
-        }
+    testWidgets('should gracefully handle width parsing failures', (WidgetTester tester) async {
+      const String data = '![alt](https://img#x50)';
+      await tester.pumpWidget(boilerplate(const Markdown(data: data)));
 
-        expect(tester.takeException(), isNull);
-      },
-    );
+      final Image image = tester.widget(find.byType(Image));
+      final NetworkImage networkImage = image.image as NetworkImage;
+      expect(networkImage.url, 'https://img');
+      expect(image.width, null);
+      expect(image.height, 50);
+    });
 
-    testWidgets(
-      'should gracefully handle width parsing failures',
-      (WidgetTester tester) async {
-        const String data = '![alt](https://img#x50)';
-        await tester.pumpWidget(
-          boilerplate(
-            const Markdown(data: data),
-          ),
-        );
+    testWidgets('should gracefully handle height parsing failures', (WidgetTester tester) async {
+      const String data = ' ![alt](https://img#50x)';
+      await tester.pumpWidget(boilerplate(const Markdown(data: data)));
 
-        final Image image = tester.widget(find.byType(Image));
-        final NetworkImage networkImage = image.image as NetworkImage;
-        expect(networkImage.url, 'https://img');
-        expect(image.width, null);
-        expect(image.height, 50);
-      },
-    );
-
-    testWidgets(
-      'should gracefully handle height parsing failures',
-      (WidgetTester tester) async {
-        const String data = ' ![alt](https://img#50x)';
-        await tester.pumpWidget(
-          boilerplate(
-            const Markdown(data: data),
-          ),
-        );
-
-        final Image image = tester.widget(find.byType(Image));
-        final NetworkImage networkImage = image.image as NetworkImage;
-        expect(networkImage.url, 'https://img');
-        expect(image.width, 50);
-        expect(image.height, null);
-      },
-    );
+      final Image image = tester.widget(find.byType(Image));
+      final NetworkImage networkImage = image.image as NetworkImage;
+      expect(networkImage.url, 'https://img');
+      expect(image.width, 50);
+      expect(image.height, null);
+    });
 
     testWidgets(
       'custom image builder',
@@ -413,10 +321,7 @@ void defineTests() {
                   child: Container(
                     color: Colors.white,
                     width: 500,
-                    child: Markdown(
-                      data: data,
-                      imageBuilder: builder,
-                    ),
+                    child: Markdown(data: data, imageBuilder: builder),
                   ),
                 ),
               ),
@@ -439,7 +344,9 @@ void defineTests() {
         await tester.pumpAndSettle();
 
         await expectLater(
-            find.byType(Container), matchesGoldenFile('assets/images/golden/image_test/custom_builder_asset_logo.png'));
+          find.byType(Container),
+          matchesGoldenFile('assets/images/golden/image_test/custom_builder_asset_logo.png'),
+        );
         imageCache.clear();
       },
       skip: kIsWeb || isLinux, // Goldens are platform-specific.

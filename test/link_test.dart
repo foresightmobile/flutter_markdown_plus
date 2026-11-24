@@ -14,157 +14,136 @@ void main() => defineTests();
 
 void defineTests() {
   group('Link', () {
-    testWidgets(
-      'should work with nested elements',
-      (WidgetTester tester) async {
-        final List<MarkdownLink> linkTapResults = <MarkdownLink>[];
-        const String data = '[Link `with nested code` Text](href)';
-        await tester.pumpWidget(
-          boilerplate(
-            Markdown(
-              data: data,
-              onTapLink: (String text, String? href, String title) =>
-                  linkTapResults.add(MarkdownLink(text, href, title)),
-            ),
+    testWidgets('should work with nested elements', (WidgetTester tester) async {
+      final List<MarkdownLink> linkTapResults = <MarkdownLink>[];
+      const String data = '[Link `with nested code` Text](href)';
+      await tester.pumpWidget(
+        boilerplate(
+          Markdown(
+            data: data,
+            onTapLink: (String text, String? href, String title) => linkTapResults.add(MarkdownLink(text, href, title)),
           ),
-        );
+        ),
+      );
 
-        final Text textWidget = tester.widget(find.byType(Text));
-        final TextSpan span = textWidget.textSpan! as TextSpan;
+      final Text textWidget = tester.widget(find.byType(Text));
+      final TextSpan span = textWidget.textSpan! as TextSpan;
 
-        final List<Type> gestureRecognizerTypes = <Type>[];
-        span.visitChildren((InlineSpan inlineSpan) {
-          if (inlineSpan is TextSpan) {
-            final TapGestureRecognizer? recognizer = inlineSpan.recognizer as TapGestureRecognizer?;
-            gestureRecognizerTypes.add(recognizer?.runtimeType ?? Null);
-            if (recognizer != null) {
-              recognizer.onTap!();
-            }
+      final List<Type> gestureRecognizerTypes = <Type>[];
+      span.visitChildren((InlineSpan inlineSpan) {
+        if (inlineSpan is TextSpan) {
+          final TapGestureRecognizer? recognizer = inlineSpan.recognizer as TapGestureRecognizer?;
+          gestureRecognizerTypes.add(recognizer?.runtimeType ?? Null);
+          if (recognizer != null) {
+            recognizer.onTap!();
           }
-          return true;
-        });
-
-        expect(span.children!.length, 3);
-        expect(gestureRecognizerTypes.length, 3);
-        expect(gestureRecognizerTypes, everyElement(TapGestureRecognizer));
-        expect(linkTapResults.length, 3);
-
-        // Each of the child text span runs should return the same link info.
-        for (final MarkdownLink tapResult in linkTapResults) {
-          expectLinkTap(tapResult, const MarkdownLink('Link with nested code Text', 'href'));
         }
-      },
-    );
+        return true;
+      });
 
-    testWidgets(
-      'should work next to other links',
-      (WidgetTester tester) async {
-        final List<MarkdownLink> linkTapResults = <MarkdownLink>[];
-        const String data = '[First Link](firstHref) and [Second Link](secondHref)';
-        await tester.pumpWidget(
-          boilerplate(
-            Markdown(
-              data: data,
-              onTapLink: (String text, String? href, String title) =>
-                  linkTapResults.add(MarkdownLink(text, href, title)),
-            ),
+      expect(span.children!.length, 3);
+      expect(gestureRecognizerTypes.length, 3);
+      expect(gestureRecognizerTypes, everyElement(TapGestureRecognizer));
+      expect(linkTapResults.length, 3);
+
+      // Each of the child text span runs should return the same link info.
+      for (final MarkdownLink tapResult in linkTapResults) {
+        expectLinkTap(tapResult, const MarkdownLink('Link with nested code Text', 'href'));
+      }
+    });
+
+    testWidgets('should work next to other links', (WidgetTester tester) async {
+      final List<MarkdownLink> linkTapResults = <MarkdownLink>[];
+      const String data = '[First Link](firstHref) and [Second Link](secondHref)';
+      await tester.pumpWidget(
+        boilerplate(
+          Markdown(
+            data: data,
+            onTapLink: (String text, String? href, String title) => linkTapResults.add(MarkdownLink(text, href, title)),
           ),
-        );
+        ),
+      );
 
-        final Text textWidget = tester.widget(find.byType(Text));
-        final TextSpan span = textWidget.textSpan! as TextSpan;
+      final Text textWidget = tester.widget(find.byType(Text));
+      final TextSpan span = textWidget.textSpan! as TextSpan;
 
-        final List<Type> gestureRecognizerTypes = <Type>[];
-        span.visitChildren((InlineSpan inlineSpan) {
-          if (inlineSpan is TextSpan) {
-            final TapGestureRecognizer? recognizer = inlineSpan.recognizer as TapGestureRecognizer?;
-            gestureRecognizerTypes.add(recognizer?.runtimeType ?? Null);
-            if (recognizer != null) {
-              recognizer.onTap!();
-            }
+      final List<Type> gestureRecognizerTypes = <Type>[];
+      span.visitChildren((InlineSpan inlineSpan) {
+        if (inlineSpan is TextSpan) {
+          final TapGestureRecognizer? recognizer = inlineSpan.recognizer as TapGestureRecognizer?;
+          gestureRecognizerTypes.add(recognizer?.runtimeType ?? Null);
+          if (recognizer != null) {
+            recognizer.onTap!();
           }
-          return true;
-        });
+        }
+        return true;
+      });
 
-        expect(span.children!.length, 3);
-        expect(
-          gestureRecognizerTypes,
-          orderedEquals(<Type>[TapGestureRecognizer, Null, TapGestureRecognizer]),
-        );
-        expectLinkTap(linkTapResults[0], const MarkdownLink('First Link', 'firstHref'));
-        expectLinkTap(linkTapResults[1], const MarkdownLink('Second Link', 'secondHref'));
-      },
-    );
+      expect(span.children!.length, 3);
+      expect(gestureRecognizerTypes, orderedEquals(<Type>[TapGestureRecognizer, Null, TapGestureRecognizer]));
+      expectLinkTap(linkTapResults[0], const MarkdownLink('First Link', 'firstHref'));
+      expectLinkTap(linkTapResults[1], const MarkdownLink('Second Link', 'secondHref'));
+    });
 
-    testWidgets(
-      'multiple inline links with same name but different urls - unique keys are assigned automatically',
-      (WidgetTester tester) async {
-        //Arange
-        final Widget toBePumped = boilerplate(
-          Column(
-            children: <Widget>[
-              MarkdownBody(
-                data: '[link](link1.com)',
+    testWidgets('multiple inline links with same name but different urls - unique keys are assigned automatically', (
+      WidgetTester tester,
+    ) async {
+      //Arange
+      final Widget toBePumped = boilerplate(
+        Column(
+          children: <Widget>[
+            MarkdownBody(data: '[link](link1.com)', onTapLink: (String text, String? href, String title) {}),
+            MarkdownBody(data: '[link](link2.com)', onTapLink: (String text, String? href, String title) {}),
+          ],
+        ),
+      );
+
+      //Act
+      await tester.pumpWidget(toBePumped);
+
+      //Assert
+      final Finder widgetFinder = find.byType(Text);
+      final List<Element> elements = widgetFinder.evaluate().toList();
+      final List<Widget> widgets = elements.map((Element e) => e.widget).toList();
+
+      final List<String> keys = widgets
+          .where((Widget w) => w.key != null && w.key.toString().isNotEmpty)
+          .map((Widget w) => w.key.toString())
+          .toList();
+      expect(keys.length, 2); //Not empty
+      expect(keys.toSet().length, 2); // Unique
+    });
+    testWidgets('multiple inline links with same content should not throw an exception', (WidgetTester tester) async {
+      //Arrange
+      final Widget toBePumped = boilerplate(
+        Column(
+          children: <Widget>[
+            Expanded(
+              child: MarkdownBody(
+                data:
+                    '''links: [![first](image.png)](https://link.com) [![second](image.png)](https://link.com) [![third](image.png)](https://link.com)''',
                 onTapLink: (String text, String? href, String title) {},
               ),
-              MarkdownBody(
-                data: '[link](link2.com)',
-                onTapLink: (String text, String? href, String title) {},
-              ),
-            ],
-          ),
-        );
+            ),
+          ],
+        ),
+      );
 
-        //Act
-        await tester.pumpWidget(toBePumped);
+      //Act
+      await tester.pumpWidget(toBePumped);
 
-        //Assert
-        final Finder widgetFinder = find.byType(Text);
-        final List<Element> elements = widgetFinder.evaluate().toList();
-        final List<Widget> widgets = elements.map((Element e) => e.widget).toList();
+      //Assert
+      final Finder widgetFinder = find.byType(Text, skipOffstage: false);
+      final List<Element> elements = widgetFinder.evaluate().toList();
+      final List<Widget> widgets = elements.map((Element e) => e.widget).toList();
 
-        final List<String> keys = widgets
-            .where((Widget w) => w.key != null && w.key.toString().isNotEmpty)
-            .map((Widget w) => w.key.toString())
-            .toList();
-        expect(keys.length, 2); //Not empty
-        expect(keys.toSet().length, 2); // Unique
-      },
-    );
-    testWidgets(
-      'multiple inline links with same content should not throw an exception',
-      (WidgetTester tester) async {
-        //Arrange
-        final Widget toBePumped = boilerplate(
-          Column(
-            children: <Widget>[
-              Expanded(
-                child: MarkdownBody(
-                  data:
-                      '''links: [![first](image.png)](https://link.com) [![second](image.png)](https://link.com) [![third](image.png)](https://link.com)''',
-                  onTapLink: (String text, String? href, String title) {},
-                ),
-              ),
-            ],
-          ),
-        );
-
-        //Act
-        await tester.pumpWidget(toBePumped);
-
-        //Assert
-        final Finder widgetFinder = find.byType(Text, skipOffstage: false);
-        final List<Element> elements = widgetFinder.evaluate().toList();
-        final List<Widget> widgets = elements.map((Element e) => e.widget).toList();
-
-        final List<String> keys = widgets
-            .where((Widget w) => w.key != null && w.key.toString().isNotEmpty)
-            .map((Widget w) => w.key.toString())
-            .toList();
-        expect(keys.length, 3); //all three links.
-        expect(keys.toSet().length, 3); // all three unique.
-      },
-    );
+      final List<String> keys = widgets
+          .where((Widget w) => w.key != null && w.key.toString().isNotEmpty)
+          .map((Widget w) => w.key.toString())
+          .toList();
+      expect(keys.length, 3); //all three links.
+      expect(keys.toSet().length, 3); // all three unique.
+    });
 
     testWidgets(
       // Example 493 from GFM.
@@ -186,24 +165,21 @@ void defineTests() {
       },
     );
 
-    testWidgets(
-      'empty inline link',
-      (WidgetTester tester) async {
-        const String data = '[](/uri "title")';
-        MarkdownLink? linkTapResults;
-        await tester.pumpWidget(
-          boilerplate(
-            MarkdownBody(
-              data: data,
-              onTapLink: (String text, String? href, String title) => linkTapResults = MarkdownLink(text, href, title),
-            ),
+    testWidgets('empty inline link', (WidgetTester tester) async {
+      const String data = '[](/uri "title")';
+      MarkdownLink? linkTapResults;
+      await tester.pumpWidget(
+        boilerplate(
+          MarkdownBody(
+            data: data,
+            onTapLink: (String text, String? href, String title) => linkTapResults = MarkdownLink(text, href, title),
           ),
-        );
+        ),
+      );
 
-        expect(find.byType(RichText), findsNothing);
-        expect(linkTapResults, isNull);
-      },
-    );
+      expect(find.byType(RichText), findsNothing);
+      expect(linkTapResults, isNull);
+    });
 
     testWidgets(
       // Example 494 from GFM.
@@ -773,10 +749,7 @@ void defineTests() {
         );
 
         expectValidLink('link');
-        expectLinkTap(
-          linkTapResults,
-          const MarkdownLink('link', '/url', 'title &quot;and&quot; title'),
-        );
+        expectLinkTap(linkTapResults, const MarkdownLink('link', '/url', 'title &quot;and&quot; title'));
       },
     );
 
@@ -1133,11 +1106,7 @@ void defineTests() {
       "brackets that aren't part of links do not take precedence",
       (WidgetTester tester) async {
         const String data = '*foo [bar* baz]';
-        await tester.pumpWidget(
-          boilerplate(
-            const MarkdownBody(data: data),
-          ),
-        );
+        await tester.pumpWidget(boilerplate(const MarkdownBody(data: data)));
 
         final Text textWidget = tester.widget(find.byType(Text));
         final TextSpan span = textWidget.textSpan! as TextSpan;
@@ -1230,8 +1199,10 @@ void defineTests() {
         expectTextSpanStyle(span.children![0] as TextSpan, null, FontWeight.normal);
 
         expectLinkTextSpan(span.children![1] as TextSpan, 'http://example.com/?search=](uri)');
-        expectLinkTap(linkTapResults,
-            const MarkdownLink('http://example.com/?search=](uri)', 'http://example.com/?search=%5D(uri)'));
+        expectLinkTap(
+          linkTapResults,
+          const MarkdownLink('http://example.com/?search=](uri)', 'http://example.com/?search=%5D(uri)'),
+        );
       },
     );
   });
@@ -1583,8 +1554,10 @@ void defineTests() {
         expectTextSpanStyle(span.children![0] as TextSpan, null, FontWeight.normal);
 
         expectLinkTextSpan(span.children![1] as TextSpan, 'http://example.com/?search=][ref]');
-        expectLinkTap(linkTapResults,
-            const MarkdownLink('http://example.com/?search=][ref]', 'http://example.com/?search=%5D%5Bref%5D'));
+        expectLinkTap(
+          linkTapResults,
+          const MarkdownLink('http://example.com/?search=][ref]', 'http://example.com/?search=%5D%5Bref%5D'),
+        );
       },
     );
 
