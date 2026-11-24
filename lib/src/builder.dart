@@ -114,6 +114,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     this.fitContent = false,
     this.onSelectionChanged,
     this.onTapText,
+    this.forceStrutHeight = true,
     this.contextMenuBuilder,
     this.softLineBreak = false,
   });
@@ -162,6 +163,16 @@ class MarkdownBuilder implements md.NodeVisitor {
 
   /// Default tap handler used when [selectable] is set to true
   final VoidCallback? onTapText;
+
+  /// Whether the strut height is forced onto every line of a text block.
+  ///
+  /// Defaults to true, which keeps a consistent line height within each block
+  /// so mixed font weights no longer shift it. Set to false to let lines grow
+  /// to their natural height; the [StrutStyle] is still applied as a minimum.
+  ///
+  /// The strut is never forced for a block containing a [WidgetSpan], which
+  /// may be taller than the strut and must be able to expand its line.
+  final bool forceStrutHeight;
 
   /// Builds the text selection toolbar when [selectable] is set to true.
   ///
@@ -971,12 +982,20 @@ class MarkdownBuilder implements md.NodeVisitor {
     return mergedSpans;
   }
 
+  bool _hasWidgetSpan(InlineSpan span) {
+    if (span is WidgetSpan) {
+      return true;
+    }
+    return span is TextSpan && (span.children?.any(_hasWidgetSpan) ?? false);
+  }
+
   Widget _buildRichText(TextSpan text, {TextAlign? textAlign, String? key}) {
     //Adding a unique key prevents the problem of using the same link handler for text spans with the same text
     final Key k = key == null ? UniqueKey() : Key(key);
     // Force a consistent line height within each text block, derived from the
     // span's own base style so headers/blockquotes keep their correct height
     // while mixed font weights within a block no longer shift line height.
+    // Inline widgets may be taller than that strut and must expand their lines.
     final TextStyle? baseStyle = text.style ?? styleSheet.p;
     final StrutStyle? strutStyle = baseStyle != null
         ? StrutStyle(
@@ -984,7 +1003,7 @@ class MarkdownBuilder implements md.NodeVisitor {
             fontSize: baseStyle.fontSize ?? styleSheet.p?.fontSize,
             height: baseStyle.height ?? styleSheet.p?.height,
             leading: 0,
-            forceStrutHeight: true,
+            forceStrutHeight: forceStrutHeight && !_hasWidgetSpan(text),
           )
         : null;
     if (selectable) {
