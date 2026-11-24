@@ -124,6 +124,64 @@ void defineTests() {
     expect(_builder(forceStrutHeight: false).forceStrutHeight, isFalse);
   });
 
+  group('unforcing the strut relaxes a text block', () {
+    testWidgets('a mixed-size paragraph grows and shrinks with the flag', (WidgetTester tester) async {
+      await tester.binding.setSurfaceSize(const Size(400, 2400));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      bool force = true;
+      late StateSetter update;
+
+      // Uniform prose cannot show the effect: the strut sets the line height
+      // and a single-size line's natural height already equals it, so forcing
+      // clamps nothing. Only a line whose runs have differing natural heights
+      // is affected — here a larger `strong` run lifting its own line. This
+      // assertion is the layout effect the flag exists for, carried over from
+      // st0ck's original b058cb4 test (which measured it on a tall-widget
+      // block, before WidgetSpan blocks opted out unconditionally).
+      const String mixed = 'Lead in **a much taller run of emphasis** and enough trailing prose to wrap onto another line.';
+      final MarkdownStyleSheet mixedStyle = MarkdownStyleSheet(
+        p: const TextStyle(fontSize: 16, height: 1.2),
+        strong: const TextStyle(fontSize: 32, height: 1.2, fontWeight: FontWeight.bold),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                update = setState;
+                return MarkdownBody(
+                  key: const ValueKey<String>('mixed'),
+                  data: mixed,
+                  styleSheet: mixedStyle,
+                  forceStrutHeight: force,
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      final Finder paragraph = find.byWidgetPredicate(
+        (Widget w) => w is Text && (w.textSpan?.toPlainText() ?? '').startsWith('Lead in'),
+      );
+      expect(paragraph, findsOneWidget);
+      expect(tester.widget<Text>(paragraph).strutStyle!.forceStrutHeight, isTrue);
+      final double forcedHeight = tester.getSize(paragraph).height;
+
+      update(() => force = false);
+      await tester.pumpAndSettle();
+      expect(tester.widget<Text>(paragraph).strutStyle!.forceStrutHeight, isFalse);
+      // The tall run is no longer clamped to the forced line height.
+      expect(tester.getSize(paragraph).height, greaterThan(forcedHeight));
+
+      update(() => force = true);
+      await tester.pumpAndSettle();
+      expect(tester.getSize(paragraph).height, forcedHeight);
+      expect(tester.takeException(), isNull);
+    });
+  });
+
   group('strut is forced only when the flag is on and the block has no WidgetSpan', () {
     for (final bool force in <bool>[true, false]) {
       for (final bool tall in <bool>[false, true]) {
