@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'all_registry_test.dart' as all_registry_test;
 import 'blockquote_test.dart' as blockquote_test;
 import 'context_menu_builder_test.dart' as context_menu_builder_test;
 import 'custom_syntax_test.dart' as custome_syntax_test;
@@ -16,6 +17,8 @@ import 'inline_widget_test.dart' as inline_widget_test;
 import 'line_break_test.dart' as line_break_test;
 import 'link_test.dart' as link_test;
 import 'list_test.dart' as list_test;
+import 'markdown_body_shrink_wrap_test.dart' as markdown_body_shrink_wrap_test;
+import 'padding_test.dart' as padding_test;
 import 'render_golden_test.dart' as render_golden_test;
 import 'scrollable_test.dart' as scrollable_test;
 import 'selection_area_compatibility_test.dart' as selection_area_test;
@@ -28,6 +31,7 @@ import 'uri_test.dart' as uri_test;
 import 'visit_element_after_test.dart' as visit_element_after_test;
 
 void main() {
+  all_registry_test.defineTests();
   blockquote_test.defineTests();
   context_menu_builder_test.defineTests();
   custome_syntax_test.defineTests();
@@ -42,6 +46,8 @@ void main() {
   line_break_test.defineTests();
   link_test.defineTests();
   list_test.defineTests();
+  markdown_body_shrink_wrap_test.defineTests();
+  padding_test.defineTests();
   render_golden_test.defineTests();
   scrollable_test.defineTests();
   selection_area_test.defineTests();
