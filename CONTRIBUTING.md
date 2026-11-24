@@ -36,6 +36,27 @@ New test files should define a `defineTests()` entry point and be registered in
 - Get dependencies: `flutter pub get`
 - Clean build: `flutter clean`
 
+### Lockfiles and the Compatibility Floor
+
+`pubspec.lock` and `example/pubspec.lock` are committed, and they track whichever
+toolchain last ran `flutter pub get` — in practice the Flutter `stable` CI uses.
+They cannot also track the Compatibility Floor.
+
+`flutter_test` pins transitive package versions per SDK, so the two toolchains
+want genuinely different resolutions. Flutter 3.50.1 resolves `meta 1.19.0` plus
+a `listen` dependency that nothing in `pubspec.yaml` declares; Flutter 3.35.0
+resolves `meta 1.16.0` and no `listen`. A `pub get` on either toolchain rewrites
+both lockfiles to its own resolution and undoes the other.
+
+What that means in practice:
+
+- "A fresh checkout has no diff after `flutter pub get`" holds only on the
+  toolchain that produced the committed lockfiles. On the other one, expect a
+  diff in both lockfiles. That is expected and not a defect.
+- Never hand-edit a lockfile. Regenerate it with `flutter pub get`.
+- The Compatibility Floor is enforced by running `flutter analyze` and
+  `flutter test` on Flutter 3.35.0, not by the committed lockfiles. Do both.
+
 ### Example app
 
 - Run the example app: `cd example && flutter run`
