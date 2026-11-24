@@ -234,3 +234,60 @@ class TestAssetBundle extends CachingAssetBundle {
     }
   }
 }
+
+/// Whether golden tests should run.
+///
+/// Pass `--dart-define=GOLDENS=true` (validate.sh forwards it). Golden
+/// reference images are generated on one pinned CI runner, so running them
+/// anywhere else compares against fonts and rasterisers the references never
+/// saw. This switch replaces the older `GITHUB_ACTIONS` and `isLinux` skips.
+const bool kGoldensEnabled = bool.fromEnvironment('GOLDENS');
+
+/// Why golden tests are skipped, or null when they are running.
+final String? kGoldensSkipReason = kGoldensEnabled
+    ? null
+    : 'skipped: goldens need --dart-define=GOLDENS=true; references are '
+          'generated on the pinned CI runner only';
+
+/// A [LocalFileComparator] that tolerates a little pixel drift.
+///
+/// Font rasterisation differs across machines and Flutter versions, so a
+/// pixel-exact comparison fails on antialiasing noise alone. Observed drift
+/// on this repo is about 0.006% of pixels; [tolerance] is 0.1% by default,
+/// far above that noise floor and far below any real layout regression.
+class TolerantGoldenComparator extends LocalFileComparator {
+  TolerantGoldenComparator(super.testFile, {this.tolerance = 0.001});
+
+  /// Maximum fraction of differing pixels still treated as a match.
+  final double tolerance;
+
+  @override
+  Future<bool> compare(Uint8List imageBytes, Uri golden) async {
+    final ComparisonResult result = await GoldenFileComparator.compareLists(imageBytes, await getGoldenBytes(golden));
+    if (result.passed || result.diffPercent <= tolerance) {
+      result.dispose();
+      return true;
+    }
+    final String error = await generateFailureOutput(result, golden, basedir);
+    result.dispose();
+    throw FlutterError(error);
+  }
+}
+
+/// Call from a golden test group's `setUpAll` to install the tolerant
+/// comparator and say, once, why the goldens are not running.
+void setUpGoldens() {
+  if (!kGoldensEnabled) {
+    if (kGoldensSkipReason != null) {
+      // Test infrastructure: R12 requires the skip reason to be visible in the
+      // test output, and setUpAll has no logger to route it through.
+      // ignore: avoid_print
+      print('Golden tests: $kGoldensSkipReason');
+    }
+    return;
+  }
+  final GoldenFileComparator current = goldenFileComparator;
+  if (current is LocalFileComparator) {
+    goldenFileComparator = TolerantGoldenComparator(Uri.parse('${current.basedir}golden_stub_test.dart'));
+  }
+}

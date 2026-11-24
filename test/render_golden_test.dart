@@ -15,12 +15,11 @@
 //
 //   flutter test test/render_golden_test.dart --update-goldens
 //
-// The comparison is pixel-exact, and font rasterisation varies across machines
-// and Flutter versions. Because CI tracks the unpinned `stable` channel, these
-// goldens are skipped there (via GITHUB_ACTIONS) to avoid flaky failures when
-// CI's Flutter drifts from the version used to generate them; they still run in
-// the local `flutter test` suite. Pin the CI Flutter version to also verify
-// them in CI.
+// Goldens run only under --dart-define=GOLDENS=true (validate.sh forwards it),
+// because the references are generated on one pinned CI runner and font
+// rasterisation varies across machines and Flutter versions. Everywhere else
+// they are skipped and say so. Comparison tolerates a little pixel drift;
+// see TolerantGoldenComparator in utils.dart.
 import 'dart:io' as io;
 
 import 'package:flutter/foundation.dart';
@@ -29,8 +28,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-final bool _isLinux = !kIsWeb && io.Platform.isLinux;
-final bool _inCi = !kIsWeb && io.Platform.environment['GITHUB_ACTIONS'] == 'true';
+import 'utils.dart';
 
 /// Directory holding the Roboto and MaterialIcons fonts shipped with the
 /// Flutter SDK, or `null` if it cannot be located.
@@ -159,10 +157,11 @@ void main() => defineTests();
 
 void defineTests() {
   final String? fontsDir = _materialFontsDir();
-  final bool skip = kIsWeb || _isLinux || _inCi || fontsDir == null;
+  final bool skip = !kGoldensEnabled || fontsDir == null;
 
   group('Golden render', () {
     setUpAll(() async {
+      setUpGoldens();
       if (fontsDir == null) {
         return;
       }

@@ -17,6 +17,12 @@ void main() => defineTests();
 
 void defineTests() {
   group('Image', () {
+    setUpAll(setUpGoldens);
+    // Image stream handles outlive a test unless the cache is cleared. The
+    // golden tests used to do this incidentally at their end; now that they
+    // can be skipped, clear it after every test instead. Deferred in a lambda
+    // because the binding does not exist at group-declaration time.
+    tearDown(() => imageCache.clear());
     setUp(() {
       // Only needs to be done once since the HttpClient generated
       // by this override is cached as a static singleton.
@@ -124,7 +130,7 @@ void defineTests() {
           matchesGoldenFile('assets/images/golden/image_test/resource_asset_logo.png'),
         );
       },
-      skip: kIsWeb || isLinux, // Goldens are platform-specific.
+      skip: !kGoldensEnabled, // Goldens need --dart-define=GOLDENS=true.
     );
 
     testWidgets('should work with local image files', (WidgetTester tester) async {
@@ -304,6 +310,13 @@ void defineTests() {
       expect(networkImage.url, 'https://img');
       expect(image.width, 50);
       expect(image.height, null);
+
+      // The NetworkImage never resolves, so the widget holds an
+      // ImageStreamCompleterHandle until it is disposed. Unmount and drop the
+      // cached completer to release it.
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump();
+      imageCache.clear();
     });
 
     testWidgets(
@@ -349,7 +362,7 @@ void defineTests() {
         );
         imageCache.clear();
       },
-      skip: kIsWeb || isLinux, // Goldens are platform-specific.
+      skip: !kGoldensEnabled, // Goldens need --dart-define=GOLDENS=true.
     );
   });
 }
