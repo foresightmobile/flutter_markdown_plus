@@ -254,14 +254,16 @@ class MarkdownBuilder implements md.NodeVisitor {
         } else {
           decoration = null;
         }
-        _tables.single.rows.add(TableRow(
-          decoration: decoration,
-          // TODO(stuartmorgan): This should be fixed, not suppressed; enabling
-          // this lint warning exposed that the builder is modifying the
-          // children of TableRows, even though they are @immutable.
-          // ignore: prefer_const_literals_to_create_immutables
-          children: <Widget>[],
-        ));
+        _tables.single.rows.add(
+          TableRow(
+            decoration: decoration,
+            // TODO(stuartmorgan): This should be fixed, not suppressed; enabling
+            // this lint warning exposed that the builder is modifying the
+            // children of TableRows, even though they are @immutable.
+            // ignore: prefer_const_literals_to_create_immutables
+            children: <Widget>[],
+          ),
+        );
       }
       final _BlockElement bElement = _BlockElement(tag);
       if (start != null) {
@@ -278,9 +280,7 @@ class MarkdownBuilder implements md.NodeVisitor {
         final String? destination = element.attributes['href'];
         final String title = element.attributes['title'] ?? '';
 
-        _linkHandlers.add(
-          delegate.createLink(text, destination, title),
-        );
+        _linkHandlers.add(delegate.createLink(text, destination, title));
       }
 
       _addParentInlineIfNeeded(_blocks.last.tag);
@@ -349,18 +349,19 @@ class MarkdownBuilder implements md.NodeVisitor {
       child = builders[_blocks.last.tag!]!.visitText(text, styleSheet.styles[_blocks.last.tag!]);
     } else if (_blocks.last.tag == 'pre') {
       child = _ScrollControllerBuilder(
-          builder: (BuildContext context, ScrollController preScrollController, Widget? child) {
-            return Scrollbar(
+        builder: (BuildContext context, ScrollController preScrollController, Widget? child) {
+          return Scrollbar(
+            controller: preScrollController,
+            child: SingleChildScrollView(
               controller: preScrollController,
-              child: SingleChildScrollView(
-                controller: preScrollController,
-                scrollDirection: Axis.horizontal,
-                padding: styleSheet.codeblockPadding,
-                child: child,
-              ),
-            );
-          },
-          child: _buildRichText(delegate.formatText(styleSheet, text.text)));
+              scrollDirection: Axis.horizontal,
+              padding: styleSheet.codeblockPadding,
+              child: child,
+            ),
+          );
+        },
+        child: _buildRichText(delegate.formatText(styleSheet, text.text)),
+      );
     } else {
       child = _buildRichText(
         TextSpan(
@@ -400,7 +401,8 @@ class MarkdownBuilder implements md.NodeVisitor {
         }
       }
 
-      Widget child = builders[tag]?.visitElementAfterWithContext(
+      Widget child =
+          builders[tag]?.visitElementAfterWithContext(
             delegate.context,
             element,
             styleSheet.styles[tag],
@@ -426,8 +428,9 @@ class MarkdownBuilder implements md.NodeVisitor {
           }
           child = Row(
             mainAxisSize: fitContent ? MainAxisSize.min : MainAxisSize.max,
-            textBaseline:
-                listItemCrossAxisAlignment == MarkdownListItemCrossAxisAlignment.start ? null : TextBaseline.alphabetic,
+            textBaseline: listItemCrossAxisAlignment == MarkdownListItemCrossAxisAlignment.start
+                ? null
+                : TextBaseline.alphabetic,
             crossAxisAlignment: listItemCrossAxisAlignment == MarkdownListItemCrossAxisAlignment.start
                 ? CrossAxisAlignment.start
                 : CrossAxisAlignment.baseline,
@@ -437,10 +440,7 @@ class MarkdownBuilder implements md.NodeVisitor {
                     styleSheet.listIndent! + styleSheet.listBulletPadding!.left + styleSheet.listBulletPadding!.right,
                 child: bullet,
               ),
-              Flexible(
-                fit: fitContent ? FlexFit.loose : FlexFit.tight,
-                child: child,
-              )
+              Flexible(fit: fitContent ? FlexFit.loose : FlexFit.tight, child: child),
             ],
           );
         }
@@ -468,17 +468,10 @@ class MarkdownBuilder implements md.NodeVisitor {
         _isInBlockquote = false;
         child = DecoratedBox(
           decoration: styleSheet.blockquoteDecoration!,
-          child: Padding(
-            padding: styleSheet.blockquotePadding!,
-            child: child,
-          ),
+          child: Padding(padding: styleSheet.blockquotePadding!, child: child),
         );
       } else if (tag == 'pre') {
-        child = Container(
-          clipBehavior: Clip.hardEdge,
-          decoration: styleSheet.codeblockDecoration,
-          child: child,
-        );
+        child = Container(clipBehavior: Clip.hardEdge, decoration: styleSheet.codeblockDecoration, child: child);
       } else if (tag == 'hr') {
         if (!builders.containsKey(tag)) {
           child = Container(decoration: styleSheet.horizontalRuleDecoration);
@@ -486,10 +479,7 @@ class MarkdownBuilder implements md.NodeVisitor {
       }
 
       if (tag == 'hr' && paddingBuilders.containsKey(tag)) {
-        child = Padding(
-          padding: paddingBuilders[tag]!.getPadding(),
-          child: child,
-        );
+        child = Padding(padding: paddingBuilders[tag]!.getPadding(), child: child);
       }
 
       _addBlockChild(child);
@@ -520,14 +510,12 @@ class MarkdownBuilder implements md.NodeVisitor {
         }
       } else if (tag == 'img') {
         // create an image widget for this image
-        current.children.add(_buildPadding(
-          padding,
-          _buildImage(
-            element.attributes['src']!,
-            element.attributes['title'],
-            element.attributes['alt'],
+        current.children.add(
+          _buildPadding(
+            padding,
+            _buildImage(element.attributes['src']!, element.attributes['title'], element.attributes['alt']),
           ),
-        ));
+        );
       } else if (tag == 'br') {
         current.children.add(_buildRichText(const TextSpan(text: '\n')));
       } else if (tag == 'th' || tag == 'td') {
@@ -604,10 +592,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     // Clip the table to the border radius if one is specified
     final BorderRadiusGeometry? borderRadius = styleSheet.tableBorder?.borderRadius;
     if (borderRadius != null) {
-      return ClipRRect(
-        borderRadius: borderRadius,
-        child: table,
-      );
+      return ClipRRect(borderRadius: borderRadius, child: table);
     }
 
     return table;
@@ -685,21 +670,13 @@ class MarkdownBuilder implements md.NodeVisitor {
     if (isUnordered) {
       return Padding(
         padding: styleSheet.listBulletPadding!,
-        child: Text(
-          '•',
-          textAlign: TextAlign.center,
-          style: styleSheet.listBullet,
-        ),
+        child: Text('•', textAlign: TextAlign.center, style: styleSheet.listBullet),
       );
     }
 
     return Padding(
       padding: styleSheet.listBulletPadding!,
-      child: Text(
-        '${index + 1}.',
-        textAlign: TextAlign.right,
-        style: styleSheet.listBullet,
-      ),
+      child: Text('${index + 1}.', textAlign: TextAlign.right, style: styleSheet.listBullet),
     );
   }
 
@@ -708,8 +685,9 @@ class MarkdownBuilder implements md.NodeVisitor {
         ? styleSheet.tableHeadCellsPadding!
         : styleSheet.tableCellsPadding!;
 
-    final TextStyle cellStyle =
-        isHeader && styleSheet.tableHead != null ? styleSheet.tableHead! : styleSheet.tableBody!;
+    final TextStyle cellStyle = isHeader && styleSheet.tableHead != null
+        ? styleSheet.tableHead!
+        : styleSheet.tableBody!;
 
     return TableCell(
       child: Padding(
@@ -741,10 +719,12 @@ class MarkdownBuilder implements md.NodeVisitor {
 
   void _addParentInlineIfNeeded(String? tag) {
     if (_inlines.isEmpty) {
-      _inlines.add(_InlineElement(
-        tag,
-        style: _isInBlockquote ? styleSheet.blockquote : (tag != null ? styleSheet.styles[tag] : null),
-      ));
+      _inlines.add(
+        _InlineElement(
+          tag,
+          style: _isInBlockquote ? styleSheet.blockquote : (tag != null ? styleSheet.styles[tag] : null),
+        ),
+      );
     }
   }
 
@@ -777,10 +757,7 @@ class MarkdownBuilder implements md.NodeVisitor {
 
     final _InlineElement inline = _inlines.single;
     if (inline.children.isNotEmpty) {
-      final List<Widget> mergedInlines = _mergeInlineChildren(
-        inline.children,
-        textAlign,
-      );
+      final List<Widget> mergedInlines = _mergeInlineChildren(inline.children, textAlign);
       final Wrap wrap = Wrap(
         crossAxisAlignment: WrapCrossAlignment.center,
         alignment: blockAlignment,
@@ -825,21 +802,18 @@ class MarkdownBuilder implements md.NodeVisitor {
   // Accesses the TextSpan property correctly depending on the widget type.
   // Returns null if not a valid (text) widget.
   InlineSpan? _getInlineSpanFromText(Widget widget) => switch (widget) {
-        SelectableText() => widget.textSpan,
-        Text() => widget.textSpan,
-        RichText() => widget.text,
-        _ => null
-      };
+    SelectableText() => widget.textSpan,
+    Text() => widget.textSpan,
+    RichText() => widget.text,
+    _ => null,
+  };
 
   /// Merges adjacent [TextSpan] children.
   /// Also forces a specific [TextAlign] regardless of merging.
   /// This is essential for table column alignment, since desired column alignment
   /// is discovered after the text widgets have been created. This function is the
   /// last chance to enforce the desired column alignment in the texts.
-  List<Widget> _mergeInlineChildren(
-    List<Widget> children,
-    TextAlign? textAlign,
-  ) {
+  List<Widget> _mergeInlineChildren(List<Widget> children, TextAlign? textAlign) {
     // List of text widgets (merged) and non-text widgets (non-merged)
     final List<Widget> mergedWidgets = <Widget>[];
 
@@ -973,17 +947,20 @@ class MarkdownBuilder implements md.NodeVisitor {
         continue;
       }
 
-      final bool matchStyle = nextChild.recognizer == previous.recognizer &&
+      final bool matchStyle =
+          nextChild.recognizer == previous.recognizer &&
           nextChild.semanticsLabel == previous.semanticsLabel &&
           nextChild.style == previous.style;
 
       if (matchStyle) {
-        mergedSpans.add(TextSpan(
-          text: previous.toPlainText() + nextChild.toPlainText(),
-          recognizer: previous.recognizer,
-          semanticsLabel: previous.semanticsLabel,
-          style: previous.style,
-        ));
+        mergedSpans.add(
+          TextSpan(
+            text: previous.toPlainText() + nextChild.toPlainText(),
+            recognizer: previous.recognizer,
+            semanticsLabel: previous.semanticsLabel,
+            style: previous.style,
+          ),
+        );
       } else {
         mergedSpans.addAll(<InlineSpan>[previous, nextChild]);
       }
@@ -1018,7 +995,7 @@ class MarkdownBuilder implements md.NodeVisitor {
         strutStyle: strutStyle,
         onSelectionChanged: onSelectionChanged != null
             ? (TextSelection selection, SelectionChangedCause? cause) =>
-                onSelectionChanged!(text.toPlainText(), selection, cause)
+                  onSelectionChanged!(text.toPlainText(), selection, cause)
             : null,
         onTap: onTapText,
         contextMenuBuilder: contextMenuBuilder,
@@ -1037,10 +1014,7 @@ class MarkdownBuilder implements md.NodeVisitor {
 }
 
 class _ScrollControllerBuilder extends StatefulWidget {
-  const _ScrollControllerBuilder({
-    required this.builder,
-    this.child,
-  });
+  const _ScrollControllerBuilder({required this.builder, this.child});
 
   final ValueWidgetBuilder<ScrollController> builder;
 

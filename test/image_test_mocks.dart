@@ -45,17 +45,19 @@ MockHttpClient createMockImageHttpClient(SecurityContext? _) {
         invocation.namedArguments[#onError] as void Function(Object, [StackTrace?])?;
     final bool? cancelOnError = invocation.namedArguments[#cancelOnError] as bool?;
 
-    return Stream<List<int>>.fromIterable(<List<int>>[transparentImage]).listen(
-      onData,
-      onError: onError,
-      onDone: onDone,
-      cancelOnError: cancelOnError,
-    );
+    return Stream<List<int>>.fromIterable(<List<int>>[
+      transparentImage,
+    ]).listen(onData, onError: onError, onDone: onDone, cancelOnError: cancelOnError);
   }
 
-  when(response.listen(any,
-          onError: anyNamed('onError'), onDone: anyNamed('onDone'), cancelOnError: anyNamed('cancelOnError')))
-      .thenAnswer(imageStream);
+  when(
+    response.listen(
+      any,
+      onError: anyNamed('onError'),
+      onDone: anyNamed('onDone'),
+      cancelOnError: anyNamed('cancelOnError'),
+    ),
+  ).thenAnswer(imageStream);
 
   return client;
 }
@@ -115,67 +117,115 @@ class MockHttpClient extends Mock implements HttpClient {
 
   @override
   Future<HttpClientRequest> open(String? method, String? host, int? port, String? path) =>
-      super.noSuchMethod(Invocation.method(#open, <Object?>[method, host, port, path]),
-          returnValue: Future<_FakeHttpClientRequest>.value(_FakeHttpClientRequest())) as Future<HttpClientRequest>;
+      super.noSuchMethod(
+            Invocation.method(#open, <Object?>[method, host, port, path]),
+            returnValue: Future<_FakeHttpClientRequest>.value(_FakeHttpClientRequest()),
+          )
+          as Future<HttpClientRequest>;
 
   @override
   Future<HttpClientRequest> openUrl(String? method, Uri? url) =>
-      super.noSuchMethod(Invocation.method(#openUrl, <Object?>[method, url]),
-          returnValue: Future<_FakeHttpClientRequest>.value(_FakeHttpClientRequest())) as Future<HttpClientRequest>;
+      super.noSuchMethod(
+            Invocation.method(#openUrl, <Object?>[method, url]),
+            returnValue: Future<_FakeHttpClientRequest>.value(_FakeHttpClientRequest()),
+          )
+          as Future<HttpClientRequest>;
 
   @override
   Future<HttpClientRequest> get(String? host, int? port, String? path) =>
-      super.noSuchMethod(Invocation.method(#get, <Object?>[host, port, path]),
-          returnValue: Future<_FakeHttpClientRequest>.value(_FakeHttpClientRequest())) as Future<HttpClientRequest>;
+      super.noSuchMethod(
+            Invocation.method(#get, <Object?>[host, port, path]),
+            returnValue: Future<_FakeHttpClientRequest>.value(_FakeHttpClientRequest()),
+          )
+          as Future<HttpClientRequest>;
 
   @override
-  Future<HttpClientRequest> getUrl(Uri? url) => super.noSuchMethod(Invocation.method(#getUrl, <Object?>[url]),
-      returnValue: Future<_FakeHttpClientRequest>.value(_FakeHttpClientRequest())) as Future<HttpClientRequest>;
+  Future<HttpClientRequest> getUrl(Uri? url) =>
+      super.noSuchMethod(
+            Invocation.method(#getUrl, <Object?>[url]),
+            returnValue: Future<_FakeHttpClientRequest>.value(_FakeHttpClientRequest()),
+          )
+          as Future<HttpClientRequest>;
 
   @override
   Future<HttpClientRequest> post(String? host, int? port, String? path) =>
-      super.noSuchMethod(Invocation.method(#post, <Object?>[host, port, path]),
-          returnValue: Future<_FakeHttpClientRequest>.value(_FakeHttpClientRequest())) as Future<HttpClientRequest>;
+      super.noSuchMethod(
+            Invocation.method(#post, <Object?>[host, port, path]),
+            returnValue: Future<_FakeHttpClientRequest>.value(_FakeHttpClientRequest()),
+          )
+          as Future<HttpClientRequest>;
 
   @override
-  Future<HttpClientRequest> postUrl(Uri? url) => super.noSuchMethod(Invocation.method(#postUrl, <Object?>[url]),
-      returnValue: Future<_FakeHttpClientRequest>.value(_FakeHttpClientRequest())) as Future<HttpClientRequest>;
+  Future<HttpClientRequest> postUrl(Uri? url) =>
+      super.noSuchMethod(
+            Invocation.method(#postUrl, <Object?>[url]),
+            returnValue: Future<_FakeHttpClientRequest>.value(_FakeHttpClientRequest()),
+          )
+          as Future<HttpClientRequest>;
 
   @override
   Future<HttpClientRequest> put(String? host, int? port, String? path) =>
-      super.noSuchMethod(Invocation.method(#put, <Object?>[host, port, path]),
-          returnValue: Future<_FakeHttpClientRequest>.value(_FakeHttpClientRequest())) as Future<HttpClientRequest>;
+      super.noSuchMethod(
+            Invocation.method(#put, <Object?>[host, port, path]),
+            returnValue: Future<_FakeHttpClientRequest>.value(_FakeHttpClientRequest()),
+          )
+          as Future<HttpClientRequest>;
 
   @override
-  Future<HttpClientRequest> putUrl(Uri? url) => super.noSuchMethod(Invocation.method(#putUrl, <Object?>[url]),
-      returnValue: Future<_FakeHttpClientRequest>.value(_FakeHttpClientRequest())) as Future<HttpClientRequest>;
+  Future<HttpClientRequest> putUrl(Uri? url) =>
+      super.noSuchMethod(
+            Invocation.method(#putUrl, <Object?>[url]),
+            returnValue: Future<_FakeHttpClientRequest>.value(_FakeHttpClientRequest()),
+          )
+          as Future<HttpClientRequest>;
 
   @override
   Future<HttpClientRequest> delete(String? host, int? port, String? path) =>
-      super.noSuchMethod(Invocation.method(#delete, <Object?>[host, port, path]),
-          returnValue: Future<_FakeHttpClientRequest>.value(_FakeHttpClientRequest())) as Future<HttpClientRequest>;
+      super.noSuchMethod(
+            Invocation.method(#delete, <Object?>[host, port, path]),
+            returnValue: Future<_FakeHttpClientRequest>.value(_FakeHttpClientRequest()),
+          )
+          as Future<HttpClientRequest>;
 
   @override
-  Future<HttpClientRequest> deleteUrl(Uri? url) => super.noSuchMethod(Invocation.method(#deleteUrl, <Object?>[url]),
-      returnValue: Future<_FakeHttpClientRequest>.value(_FakeHttpClientRequest())) as Future<HttpClientRequest>;
+  Future<HttpClientRequest> deleteUrl(Uri? url) =>
+      super.noSuchMethod(
+            Invocation.method(#deleteUrl, <Object?>[url]),
+            returnValue: Future<_FakeHttpClientRequest>.value(_FakeHttpClientRequest()),
+          )
+          as Future<HttpClientRequest>;
 
   @override
   Future<HttpClientRequest> patch(String? host, int? port, String? path) =>
-      super.noSuchMethod(Invocation.method(#patch, <Object?>[host, port, path]),
-          returnValue: Future<_FakeHttpClientRequest>.value(_FakeHttpClientRequest())) as Future<HttpClientRequest>;
+      super.noSuchMethod(
+            Invocation.method(#patch, <Object?>[host, port, path]),
+            returnValue: Future<_FakeHttpClientRequest>.value(_FakeHttpClientRequest()),
+          )
+          as Future<HttpClientRequest>;
 
   @override
-  Future<HttpClientRequest> patchUrl(Uri? url) => super.noSuchMethod(Invocation.method(#patchUrl, <Object?>[url]),
-      returnValue: Future<_FakeHttpClientRequest>.value(_FakeHttpClientRequest())) as Future<HttpClientRequest>;
+  Future<HttpClientRequest> patchUrl(Uri? url) =>
+      super.noSuchMethod(
+            Invocation.method(#patchUrl, <Object?>[url]),
+            returnValue: Future<_FakeHttpClientRequest>.value(_FakeHttpClientRequest()),
+          )
+          as Future<HttpClientRequest>;
 
   @override
   Future<HttpClientRequest> head(String? host, int? port, String? path) =>
-      super.noSuchMethod(Invocation.method(#head, <Object?>[host, port, path]),
-          returnValue: Future<_FakeHttpClientRequest>.value(_FakeHttpClientRequest())) as Future<HttpClientRequest>;
+      super.noSuchMethod(
+            Invocation.method(#head, <Object?>[host, port, path]),
+            returnValue: Future<_FakeHttpClientRequest>.value(_FakeHttpClientRequest()),
+          )
+          as Future<HttpClientRequest>;
 
   @override
-  Future<HttpClientRequest> headUrl(Uri? url) => super.noSuchMethod(Invocation.method(#headUrl, <Object?>[url]),
-      returnValue: Future<_FakeHttpClientRequest>.value(_FakeHttpClientRequest())) as Future<HttpClientRequest>;
+  Future<HttpClientRequest> headUrl(Uri? url) =>
+      super.noSuchMethod(
+            Invocation.method(#headUrl, <Object?>[url]),
+            returnValue: Future<_FakeHttpClientRequest>.value(_FakeHttpClientRequest()),
+          )
+          as Future<HttpClientRequest>;
 
   @override
   void addCredentials(Uri? url, String? realm, HttpClientCredentials? credentials) =>
@@ -245,12 +295,20 @@ class MockHttpClientRequest extends Mock implements HttpClientRequest {
   List<Cookie> get cookies => super.noSuchMethod(Invocation.getter(#cookies), returnValue: <Cookie>[]) as List<Cookie>;
 
   @override
-  Future<HttpClientResponse> get done => super.noSuchMethod(Invocation.getter(#done),
-      returnValue: Future<_FakeHttpClientResponse>.value(_FakeHttpClientResponse())) as Future<HttpClientResponse>;
+  Future<HttpClientResponse> get done =>
+      super.noSuchMethod(
+            Invocation.getter(#done),
+            returnValue: Future<_FakeHttpClientResponse>.value(_FakeHttpClientResponse()),
+          )
+          as Future<HttpClientResponse>;
 
   @override
-  Future<HttpClientResponse> close() => super.noSuchMethod(Invocation.method(#close, <Object?>[]),
-      returnValue: Future<_FakeHttpClientResponse>.value(_FakeHttpClientResponse())) as Future<HttpClientResponse>;
+  Future<HttpClientResponse> close() =>
+      super.noSuchMethod(
+            Invocation.method(#close, <Object?>[]),
+            returnValue: Future<_FakeHttpClientResponse>.value(_FakeHttpClientResponse()),
+          )
+          as Future<HttpClientResponse>;
 }
 
 /// A class which mocks [HttpClientResponse].
@@ -264,15 +322,21 @@ class MockHttpClientResponse extends Mock implements HttpClientResponse {
   // Include an override method for the inherited listen method. This method
   // intercepts HttpClientResponse listen calls to return a mock image.
   @override
-  StreamSubscription<List<int>> listen(void Function(List<int> event)? onData,
-          {Function? onError, void Function()? onDone, bool? cancelOnError}) =>
+  StreamSubscription<List<int>> listen(
+    void Function(List<int> event)? onData, {
+    Function? onError,
+    void Function()? onDone,
+    bool? cancelOnError,
+  }) =>
       super.noSuchMethod(
-          Invocation.method(
-            #listen,
-            <Object?>[onData],
-            <Symbol, Object?>{#onError: onError, #onDone: onDone, #cancelOnError: cancelOnError},
-          ),
-          returnValue: _FakeStreamSubscription<List<int>>()) as StreamSubscription<List<int>>;
+            Invocation.method(
+              #listen,
+              <Object?>[onData],
+              <Symbol, Object?>{#onError: onError, #onDone: onDone, #cancelOnError: cancelOnError},
+            ),
+            returnValue: _FakeStreamSubscription<List<int>>(),
+          )
+          as StreamSubscription<List<int>>;
 
   @override
   int get statusCode => super.noSuchMethod(Invocation.getter(#statusCode), returnValue: 0) as int;
@@ -284,8 +348,12 @@ class MockHttpClientResponse extends Mock implements HttpClientResponse {
   int get contentLength => super.noSuchMethod(Invocation.getter(#contentLength), returnValue: 0) as int;
 
   @override
-  HttpClientResponseCompressionState get compressionState => super.noSuchMethod(Invocation.getter(#compressionState),
-      returnValue: HttpClientResponseCompressionState.notCompressed) as HttpClientResponseCompressionState;
+  HttpClientResponseCompressionState get compressionState =>
+      super.noSuchMethod(
+            Invocation.getter(#compressionState),
+            returnValue: HttpClientResponseCompressionState.notCompressed,
+          )
+          as HttpClientResponseCompressionState;
 
   @override
   bool get persistentConnection =>
@@ -307,12 +375,19 @@ class MockHttpClientResponse extends Mock implements HttpClientResponse {
 
   @override
   Future<HttpClientResponse> redirect([String? method, Uri? url, bool? followLoops]) =>
-      super.noSuchMethod(Invocation.method(#redirect, <Object?>[method, url, followLoops]),
-          returnValue: Future<_FakeHttpClientResponse>.value(_FakeHttpClientResponse())) as Future<HttpClientResponse>;
+      super.noSuchMethod(
+            Invocation.method(#redirect, <Object?>[method, url, followLoops]),
+            returnValue: Future<_FakeHttpClientResponse>.value(_FakeHttpClientResponse()),
+          )
+          as Future<HttpClientResponse>;
 
   @override
-  Future<Socket> detachSocket() => super.noSuchMethod(Invocation.method(#detachSocket, <Object?>[]),
-      returnValue: Future<_FakeSocket>.value(_FakeSocket())) as Future<Socket>;
+  Future<Socket> detachSocket() =>
+      super.noSuchMethod(
+            Invocation.method(#detachSocket, <Object?>[]),
+            returnValue: Future<_FakeSocket>.value(_FakeSocket()),
+          )
+          as Future<Socket>;
 }
 
 /// A class which mocks [HttpHeaders].
@@ -354,11 +429,13 @@ class MockHttpHeaders extends Mock implements HttpHeaders {
 
   @override
   void add(String? name, Object? value, {bool? preserveHeaderCase = false}) => super.noSuchMethod(
-      Invocation.method(#add, <Object?>[name, value], <Symbol, Object?>{#preserveHeaderCase: preserveHeaderCase}));
+    Invocation.method(#add, <Object?>[name, value], <Symbol, Object?>{#preserveHeaderCase: preserveHeaderCase}),
+  );
 
   @override
   void set(String? name, Object? value, {bool? preserveHeaderCase = false}) => super.noSuchMethod(
-      Invocation.method(#set, <Object?>[name, value], <Symbol, Object?>{#preserveHeaderCase: preserveHeaderCase}));
+    Invocation.method(#set, <Object?>[name, value], <Symbol, Object?>{#preserveHeaderCase: preserveHeaderCase}),
+  );
 
   @override
   void remove(String? name, Object? value) => super.noSuchMethod(Invocation.method(#remove, <Object?>[name, value]));

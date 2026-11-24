@@ -17,11 +17,7 @@ void defineTests() {
       'two spaces at end of line',
       (WidgetTester tester) async {
         const String data = 'foo  \nbar';
-        await tester.pumpWidget(
-          boilerplate(
-            const MarkdownBody(data: data),
-          ),
-        );
+        await tester.pumpWidget(boilerplate(const MarkdownBody(data: data)));
 
         final Finder richTextFinder = find.byType(RichText);
         expect(richTextFinder, findsOneWidget);
@@ -37,11 +33,7 @@ void defineTests() {
       'backslash at end of line',
       (WidgetTester tester) async {
         const String data = 'foo\\\nbar';
-        await tester.pumpWidget(
-          boilerplate(
-            const MarkdownBody(data: data),
-          ),
-        );
+        await tester.pumpWidget(boilerplate(const MarkdownBody(data: data)));
 
         final Finder richTextFinder = find.byType(RichText);
         expect(richTextFinder, findsOneWidget);
@@ -57,11 +49,7 @@ void defineTests() {
       'more than two spaces at end of line',
       (WidgetTester tester) async {
         const String data = 'foo       \nbar';
-        await tester.pumpWidget(
-          boilerplate(
-            const MarkdownBody(data: data),
-          ),
-        );
+        await tester.pumpWidget(boilerplate(const MarkdownBody(data: data)));
 
         final Finder richTextFinder = find.byType(RichText);
         expect(richTextFinder, findsOneWidget);
@@ -77,11 +65,7 @@ void defineTests() {
       'leading spaces at beginning of next line are ignored',
       (WidgetTester tester) async {
         const String data = 'foo  \n     bar';
-        await tester.pumpWidget(
-          boilerplate(
-            const MarkdownBody(data: data),
-          ),
-        );
+        await tester.pumpWidget(boilerplate(const MarkdownBody(data: data)));
 
         final Finder richTextFinder = find.byType(RichText);
         expect(richTextFinder, findsOneWidget);
@@ -97,11 +81,7 @@ void defineTests() {
       'leading spaces at beginning of next line are ignored',
       (WidgetTester tester) async {
         const String data = 'foo\\\n     bar';
-        await tester.pumpWidget(
-          boilerplate(
-            const MarkdownBody(data: data),
-          ),
-        );
+        await tester.pumpWidget(boilerplate(const MarkdownBody(data: data)));
 
         final Finder richTextFinder = find.byType(RichText);
         expect(richTextFinder, findsOneWidget);
@@ -117,11 +97,7 @@ void defineTests() {
       'two spaces line break inside emphasis',
       (WidgetTester tester) async {
         const String data = '*foo  \nbar*';
-        await tester.pumpWidget(
-          boilerplate(
-            const MarkdownBody(data: data),
-          ),
-        );
+        await tester.pumpWidget(boilerplate(const MarkdownBody(data: data)));
 
         final Finder textFinder = find.byType(Text);
         expect(textFinder, findsOneWidget);
@@ -152,11 +128,7 @@ void defineTests() {
       'backslash line break inside emphasis',
       (WidgetTester tester) async {
         const String data = '*foo\\\nbar*';
-        await tester.pumpWidget(
-          boilerplate(
-            const MarkdownBody(data: data),
-          ),
-        );
+        await tester.pumpWidget(boilerplate(const MarkdownBody(data: data)));
 
         final Finder textFinder = find.byType(Text);
         expect(textFinder, findsOneWidget);
@@ -187,11 +159,7 @@ void defineTests() {
       'two space line break does not occur in code span',
       (WidgetTester tester) async {
         const String data = '`code  \nspan`';
-        await tester.pumpWidget(
-          boilerplate(
-            const MarkdownBody(data: data),
-          ),
-        );
+        await tester.pumpWidget(boilerplate(const MarkdownBody(data: data)));
 
         final Finder textFinder = find.byType(Text);
         expect(textFinder, findsOneWidget);
@@ -212,11 +180,7 @@ void defineTests() {
       'backslash line break does not occur in code span',
       (WidgetTester tester) async {
         const String data = '`code\\\nspan`';
-        await tester.pumpWidget(
-          boilerplate(
-            const MarkdownBody(data: data),
-          ),
-        );
+        await tester.pumpWidget(boilerplate(const MarkdownBody(data: data)));
 
         final Finder textFinder = find.byType(Text);
         expect(textFinder, findsOneWidget);
@@ -237,11 +201,7 @@ void defineTests() {
       'backslash at end of paragraph is ignored',
       (WidgetTester tester) async {
         const String data = r'foo\';
-        await tester.pumpWidget(
-          boilerplate(
-            const MarkdownBody(data: data),
-          ),
-        );
+        await tester.pumpWidget(boilerplate(const MarkdownBody(data: data)));
 
         final Finder richTextFinder = find.byType(RichText);
         expect(richTextFinder, findsOneWidget);
@@ -257,11 +217,7 @@ void defineTests() {
       'two spaces at end of paragraph is ignored',
       (WidgetTester tester) async {
         const String data = 'foo  ';
-        await tester.pumpWidget(
-          boilerplate(
-            const MarkdownBody(data: data),
-          ),
-        );
+        await tester.pumpWidget(boilerplate(const MarkdownBody(data: data)));
 
         final Finder richTextFinder = find.byType(RichText);
         expect(richTextFinder, findsOneWidget);
@@ -277,11 +233,7 @@ void defineTests() {
       'backslash at end of header is ignored',
       (WidgetTester tester) async {
         const String data = r'### foo\';
-        await tester.pumpWidget(
-          boilerplate(
-            const MarkdownBody(data: data),
-          ),
-        );
+        await tester.pumpWidget(boilerplate(const MarkdownBody(data: data)));
 
         final Finder richTextFinder = find.byType(RichText);
         expect(richTextFinder, findsOneWidget);
@@ -297,11 +249,7 @@ void defineTests() {
       'two spaces at end of header is ignored',
       (WidgetTester tester) async {
         const String data = '### foo  ';
-        await tester.pumpWidget(
-          boilerplate(
-            const MarkdownBody(data: data),
-          ),
-        );
+        await tester.pumpWidget(boilerplate(const MarkdownBody(data: data)));
 
         final Finder richTextFinder = find.byType(RichText);
         expect(richTextFinder, findsOneWidget);
@@ -319,11 +267,7 @@ void defineTests() {
       'lines of text in paragraph',
       (WidgetTester tester) async {
         const String data = 'foo\nbaz';
-        await tester.pumpWidget(
-          boilerplate(
-            const MarkdownBody(data: data),
-          ),
-        );
+        await tester.pumpWidget(boilerplate(const MarkdownBody(data: data)));
 
         final Finder richTextFinder = find.byType(RichText);
         expect(richTextFinder, findsOneWidget);
@@ -339,11 +283,7 @@ void defineTests() {
       'spaces at beginning and end of lines of text in paragraph are removed',
       (WidgetTester tester) async {
         const String data = 'foo \n baz';
-        await tester.pumpWidget(
-          boilerplate(
-            const MarkdownBody(data: data),
-          ),
-        );
+        await tester.pumpWidget(boilerplate(const MarkdownBody(data: data)));
 
         final Finder richTextFinder = find.byType(RichText);
         expect(richTextFinder, findsOneWidget);

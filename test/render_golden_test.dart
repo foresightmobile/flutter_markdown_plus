@@ -116,9 +116,7 @@ Future<void> _expectGolden(WidgetTester tester, String data, String file) async 
     useMaterial3: true,
     brightness: Brightness.light,
   );
-  final ThemeData theme = base.copyWith(
-    textTheme: base.textTheme.apply(fontFamily: 'Roboto'),
-  );
+  final ThemeData theme = base.copyWith(textTheme: base.textTheme.apply(fontFamily: 'Roboto'));
 
   await tester.pumpWidget(
     MaterialApp(
