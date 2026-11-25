@@ -29,16 +29,18 @@ Compatibility Floor. A patch release must not raise the floor.
 ## 2. Recommended order of work
 
 1. **Land 1.1.0.** It unblocks the merge freeze and the Material UI work.
-2. **Three small fixes, all one-file changes with tests** (§3.1 and §5.2) — #82, #121, and the
-   `test/image_test.dart` defects we already carry. The third is a two-line re-derivation of work
-   that has already been done and verified elsewhere; take it first, it is the cheapest.
-3. **Close the already-fixed issues** (§3.2) — no code, just disposition comments naming the version.
-4. **Close the agreed won't-fix set** (§3.3).
-5. **Leave the contested four open** (§4) and give them a label so they stop looking abandoned.
-6. **Open a work item for the `material_ui` migration** (§6) — it is the only long-lead item and it
+2. **Take the `test/image_test.dart` fixes — [#190](https://github.com/foresightmobile/flutter_markdown_plus/issues/190).**
+   Two lines, already found and verified elsewhere (§5.2). Cheapest item on this list and it quiets
+   leak-tracker noise we already chase. Do it first.
+3. **Two small fixes that close two issues outright** (§3.1) — #82 and #121, both one-file changes
+   with tests.
+4. **Close the already-fixed issues** (§3.2) — no code, just disposition comments naming the version.
+5. **Close the agreed won't-fix set** (§3.3).
+6. **Leave the contested four open** (§4) and give them a label so they stop looking abandoned.
+7. **Open a work item for the `material_ui` migration** (§6) — it is the only long-lead item and it
    should not be discovered late.
 
-Steps 2–5 are cheap and make the tracker look maintained, which is the point.
+Steps 2–6 are cheap and make the tracker look maintained, which is the point.
 
 ---
 
@@ -177,8 +179,8 @@ they are not its work.
 
 ### 5.2 Directly adoptable — verified patch, ready to take
 
-**Ticket: `test/image_test.dart` correctness and Linux leak.** Not an issue number — a test defect
-that our own suite carries.
+**[#190](https://github.com/foresightmobile/flutter_markdown_plus/issues/190) — `test/image_test.dart`
+correctness and Linux leak.** Filed as a Work Item; the acceptance criteria are on the issue.
 
 Its PR #91 makes two changes. **Both defects are present in our tree right now:**
 
