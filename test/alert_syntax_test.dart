@@ -7,7 +7,6 @@ import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:markdown/markdown.dart' as md;
 
-
 void main() => defineTests();
 
 /// Regression tests for #59.
@@ -26,10 +25,7 @@ void defineTests() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: Markdown(
-            data: '> [!$kind]\n> this does not work',
-            extensionSet: md.ExtensionSet.gitHubWeb,
-          ),
+          body: Markdown(data: '> [!$kind]\n> this does not work', extensionSet: md.ExtensionSet.gitHubWeb),
         ),
       ),
     );
@@ -39,9 +35,16 @@ void defineTests() {
   }
 
   group('Alert syntax', () {
-    testWidgets('> [!NOTE] does not crash', (WidgetTester tester) async {
+    testWidgets('> [!NOTE] does not crash and keeps its body text', (WidgetTester tester) async {
       await pumpAlert(tester, 'NOTE');
       expect(tester.takeException(), isNull);
+      // The alert body must still render — stopping the crash is not enough if
+      // the content is dropped. `find.text` misses bare RichText, so match on
+      // the plain text of every RichText instead.
+      final Iterable<String> rendered = tester.allWidgets.whereType<RichText>().map(
+        (RichText w) => w.text.toPlainText(),
+      );
+      expect(rendered, anyElement(contains('this does not work')));
     });
 
     testWidgets('every alert kind does not crash', (WidgetTester tester) async {
