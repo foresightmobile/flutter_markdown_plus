@@ -495,6 +495,13 @@ class MarkdownBuilder implements md.NodeVisitor {
 
       _addBlockChild(child);
     } else {
+      // An unknown container element (the `div` behind `> [!NOTE]`) can reach
+      // here with too few inlines to unwind: `.removeLast()` then threw
+      // RangeError and `.last` would too. Nothing to close in that case (#59).
+      if (_inlines.length < 2) {
+        _inlines.clear();
+        return;
+      }
       final _InlineElement current = _inlines.removeLast();
       final _InlineElement parent = _inlines.last;
       EdgeInsets padding = EdgeInsets.zero;
@@ -766,20 +773,26 @@ class MarkdownBuilder implements md.NodeVisitor {
       }
     }
 
-    final _InlineElement inline = _inlines.single;
-    if (inline.children.isNotEmpty) {
-      final List<Widget> mergedInlines = _mergeInlineChildren(inline.children, textAlign);
-      final Wrap wrap = Wrap(
-        crossAxisAlignment: WrapCrossAlignment.center,
-        alignment: blockAlignment,
-        children: mergedInlines,
-      );
+    // Not `.single`: an unknown container element (e.g. the `div` that
+    // `> [!NOTE]` alert syntax produces) can leave more than one inline here,
+    // and `.single` threw "Bad state: Too many elements" (#59). Emit one Wrap
+    // per inline instead. This removes the crash only; rendering alert blocks
+    // properly is left open for phase 2.
+    for (final _InlineElement inline in _inlines) {
+      if (inline.children.isNotEmpty) {
+        final List<Widget> mergedInlines = _mergeInlineChildren(inline.children, textAlign);
+        final Wrap wrap = Wrap(
+          crossAxisAlignment: WrapCrossAlignment.center,
+          alignment: blockAlignment,
+          children: mergedInlines,
+        );
 
-      if (textPadding == EdgeInsets.zero) {
-        _addBlockChild(wrap);
-      } else {
-        final Padding padding = Padding(padding: textPadding, child: wrap);
-        _addBlockChild(padding);
+        if (textPadding == EdgeInsets.zero) {
+          _addBlockChild(wrap);
+        } else {
+          final Padding padding = Padding(padding: textPadding, child: wrap);
+          _addBlockChild(padding);
+        }
       }
     }
 
