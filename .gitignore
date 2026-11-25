@@ -51,7 +51,10 @@ flutter_markdown_plus_latex
 /.review/
 
 # Local planning and agent docs (Specs live in Slite; see CLAUDE.md)
-/docs/
+# Exception: release-plan.md is tracked and public-safe — it is the action list a working
+# agent pulls in. It must name no internal tooling. Kept out of the pub.dev tarball by .pubignore.
+/docs/*
+!/docs/release-plan.md
 /.act/
 /AGENTS.md
 /GLOSSARY.md

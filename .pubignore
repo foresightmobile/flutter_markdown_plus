@@ -73,3 +73,6 @@ example/ios/Flutter/app.zip
 example/ios/Flutter/flutter_assets/
 example/ios/Flutter/flutter_export_environment.sh
 example/ios/Runner/GeneratedPluginRegistrant.*
+
+# Development docs (tracked in git, but never ship in the package)
+docs/
