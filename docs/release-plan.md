@@ -29,7 +29,9 @@ Compatibility Floor. A patch release must not raise the floor.
 ## 2. Recommended order of work
 
 1. **Land 1.1.0.** It unblocks the merge freeze and the Material UI work.
-2. **Two small fixes that close two issues outright** (§3.1) — both are one-file changes with tests.
+2. **Three small fixes, all one-file changes with tests** (§3.1 and §5.2) — #82, #121, and the
+   `test/image_test.dart` defects we already carry. The third is a two-line re-derivation of work
+   that has already been done and verified elsewhere; take it first, it is the cheapest.
 3. **Close the already-fixed issues** (§3.2) — no code, just disposition comments naming the version.
 4. **Close the agreed won't-fix set** (§3.3).
 5. **Leave the contested four open** (§4) and give them a label so they stop looking abandoned.
@@ -148,29 +150,101 @@ The reasoning must be ours.
 
 ---
 
-## 5. Adoption decisions
+## 5. Adoption map — what a community fork has already done, per ticket
 
-A community fork of this package (`zuraffa_markdown` on pub.dev) has shipped work and published a
-triage of our backlog. Reviewed 27 Nov 2026. Position: **thank, do not compete, adopt selectively.**
+A community fork of this package (`zuraffa_markdown` on pub.dev) shipped work and published a triage
+of our backlog. Reviewed 27 Nov 2026 against its code, not its README. This section exists so nobody
+re-derives work that is already done: it says, ticket by ticket, whether there is something to take.
 
-- **Do not mirror its comment pattern onto our tracker or theirs.** Answer our issues in our own
-  words. Visible activity and clear dispositions are the response.
+Position: **thank, do not compete, adopt selectively.**
+
+### 5.1 Its complete code inventory
+
+Do not go looking for more. It has exactly **three** code changes beyond package renaming and
+`dart format` reflow (its whole diff is 67 files but ~90% is reflow; `builder.dart` has zero semantic
+hunks). All are merged on its own repo:
+
+| Its PR | Commit | What |
+| --- | --- | --- |
+| #1 | `c84ef6a` | `material_ui` / `cupertino_ui` support, package rename to 7.6.1 |
+| #2 | `dc31ee9` | `fix: SDK MaterialApp apps keep their own theme` (7.6.2 — fixes a bug its own #1 introduced) |
+| #91 | `2f2555d` | `fix: correct invalid-scheme image test condition and skip leaky test on Linux` |
+
+Everything else is docs (its triage index, README, CHANGELOG). Its 40 "planned" tickets have **no
+code, no branches and no PRs** — only restated symptoms. Branches it has named `feature/*` and
+`claude/*` are **our own history** carried over by the fork (they exist on this repo's remote too);
+they are not its work.
+
+### 5.2 Directly adoptable — verified patch, ready to take
+
+**Ticket: `test/image_test.dart` correctness and Linux leak.** Not an issue number — a test defect
+that our own suite carries.
+
+Its PR #91 makes two changes. **Both defects are present in our tree right now:**
+
+| Our location | Defect | Its fix |
+| --- | --- | --- |
+| `test/image_test.dart:355` — `if (kIsWeb \|\| isLinux) {` | Wrong. On non-web, an unrecognized scheme is treated as a *file* image and constructing it throws, so no `Image` is created on **any** non-web platform. Linux is not special. The comment above the line already describes the correct behaviour; the condition contradicts it. | Drop the `\|\| isLinux`. |
+| The `'should show properly next to text'` test (opens near `test/image_test.dart:189`) | Has no `skip:`, and on Linux leaks `ImageStreamCompleter` handles — the Flutter leak tracker reports it. Every neighbouring image test already skips on Linux. | Add `skip: isLinux` to its closing. |
+
+*Why it matters to us:* we already chase leak-tracker reports (`fix/golden-test-leak` was about
+exactly this class of noise), and our goldens are platform-gated on the same `isLinux` convention.
+
+*To take it:* two lines, re-derived against our tree — do not cherry-pick, its history is reformatted.
+*Acceptance:* `flutter test test/image_test.dart` passes; the leak tracker stops reporting
+`ImageStreamCompleter` on Linux; the invalid-scheme test's `findsOneWidget` branch is now reachable
+on web only.
+
+### 5.3 Study for in-flight work — do not merge
+
+**Ticket #144 / PRs #150 and #153 (`material_ui`).** Its #1 and #2 are the same problem space.
+
+| Take as an idea | Where | Note |
+| --- | --- | --- |
+| Discriminating theme families by **ancestor widget** rather than `Theme.of` (whose fallback always returns something, so it cannot tell you which family is present) | its `lib/src/_functions_io.dart` / `_functions_web.dart` | The one genuinely clever contribution. Re-implement dependency-free. |
+| A style-sheet factory family where two theme sources feed one shared mapping | its `lib/src/style_sheet.dart` | Additive, cannot break callers. Its `_fromThemeParts` de-duplication is worth reading. |
+| The *shape* of its theme-family test | its `test/theme_family_test.dart` (55 lines) | Re-creatable SDK-only: "style sheet follows `ThemeData.light()` / `ThemeData.dark()`". |
+
+Its #2 is a useful **negative** example: its own `material_ui` change silently dropped the SDK theme
+under an SDK `MaterialApp`, and it needed a second release to fix. That failure mode is exactly what
+#153's theme-nesting work should be tested against.
+
+### 5.4 Tickets where there is nothing to take
+
+Checked, so nobody looks twice:
+
+| Our ticket | Its disposition | Anything to take? |
+| --- | --- | --- |
+| #46, #48, #58, #62, #72, #81, #99 | "fixed" | No — those fixes are **ours**, already in our code before it forked. See §3.2 to close them. |
+| #82 | "fixed" | No — it is **not** fixed anywhere. See §3.1; we fix it ourselves. |
+| #61 | "fixed" | No — it changed nothing on the blamed code path. See §3.1. |
+| #60, #121 | "fixed" | No — partial in both trees. See §3.1 for what's missing. |
+| #146 | "planned" | No — the "~45-line fix" it cites is **ours**, written in our own issue. |
+| #63, #64, #152 | "planned" (two of them P0) | No — we already fixed and closed all three. |
+| The other 40 "planned" | planned | No code exists. |
+| The 35 "declined" | declined | Nothing to take; see §3.3 and §4 for our own calls. |
+
+### 5.5 Do not take
+
+- **Its dependency set** — two hard third-party theme packages. A general-purpose Markdown renderer
+  must not force every consumer to resolve and ship a theme family.
+- **Its SDK floor** (`flutter >=3.47.0`, `sdk ^3.13.0`) — would drop every consumer on Flutter
+  3.27–3.46 and break the Compatibility Floor rule in §8.
+- **Its version numbering** (1.0.12 → 7.6.2) — fleet alignment with its other packages, not our history.
+- **Its goldens** — regenerate under our own toolchain; our suite is platform-specific and pinned to
+  the local Flutter.
+- **Its README claims.** It states "The public API is unchanged: every class, constructor, named
+  parameter and default value keeps its name, type and meaning." That is **false** for two factories,
+  whose parameter type changed. Verify any such claim against code before repeating it.
+
+### 5.6 Standing rules
+
 - **Do not merge from its history.** It reformats every file to a different page width, so any
-  cherry-pick produces enormous misleading diffs. Re-derive anything we take as a small targeted patch
-  against our tree.
-- **Worth taking, as patterns rather than as code:**
-  1. The *idea* of discriminating theme families by ancestor widget rather than by `Theme.of`
-     (which returns a fallback instead of failing). Useful for §6. Re-implement without a hard
-     dependency on any third-party theme package.
-  2. A style-sheet factory family that lets two theme sources share one mapping
-     (`fromTheme`-style entry points feeding one shared builder). Additive, so it cannot break callers.
-  3. The *shape* of its theme-family test: assert the resolved style sheet follows whichever theme
-     ancestor is present. Re-creatable SDK-only as "style sheet follows `ThemeData.light()`/`.dark()`".
-- **Do not take:** its dependency set (two hard third-party theme packages), its SDK floor, its
-  version numbering, or its goldens. Regenerate goldens under our own toolchain — the suite is
-  platform-specific and pinned to the local Flutter.
-- **Known trap if someone quotes its README:** it claims the public API is unchanged, but two
-  factories changed parameter type. Verify any such claim against code before repeating it.
+  cherry-pick produces enormous misleading diffs. Re-derive as small targeted patches against our tree.
+- **Do not mirror its comment pattern** onto our tracker or theirs. Answer our issues in our own
+  words. Visible activity and clear dispositions are the response.
+- **Credit where we adopt.** If we take §5.2, say so in the commit message. That is normal open-source
+  hygiene and costs nothing.
 
 ---
 
