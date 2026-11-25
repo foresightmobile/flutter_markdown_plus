@@ -56,3 +56,6 @@ flutter_markdown_plus_latex
 /AGENTS.md
 /GLOSSARY.md
 /.mimocode/
+
+# Local git worktrees created by the worktree helper (dev only)
+worktrees
