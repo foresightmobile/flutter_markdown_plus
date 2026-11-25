@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'all_registry_test.dart' as all_registry_test;
+import 'alert_syntax_test.dart' as alert_syntax_test;
 import 'blockquote_test.dart' as blockquote_test;
 import 'context_menu_builder_test.dart' as context_menu_builder_test;
 import 'custom_syntax_test.dart' as custome_syntax_test;
@@ -32,6 +33,7 @@ import 'visit_element_after_test.dart' as visit_element_after_test;
 
 void main() {
   all_registry_test.defineTests();
+  alert_syntax_test.defineTests();
   blockquote_test.defineTests();
   context_menu_builder_test.defineTests();
   custome_syntax_test.defineTests();
