@@ -4,7 +4,9 @@
 release. It records what has been decided, in what order, and what "done" looks like for each item.
 Everything here is a decision or a measurement; where the two differ it says which.
 
-- **Status:** decisions made 27 Nov 2026, nothing yet actioned.
+- **Status:** decisions made 25 Nov 2026. **Already done:** #190 filed as a Work Item, and this
+  document landed on `main` (#188, #191). **Nothing in §3 or §4 has been actioned yet** — no issue
+  has been closed and no fix has been written.
 - **Scope:** release train, issue closures, what to adopt from the community fork, and the
   `material_ui` migration.
 - **Deep-dive evidence** lives in the local-only `docs/` directory of a working checkout (it is
@@ -155,7 +157,7 @@ The reasoning must be ours.
 ## 5. Adoption map — what a community fork has already done, per ticket
 
 A community fork of this package (`zuraffa_markdown` on pub.dev) shipped work and published a triage
-of our backlog. Reviewed 27 Nov 2026 against its code, not its README. This section exists so nobody
+of our backlog. Reviewed 25 Nov 2026 against its code, not its README. This section exists so nobody
 re-derives work that is already done: it says, ticket by ticket, whether there is something to take.
 
 Position: **thank, do not compete, adopt selectively.**
