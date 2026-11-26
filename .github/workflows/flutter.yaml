@@ -112,6 +112,7 @@ jobs:
             sudo xcode-select -s /Applications/Xcode_27.2.app
           fi
           xcodebuild -version
+          xcodebuild -version | grep -q '^Xcode 27\.'
       - name: Build iOS simulator app
         working-directory: example
         run: |
