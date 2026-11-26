@@ -1,8 +1,9 @@
 # Continuation prompt — handing this repo to another agent
 
-**Read this first, then `docs/release-plan.md`.** This file is the onboarding: what the repo is, what
-state it is in, what is outstanding, and which process to follow. The release plan is the action
-list. Together they should be enough to start work without any other context.
+**Read `handover.md` in the repository root first, then this file, then `docs/release-plan.md`.**
+`handover.md` is the full handover: what to do first, where things stand, the fork and its rules,
+process, traps, and the machine-local setup in §9. This file is the shorter onboarding. The release
+plan is the action list.
 
 Last updated 25 Nov 2026.
 
@@ -137,7 +138,9 @@ without hard third-party dependencies and without raising the Compatibility Floo
 
 ## 8. Machine-local setup
 
-If you are running on the maintainer's own machine, there is a second document beside this one,
-**`docs/continuation-machine-setup.md`**, which is deliberately **not** committed to this public
-repository. It holds the memory-store locations, skills and MCP configuration needed to pick up the
-existing working context. Ask the operator for it; it is not in the repo on purpose.
+**`handover.md` §9**, in the repository root, is the canonical machine-local setup: the memory
+stores, skills directories, MCP configuration, toolchain layout and local-only doc index, with
+absolute paths. It is committed to this public repository deliberately, at the operator's request.
+
+`docs/continuation-machine-setup.md` holds the same detail and is gitignored. Kept as a working
+copy; `handover.md` §9 supersedes it.
