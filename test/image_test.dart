@@ -366,7 +366,13 @@ void defineTests() {
           find.byType(Container),
           matchesGoldenFile('assets/images/golden/image_test/custom_builder_asset_logo.png'),
         );
+        // Unmount the widget tree and clear cached/live image handles BEFORE
+        // the final pump so CachedImage.disposeHandle post-frame callbacks run
+        // and release ui.Image before leak_tracker checks tearDownAll.
+        await tester.pumpWidget(const SizedBox.shrink());
         imageCache.clear();
+        imageCache.clearLiveImages();
+        await tester.pump();
       },
       skip: !kGoldensEnabled, // Goldens need --dart-define=GOLDENS=true.
     );
