@@ -24,6 +24,11 @@ flutter_markdown_plus_latex/
 /worktrees/
 .idea/
 .fvm/
+
+# Agent handover. Tracked in git on purpose (an agent must be able to pull it),
+# but it is developer documentation and must not ship in the package. Root-level
+# and anchored, for the same reason as the rules above.
+/handover.md
 *.iml
 *.ipr
 *.iws
