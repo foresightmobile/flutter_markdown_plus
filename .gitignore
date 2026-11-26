@@ -51,10 +51,14 @@ flutter_markdown_plus_latex
 /.review/
 
 # Local planning and agent docs (Specs live in Slite; see CLAUDE.md)
-# Exception: release-plan.md is tracked and public-safe — it is the action list a working
-# agent pulls in. It must name no internal tooling. Kept out of the pub.dev tarball by .pubignore.
+# Exceptions: two files are tracked and public-safe, because a working agent pulls them in and
+# they must name no internal tooling, no personal paths, and no memory locations. Kept out of the
+# pub.dev tarball by .pubignore. Everything else in docs/ is local-only — there is a third file in
+# here (continuation-machine-setup.md) that deliberately stays local precisely because it does
+# name those things.
 /docs/*
 !/docs/release-plan.md
+!/docs/continuation.md
 /.act/
 /AGENTS.md
 /GLOSSARY.md
