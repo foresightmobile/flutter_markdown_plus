@@ -11,9 +11,10 @@
 // via FLUTTER_ROOT, which `flutter test` always sets) so the goldens show
 // actual glyphs rather than the Ahem test font.
 //
-// To regenerate the reference images after an intentional change:
-//
-//   flutter test test/render_golden_test.dart --update-goldens
+// Reference images are never regenerated on a developer machine. To
+// regenerate them after an intentional change, run the manual
+// `Regenerate golden references` workflow_dispatch job in GitHub Actions
+// (from `main`), which runs on the pinned macOS runner and opens a PR.
 //
 // Goldens run only under --dart-define=GOLDENS=true (validate.sh forwards it),
 // because the references are generated on one pinned CI runner and font
@@ -157,13 +158,20 @@ void main() => defineTests();
 
 void defineTests() {
   final String? fontsDir = _materialFontsDir();
-  final bool skip = !kGoldensEnabled || fontsDir == null;
 
   group('Golden render', () {
     setUpAll(() async {
       setUpGoldens();
-      if (fontsDir == null) {
+      if (!kGoldensEnabled) {
         return;
+      }
+      if (fontsDir == null) {
+        final String? root = kIsWeb ? null : io.Platform.environment['FLUTTER_ROOT'];
+        throw StateError(
+          'GOLDENS=true is set, but Material fonts were not found under '
+          'FLUTTER_ROOT ($root). Cannot run golden render tests without '
+          'Roboto / MaterialIcons.',
+        );
       }
       await _loadFont('Roboto', <String>[
         '$fontsDir/Roboto-Regular.ttf',
@@ -177,19 +185,19 @@ void defineTests() {
     testWidgets(
       'formatting, emphasis, blockquotes and lists',
       (WidgetTester tester) => _expectGolden(tester, _formatting, 'formatting.png'),
-      skip: skip,
+      skip: !kGoldensEnabled,
     );
 
     testWidgets(
       'tables and task lists',
       (WidgetTester tester) => _expectGolden(tester, _tablesAndTasks, 'tables.png'),
-      skip: skip,
+      skip: !kGoldensEnabled,
     );
 
     testWidgets(
       'inline and fenced code blocks',
       (WidgetTester tester) => _expectGolden(tester, _code, 'code.png'),
-      skip: skip,
+      skip: !kGoldensEnabled,
     );
   });
 }

@@ -19,11 +19,17 @@ jobs:
       id-token: write # Required for authentication using OIDC
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
+      # setup-dart configures the pub.dev OIDC token that `flutter pub publish`
+      # authenticates with; it is not used to run Dart.
       - uses: dart-lang/setup-dart@v1
+      # Same pinned Flutter as the `validate-latest` job in flutter.yaml
+      # (FLUTTER_LATEST). Never `channel: stable` alone: the published archive
+      # must be built by the toolchain CI verified.
       - uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          flutter-version: '3.50.1'
+          channel: stable
       - name: Install dependencies
         run: flutter pub get
       # `flutter pub publish` publishes whatever pubspec.yaml says and never

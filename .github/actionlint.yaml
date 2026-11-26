@@ -1,0 +1,4 @@
+self-hosted-runner:
+  labels:
+    # GitHub-hosted public preview runner for Xcode 27 (not yet in actionlint's built-in runner list)
+    - xcode-27
