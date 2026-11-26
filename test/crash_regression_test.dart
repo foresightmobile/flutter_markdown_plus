@@ -22,7 +22,11 @@ void defineTests() {
   Iterable<String> renderedText(WidgetTester tester) =>
       tester.allWidgets.whereType<RichText>().map((RichText w) => w.text.toPlainText());
 
-  group('#59 alert syntax and custom block builders', () {
+  // The `div` block-builder test for #59 lives in `test/alert_div_builder_test.dart`
+  // because `MarkdownBuilder` permanently adds block-builder tags to the global
+  // `_kBlockTags` list; keeping it separate prevents `'div'` from leaking into
+  // the non-builder `#59` test below under random test ordering.
+  group('#59 alert syntax', () {
     testWidgets('the #59 sample (> [!NOTE] with gitHubWeb) does not throw', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -34,25 +38,6 @@ void defineTests() {
 
       expect(tester.takeException(), isNull);
       expect(renderedText(tester), anyElement(contains('this does not work')));
-    });
-
-    testWidgets('a block builder registered for div is called for an alert', (WidgetTester tester) async {
-      final _AlertBlockBuilder builder = _AlertBlockBuilder();
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: Markdown(
-              data: '> [!NOTE]\n> this does not work\n',
-              extensionSet: md.ExtensionSet.gitHubWeb,
-              builders: <String, MarkdownElementBuilder>{'div': builder},
-            ),
-          ),
-        ),
-      );
-
-      expect(tester.takeException(), isNull);
-      expect(builder.visitedClasses, <String?>['markdown-alert markdown-alert-note']);
-      expect(find.byKey(_AlertBlockBuilder.key), findsOneWidget);
     });
   });
 
@@ -130,27 +115,6 @@ void defineTests() {
       expect(find.text('Example'), findsOneWidget);
     });
   });
-}
-
-/// A block builder for the `div` that `> [!NOTE]` produces, as #59 asked for.
-class _AlertBlockBuilder extends MarkdownElementBuilder {
-  static const Key key = Key('alert-block');
-
-  final List<String?> visitedClasses = <String?>[];
-
-  @override
-  bool isBlockElement() => true;
-
-  @override
-  Widget? visitElementAfterWithContext(
-    BuildContext context,
-    md.Element element,
-    TextStyle? preferredStyle,
-    TextStyle? parentStyle,
-  ) {
-    visitedClasses.add(element.attributes['class']);
-    return const SizedBox(key: key, height: 10);
-  }
 }
 
 /// The block syntax from the #93 report: emits an empty custom element.

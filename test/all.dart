@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'all_registry_test.dart' as all_registry_test;
+import 'alert_div_builder_test.dart' as alert_div_builder_test;
 import 'alert_syntax_test.dart' as alert_syntax_test;
 import 'blockquote_test.dart' as blockquote_test;
 import 'context_menu_builder_test.dart' as context_menu_builder_test;
@@ -62,4 +63,7 @@ void main() {
   text_scaler.defineTests();
   uri_test.defineTests();
   visit_element_after_test.defineTests();
+  // Keep last: registers a block builder for `'div'`, which permanently mutates
+  // the global `_kBlockTags` list in `MarkdownBuilder` for the rest of the isolate.
+  alert_div_builder_test.defineTests();
 }
