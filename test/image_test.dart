@@ -152,6 +152,12 @@ void defineTests() {
       final TextSpan textSpan = text.textSpan! as TextSpan;
       expect(textSpan.text, 'Hello ');
       expect(textSpan.style, isNotNull);
+
+      // Unmount and drop the cached completer so the ImageStreamCompleterHandle
+      // is released before leak tracking checks tearDownAll.
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump();
+      imageCache.clear();
     });
 
     testWidgets('should work when nested in a link', (WidgetTester tester) async {
@@ -281,7 +287,7 @@ void defineTests() {
       // On non-web, any URI with an unrecognized scheme is treated as a file image.
       // However, constructing a file from an invalid URI will throw an exception.
       // Thus the Image widget is never created, nor is its error builder called.
-      if (kIsWeb || isLinux) {
+      if (kIsWeb) {
         expect(find.byType(Image), findsOneWidget);
       } else {
         expect(find.byType(Image), findsNothing);
