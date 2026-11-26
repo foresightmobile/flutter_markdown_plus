@@ -8,10 +8,14 @@ First prerelease of 1.1.0, published for a soak before stable (see 1.1.0 for the
 * Updated `.pubignore` so local build output and development-only files no longer ship in the published package. A local `flutter pub publish --dry-run` archive is now about 776 KB, where previously a `build/` directory pushed it to around 16 MB. (#168)
 * Inline widgets inside a paragraph are no longer clipped by the forced line height. A text block containing a `WidgetSpan` — from a custom `MarkdownElementBuilder`, or from a `SyntaxHighlighter` returning one — now lets its lines grow to fit the widget, while text-only blocks keep the fixed strut they have had since 1.0.8 (fixes #152)
 * Added a `forceStrutHeight` parameter to `MarkdownWidget`, `Markdown`, `MarkdownBody` and `MarkdownBuilder`, defaulting to `true`, to opt out of the forced line height introduced in 1.0.8. Set it to `false` and the generated `StrutStyle` still applies as a minimum line height, but lines are free to grow to their natural height. This restores the pre-1.0.8 layout for apps with a custom `MarkdownStyleSheet` and custom fonts, whose golden heights shrank and whose hard line breaks overlapped after upgrading. Changing the parameter re-parses the Markdown. This is a partial answer to #109, which asked for `StrutStyle` control over the minimum line height: `forceStrutHeight: false` removes the forcing, but the `StrutStyle` itself is not yet configurable
+* Preserved nested `TextSpan` children when flattening inline spans so a `WidgetSpan` nested inside styled text (such as bold, italic, or links) still renders (#175, #178)
+* Stopped GitHub alert syntax (`> [!NOTE]` and the other alert kinds under `ExtensionSet.gitHubWeb`) from crashing `MarkdownBuilder` with `Bad state` or `RangeError`. Custom block builders registered for `div` receive `visitElementAfterWithContext` for alert containers; built-in alert styling stays open in #59 (#192, #194)
+* Added regression coverage for reported crash and builder issues (#59, #62, #63, #64, #72, #93; #158-#161, #166, #169, #199), and fixed the invalid-scheme condition and an image stream leak in `test/image_test.dart` (#190, #198)
 
 **Thanks to our contributors:**
 * [@dux-web](https://github.com/dux-web) for detecting `WidgetSpan` recursively so inline widgets can expand their text line (#149)
 * [@st0ck](https://github.com/st0ck) for the `forceStrutHeight` opt-out (#152)
+* [@arrrrny](https://github.com/arrrrny) ([zuraffa_markdown](https://github.com/arrrrny/zuraffa_markdown)) for identifying the invalid-scheme test bug and image stream leak in `test/image_test.dart` (#190)
 
 ## 1.0.12
 
