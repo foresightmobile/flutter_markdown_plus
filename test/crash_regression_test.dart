@@ -123,9 +123,9 @@ void defineTests() {
 
       expect(tester.takeException(), isNull);
       // The rest of the document still renders around the custom element.
-      final Iterable<String> selectable = tester.widgetList<SelectableText>(find.byType(SelectableText)).map(
-        (SelectableText w) => w.textSpan!.toPlainText(),
-      );
+      final Iterable<String> selectable = tester
+          .widgetList<SelectableText>(find.byType(SelectableText))
+          .map((SelectableText w) => w.textSpan!.toPlainText());
       expect(selectable, contains('Just to showcase the bug'));
       expect(find.text('Example'), findsOneWidget);
     });
