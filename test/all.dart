@@ -6,6 +6,7 @@ import 'all_registry_test.dart' as all_registry_test;
 import 'alert_syntax_test.dart' as alert_syntax_test;
 import 'blockquote_test.dart' as blockquote_test;
 import 'context_menu_builder_test.dart' as context_menu_builder_test;
+import 'crash_regression_test.dart' as crash_regression_test;
 import 'custom_syntax_test.dart' as custome_syntax_test;
 import 'emphasis_test.dart' as emphasis_test;
 import 'footnote_test.dart' as footnote_test;
@@ -36,6 +37,7 @@ void main() {
   alert_syntax_test.defineTests();
   blockquote_test.defineTests();
   context_menu_builder_test.defineTests();
+  crash_regression_test.defineTests();
   custome_syntax_test.defineTests();
   emphasis_test.defineTests();
   footnote_test.defineTests();
